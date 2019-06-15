@@ -24,6 +24,7 @@ import android.app.AlertDialog
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.*
+import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
@@ -41,6 +42,7 @@ import com.hally.lotsms.common.base.QkThemedActivity
 import com.hally.lotsms.common.util.extensions.*
 import com.hally.lotsms.feature.conversations.ConversationItemTouchCallback
 import com.hally.lotsms.feature.conversations.ConversationsAdapter
+import com.hally.lotsms.model.Conversation
 import com.hally.lotsms.repository.SyncRepository
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
@@ -50,21 +52,31 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
+import io.realm.OrderedRealmCollection
+import io.realm.RealmResults
 import kotlinx.android.synthetic.main.drawer_view.*
 import kotlinx.android.synthetic.main.main_activity.*
 import kotlinx.android.synthetic.main.main_permission_hint.*
 import kotlinx.android.synthetic.main.main_syncing.*
+import java.util.*
 import javax.inject.Inject
 
 class MainActivity : QkThemedActivity(), MainView {
 
-    @Inject lateinit var disposables: CompositeDisposable
-    @Inject lateinit var navigator: Navigator
-    @Inject lateinit var conversationsAdapter: ConversationsAdapter
-    @Inject lateinit var drawerBadgesExperiment: DrawerBadgesExperiment
-    @Inject lateinit var searchAdapter: SearchAdapter
-    @Inject lateinit var itemTouchCallback: ConversationItemTouchCallback
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject
+    lateinit var disposables: CompositeDisposable
+    @Inject
+    lateinit var navigator: Navigator
+    @Inject
+    lateinit var conversationsAdapter: ConversationsAdapter
+    @Inject
+    lateinit var drawerBadgesExperiment: DrawerBadgesExperiment
+    @Inject
+    lateinit var searchAdapter: SearchAdapter
+    @Inject
+    lateinit var itemTouchCallback: ConversationItemTouchCallback
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
 
     override val activityResumedIntent: Subject<Unit> = PublishSubject.create()
     override val queryChangedIntent by lazy { toolbarSearch.textChanges() }
@@ -114,6 +126,9 @@ class MainActivity : QkThemedActivity(), MainView {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
+        val is1Day = prefs.oneDaySms.get()
+        datePicker.setText(if (is1Day) R.string.datePicker1Day else R.string.datePickerAllDay)
+        datePicker.setOnClickListener { v -> changeDatePicker(v as TextView) }
         viewModel.bindView(this)
 
         (snackbar as? ViewStub)?.setOnInflateListener { _, _ ->
@@ -170,6 +185,13 @@ class MainActivity : QkThemedActivity(), MainView {
         conversationsAdapter.autoScrollToStart(recyclerView)
     }
 
+    private fun changeDatePicker(textView: TextView) {
+        val is1Day = prefs.oneDaySms.get()
+        textView.setText(if (is1Day) R.string.datePickerAllDay else R.string.datePicker1Day)
+        prefs.oneDaySms.set(!is1Day)
+        viewModel.bindView(this)
+    }
+
     override fun render(state: MainState) {
         if (state.hasError) {
             finish()
@@ -221,7 +243,7 @@ class MainActivity : QkThemedActivity(), MainView {
                 showBackButton(state.page.selected > 0)
                 title = getString(R.string.main_title_selected, state.page.selected)
                 if (recyclerView.adapter !== conversationsAdapter) recyclerView.adapter = conversationsAdapter
-                conversationsAdapter.updateData(state.page.data)
+                conversationsAdapter.updateData(filterData(state.page.data))
                 itemTouchHelper.attachToRecyclerView(recyclerView)
                 empty.setText(R.string.inbox_empty_text)
             }
@@ -241,7 +263,7 @@ class MainActivity : QkThemedActivity(), MainView {
                     false -> getString(R.string.title_archived)
                 }
                 if (recyclerView.adapter !== conversationsAdapter) recyclerView.adapter = conversationsAdapter
-                conversationsAdapter.updateData(state.page.data)
+                conversationsAdapter.updateData(filterData(state.page.data))
                 itemTouchHelper.attachToRecyclerView(null)
                 empty.setText(R.string.archived_empty_text)
             }
@@ -287,6 +309,14 @@ class MainActivity : QkThemedActivity(), MainView {
                 snackbarButton?.setText(R.string.main_permission_allow)
             }
         }
+    }
+
+    private fun filterData(data: RealmResults<Conversation>?): OrderedRealmCollection<Conversation>? {
+        if (!prefs.oneDaySms.get()) return data
+
+        val then = Calendar.getInstance()
+        then.add(Calendar.DAY_OF_YEAR, -1)
+        return data?.where()?.greaterThan("date", then.timeInMillis)?.findAll()
     }
 
     override fun onResume() {

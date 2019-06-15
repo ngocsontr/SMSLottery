@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (C) 2017 Moez Bhatti <moez.bhatti@gmail.com>
   ~
   ~ This file is part of QKSMS.
@@ -17,10 +16,10 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with QKSMS.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<androidx.drawerlayout.widget.DrawerLayout android:id="@+id/drawerLayout"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -40,12 +39,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <com.moez.QKSMS.common.widget.QkTextView
+            <com.hally.lotsms.common.widget.QkTextView
                 android:id="@+id/toolbarTitle"
                 style="@style/ToolbarText"
                 android:layout_marginStart="16dp" />
 
-            <com.moez.QKSMS.common.widget.QkEditText
+            <com.hally.lotsms.common.widget.QkEditText
                 android:id="@+id/toolbarSearch"
                 style="@style/ToolbarText"
                 android:layout_marginTop="8dp"
@@ -62,7 +61,7 @@
 
         </androidx.appcompat.widget.Toolbar>
 
-        <com.moez.QKSMS.common.widget.QkTextView
+        <com.hally.lotsms.common.widget.QkTextView
             android:id="@+id/empty"
             style="@style/TextSecondary"
             android:layout_width="match_parent"
@@ -75,16 +74,29 @@
             tools:text="Your conversations will appear here"
             tools:visibility="invisible" />
 
+        <TextView
+            android:id="@+id/datePicker"
+            style="@style/TextSecondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="@string/datePicker1Day"
+            android:textSize="25sp"
+            app:layout_constraintBottom_toTopOf="@id/recyclerView"
+            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:clipChildren="false"
             android:clipToPadding="false"
-            android:paddingBottom="8dp"
             android:paddingTop="8dp"
+            android:paddingBottom="8dp"
             app:layout_constraintBottom_toTopOf="@id/bottom"
-            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintTop_toBottomOf="@id/datePicker"
             tools:listitem="@layout/conversation_list_item" />
 
         <ImageView
