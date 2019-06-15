@@ -23,7 +23,7 @@
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground">
 
-    <com.moez.QKSMS.common.widget.QkTextView
+    <com.hally.lotsms.common.widget.QkTextView
         android:id="@+id/timestamp"
         style="@style/TextSecondary"
         android:layout_width="wrap_content"
@@ -48,7 +48,7 @@
         app:layout_constraintStart_toEndOf="@id/timestamp"
         app:layout_constraintTop_toTopOf="@id/timestamp" />
 
-    <com.moez.QKSMS.common.widget.QkTextView
+    <com.hally.lotsms.common.widget.QkTextView
         android:id="@+id/simIndex"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -77,7 +77,7 @@
         tools:itemCount="1"
         tools:listitem="@layout/mms_preview_list_item" />
 
-    <com.moez.QKSMS.common.widget.AvatarView
+    <com.hally.lotsms.common.widget.AvatarView
         android:id="@+id/avatar"
         android:layout_width="36dp"
         android:layout_height="36dp"
@@ -85,7 +85,7 @@
         app:layout_constraintBottom_toBottomOf="@id/body"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <com.moez.QKSMS.common.widget.TightTextView
+    <com.hally.lotsms.common.widget.TightTextView
         android:id="@+id/body"
         style="@style/TextPrimary"
         android:layout_width="wrap_content"
@@ -109,7 +109,7 @@
         tools:backgroundTint="@color/tools_theme"
         tools:text="@tools:sample/lorem" />
 
-    <com.moez.QKSMS.common.widget.TightTextView
+    <com.hally.lotsms.common.widget.TightTextView
         android:id="@+id/chotBtn"
         style="@style/TextPrimary"
         android:layout_width="wrap_content"
@@ -132,7 +132,7 @@
         app:layout_constraintTop_toBottomOf="@id/attachments"
         tools:backgroundTint="@color/tools_theme" />
 
-    <com.moez.QKSMS.common.widget.QkTextView
+    <com.hally.lotsms.common.widget.QkTextView
         android:id="@+id/status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

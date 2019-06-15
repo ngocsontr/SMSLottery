@@ -28,7 +28,7 @@
     android:background="@drawable/rounded_rectangle_4dp"
     android:backgroundTint="?attr/composeBackground"
     android:elevation="8dp"
-    tools:context="com.moez.QKSMS.feature.qkreply.QkReplyActivity">
+    tools:context="com.hally.lotsms.feature.qkreply.QkReplyActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/messages"
@@ -78,7 +78,7 @@
         app:layout_constraintStart_toStartOf="@id/message"
         app:layout_constraintTop_toTopOf="@id/message" />
 
-    <com.moez.QKSMS.common.widget.QkEditText
+    <com.hally.lotsms.common.widget.QkEditText
         android:id="@+id/message"
         style="@style/TextPrimary"
         android:layout_width="0dp"
@@ -114,7 +114,7 @@
         app:layout_constraintBottom_toBottomOf="@id/message"
         app:layout_constraintEnd_toStartOf="@id/send" />
 
-    <com.moez.QKSMS.common.widget.QkTextView
+    <com.hally.lotsms.common.widget.QkTextView
         android:id="@+id/simIndex"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -130,7 +130,7 @@
         tools:ignore="SpUsage"
         tools:text="1" />
 
-    <com.moez.QKSMS.common.widget.QkTextView
+    <com.hally.lotsms.common.widget.QkTextView
         android:id="@+id/counter"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -168,7 +168,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_weight="1">
 
-        <com.moez.QKSMS.common.widget.QkTextView
+        <com.hally.lotsms.common.widget.QkTextView
             android:id="@+id/toolbarTitle"
             style="@style/ToolbarText"
             tools:text="Conversations" />

@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:foreground="?attr/selectableItemBackground">
 
-            <com.moez.QKSMS.common.widget.QkTextView
+            <com.hally.lotsms.common.widget.QkTextView
                 android:id="@+id/rightTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:textSize="primary" />
 
-            <com.moez.QKSMS.common.widget.QkTextView
+            <com.hally.lotsms.common.widget.QkTextView
                 android:id="@+id/rightLabel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
                 app:textSize="secondary"
                 tools:text="Archive" />
 
-            <com.moez.QKSMS.common.widget.QkTextView
+            <com.hally.lotsms.common.widget.QkTextView
                 android:id="@+id/rightChange"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -158,7 +158,7 @@
             android:layout_height="wrap_content"
             android:foreground="?attr/selectableItemBackground">
 
-            <com.moez.QKSMS.common.widget.QkTextView
+            <com.hally.lotsms.common.widget.QkTextView
                 android:id="@+id/leftTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -172,7 +172,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:textSize="primary" />
 
-            <com.moez.QKSMS.common.widget.QkTextView
+            <com.hally.lotsms.common.widget.QkTextView
                 android:id="@+id/leftLabel"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -184,7 +184,7 @@
                 app:textSize="secondary"
                 tools:text="Archive" />
 
-            <com.moez.QKSMS.common.widget.QkTextView
+            <com.hally.lotsms.common.widget.QkTextView
                 android:id="@+id/leftChange"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

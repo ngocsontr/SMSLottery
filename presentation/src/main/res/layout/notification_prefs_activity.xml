@@ -28,7 +28,7 @@
         style="@style/Toolbar"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.moez.QKSMS.common.widget.QkTextView
+        <com.hally.lotsms.common.widget.QkTextView
             android:id="@+id/toolbarTitle"
             style="@style/ToolbarText"
             tools:text="Notifications" />
@@ -49,7 +49,7 @@
             android:paddingBottom="8dp"
             android:paddingTop="8dp">
 
-            <com.moez.QKSMS.common.widget.PreferenceView
+            <com.hally.lotsms.common.widget.PreferenceView
                 android:id="@+id/notificationsO"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -57,28 +57,28 @@
                 app:title="@string/settings_notifications_title"
                 tools:visibility="gone" />
 
-            <com.moez.QKSMS.common.widget.PreferenceView
+            <com.hally.lotsms.common.widget.PreferenceView
                 android:id="@+id/notifications"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:title="@string/settings_notifications_title"
                 app:widget="@layout/settings_switch_widget" />
 
-            <com.moez.QKSMS.common.widget.PreferenceView
+            <com.hally.lotsms.common.widget.PreferenceView
                 android:id="@+id/previews"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:title="@string/settings_notification_previews_title"
                 tools:summary="Show name and message" />
 
-            <com.moez.QKSMS.common.widget.PreferenceView
+            <com.hally.lotsms.common.widget.PreferenceView
                 android:id="@+id/vibration"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:title="@string/settings_vibration_title"
                 app:widget="@layout/settings_switch_widget" />
 
-            <com.moez.QKSMS.common.widget.PreferenceView
+            <com.hally.lotsms.common.widget.PreferenceView
                 android:id="@+id/ringtone"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -92,26 +92,26 @@
                 android:layout_marginTop="8dp"
                 android:background="?android:attr/divider" />
 
-            <com.moez.QKSMS.common.widget.QkTextView
+            <com.hally.lotsms.common.widget.QkTextView
                 android:id="@+id/actionsTitle"
                 style="@style/PreferenceCategory"
                 android:text="@string/settings_notification_actions_title" />
 
-            <com.moez.QKSMS.common.widget.PreferenceView
+            <com.hally.lotsms.common.widget.PreferenceView
                 android:id="@+id/action1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:title="@string/settings_notification_action_1"
                 tools:summary="Mark read" />
 
-            <com.moez.QKSMS.common.widget.PreferenceView
+            <com.hally.lotsms.common.widget.PreferenceView
                 android:id="@+id/action2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:title="@string/settings_notification_action_2"
                 tools:summary="Reply" />
 
-            <com.moez.QKSMS.common.widget.PreferenceView
+            <com.hally.lotsms.common.widget.PreferenceView
                 android:id="@+id/action3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -126,12 +126,12 @@
                 android:layout_marginTop="8dp"
                 android:background="?android:attr/divider" />
 
-            <com.moez.QKSMS.common.widget.QkTextView
+            <com.hally.lotsms.common.widget.QkTextView
                 android:id="@+id/qkreplyTitle"
                 style="@style/PreferenceCategory"
                 android:text="@string/settings_category_qkreply" />
 
-            <com.moez.QKSMS.common.widget.PreferenceView
+            <com.hally.lotsms.common.widget.PreferenceView
                 android:id="@+id/qkreply"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -139,7 +139,7 @@
                 app:title="@string/settings_qkreply_title"
                 app:widget="@layout/settings_switch_widget" />
 
-            <com.moez.QKSMS.common.widget.PreferenceView
+            <com.hally.lotsms.common.widget.PreferenceView
                 android:id="@+id/qkreplyTapDismiss"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

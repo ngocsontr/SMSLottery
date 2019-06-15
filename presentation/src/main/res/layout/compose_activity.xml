@@ -24,7 +24,7 @@
     android:layout_height="match_parent"
     android:background="?attr/composeBackground"
     android:orientation="vertical"
-    tools:context="com.moez.QKSMS.feature.compose.ComposeActivity">
+    tools:context="com.hally.lotsms.feature.compose.ComposeActivity">
 
     <RelativeLayout
         android:id="@+id/lotteryList"
@@ -36,7 +36,7 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintVertical_bias="0.0">
 
-        <com.moez.QKSMS.common.widget.QkTextView
+        <com.hally.lotsms.common.widget.QkTextView
             android:id="@+id/lottery_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,7 +46,7 @@
             app:textColor="tertiary"
             app:textSize="secondary" />
 
-        <com.moez.QKSMS.common.widget.QkTextView
+        <com.hally.lotsms.common.widget.QkTextView
             android:id="@+id/lottery_lo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -57,7 +57,7 @@
             app:textColor="tertiary"
             app:textSize="secondary" />
 
-        <com.moez.QKSMS.common.widget.QkTextView
+        <com.hally.lotsms.common.widget.QkTextView
             android:id="@+id/lottery_de"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
         app:stackFromEnd="true"
         tools:listitem="@layout/message_list_item_in" />
 
-    <com.moez.QKSMS.common.widget.QkTextView
+    <com.hally.lotsms.common.widget.QkTextView
         android:id="@+id/messagesEmpty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -128,7 +128,7 @@
         app:layout_constraintBottom_toBottomOf="@id/sendAsGroupSummary"
         app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
-    <com.moez.QKSMS.common.widget.QkTextView
+    <com.hally.lotsms.common.widget.QkTextView
         android:id="@+id/sendAsGroupTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -143,7 +143,7 @@
         app:layout_constraintTop_toTopOf="@id/sendAsGroupBackground"
         app:textSize="primary" />
 
-    <com.moez.QKSMS.common.widget.QkTextView
+    <com.hally.lotsms.common.widget.QkTextView
         android:id="@+id/sendAsGroupSummary"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -155,7 +155,7 @@
         app:layout_constraintTop_toBottomOf="@id/sendAsGroupTitle"
         app:textSize="secondary" />
 
-    <com.moez.QKSMS.common.widget.QkSwitch
+    <com.hally.lotsms.common.widget.QkSwitch
         android:id="@+id/sendAsGroupSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -229,7 +229,7 @@
         android:visibility="gone"
         app:constraint_referenced_ids="scheduledTitle, scheduledTime, scheduledCancel, scheduledSeparator" />
 
-    <com.moez.QKSMS.common.widget.QkTextView
+    <com.hally.lotsms.common.widget.QkTextView
         android:id="@+id/scheduledTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -246,7 +246,7 @@
         app:layout_constraintVertical_chainStyle="packed"
         app:textSize="secondary" />
 
-    <com.moez.QKSMS.common.widget.QkTextView
+    <com.hally.lotsms.common.widget.QkTextView
         android:id="@+id/scheduledTime"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -298,7 +298,7 @@
         app:layout_constraintStart_toStartOf="@id/messageBackground"
         tools:listitem="@layout/attachment_image_list_item" />
 
-    <com.moez.QKSMS.common.widget.QkEditText
+    <com.hally.lotsms.common.widget.QkEditText
         android:id="@+id/message"
         style="@style/TextPrimary"
         android:layout_width="0dp"
@@ -333,7 +333,7 @@
         app:layout_constraintBottom_toBottomOf="@id/messageBackground"
         app:layout_constraintEnd_toStartOf="@id/send" />
 
-    <com.moez.QKSMS.common.widget.QkTextView
+    <com.hally.lotsms.common.widget.QkTextView
         android:id="@+id/simIndex"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -349,7 +349,7 @@
         tools:ignore="SpUsage"
         tools:text="1" />
 
-    <com.moez.QKSMS.common.widget.QkTextView
+    <com.hally.lotsms.common.widget.QkTextView
         android:id="@+id/counter"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -394,13 +394,13 @@
             android:gravity="center_vertical"
             android:orientation="vertical">
 
-            <com.moez.QKSMS.common.widget.QkTextView
+            <com.hally.lotsms.common.widget.QkTextView
                 android:id="@+id/toolbarTitle"
                 style="@style/ToolbarText"
                 android:layout_height="wrap_content"
                 tools:text="Moez Bhatti" />
 
-            <com.moez.QKSMS.common.widget.QkTextView
+            <com.hally.lotsms.common.widget.QkTextView
                 android:id="@+id/toolbarSubtitle"
                 style="@style/ToolbarText"
                 android:visibility="gone"
@@ -469,7 +469,7 @@
         app:layout_constraintEnd_toEndOf="@id/attach"
         app:layout_constraintStart_toStartOf="@id/attach" />
 
-    <com.moez.QKSMS.common.widget.QkTextView
+    <com.hally.lotsms.common.widget.QkTextView
         android:id="@+id/contactLabel"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
@@ -503,7 +503,7 @@
         app:layout_constraintEnd_toEndOf="@id/attach"
         app:layout_constraintStart_toStartOf="@id/attach" />
 
-    <com.moez.QKSMS.common.widget.QkTextView
+    <com.hally.lotsms.common.widget.QkTextView
         android:id="@+id/scheduleLabel"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
@@ -537,7 +537,7 @@
         app:layout_constraintEnd_toEndOf="@id/attach"
         app:layout_constraintStart_toStartOf="@id/attach" />
 
-    <com.moez.QKSMS.common.widget.QkTextView
+    <com.hally.lotsms.common.widget.QkTextView
         android:id="@+id/galleryLabel"
         android:layout_width="wrap_content"
         android:layout_height="32dp"
@@ -571,7 +571,7 @@
         app:layout_constraintEnd_toEndOf="@id/attach"
         app:layout_constraintStart_toStartOf="@id/attach" />
 
-    <com.moez.QKSMS.common.widget.QkTextView
+    <com.hally.lotsms.common.widget.QkTextView
         android:id="@+id/cameraLabel"
         android:layout_width="wrap_content"
         android:layout_height="32dp"

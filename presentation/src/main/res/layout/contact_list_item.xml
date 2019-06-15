@@ -23,7 +23,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.moez.QKSMS.common.widget.AvatarView
+    <com.hally.lotsms.common.widget.AvatarView
         android:id="@+id/avatar"
         android:layout_width="40dp"
         android:layout_height="40dp"
@@ -34,7 +34,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0" />
 
-    <com.moez.QKSMS.common.widget.QkTextView
+    <com.hally.lotsms.common.widget.QkTextView
         android:id="@+id/name"
         style="@style/TextPrimary"
         android:layout_width="0dp"
@@ -49,7 +49,7 @@
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="Moez Bhatti" />
 
-    <com.moez.QKSMS.common.widget.QkTextView
+    <com.hally.lotsms.common.widget.QkTextView
         android:id="@+id/address"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
         tools:text="(123) 456-7890"
         tools:textColor="@color/textSecondary" />
 
-    <com.moez.QKSMS.common.widget.QkTextView
+    <com.hally.lotsms.common.widget.QkTextView
         android:id="@+id/type"
         style="@style/TextSecondary"
         android:layout_width="wrap_content"

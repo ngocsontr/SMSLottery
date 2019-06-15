@@ -16,14 +16,14 @@
  * You should have received a copy of the GNU General Public License
  * along with QKSMS.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.moez.QKSMS.manager
+package com.hally.lotsms.manager
 
 import android.content.Context
 import com.amplitude.api.Amplitude
 import com.amplitude.api.AmplitudeClient
 import com.amplitude.api.Identify
 import com.mixpanel.android.mpmetrics.MixpanelAPI
-import com.moez.QKSMS.data.BuildConfig
+import com.hally.lotsms.data.BuildConfig
 import org.json.JSONArray
 import org.json.JSONObject
 import timber.log.Timber

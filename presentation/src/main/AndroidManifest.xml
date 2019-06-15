@@ -17,7 +17,7 @@
   ~ You should have received a copy of the GNU General Public License
   ~ along with QKSMS.  If not, see <http://www.gnu.org/licenses/>.
   -->
-<manifest package="com.moez.QKSMS"
+<manifest package="com.hally.lotsms"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -36,7 +36,7 @@
     <uses-permission android:name="android.permission.WRITE_SMS" />
 
     <application
-        android:name=".common.QKApplication"
+        android:name="com.hally.lotsms.common.QKApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -44,7 +44,7 @@
         android:theme="@style/AppThemeDark">
 
         <activity
-            android:name=".feature.main.MainActivity"
+            android:name="com.hally.lotsms.feature.main.MainActivity"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -55,8 +55,8 @@
                 android:resource="@xml/shortcuts" />
         </activity>
         <activity
-            android:name=".feature.compose.ComposeActivity"
-            android:parentActivityName=".feature.main.MainActivity">
+            android:name="com.hally.lotsms.feature.compose.ComposeActivity"
+            android:parentActivityName="com.hally.lotsms.feature.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />
@@ -92,43 +92,43 @@
                 android:name="android.service.chooser.chooser_target_service"
                 android:value=".common.util.QkChooserTargetService" />
         </activity>
-        <activity android:name=".feature.settings.SettingsActivity" />
-        <activity android:name=".feature.plus.PlusActivity" />
+        <activity android:name="com.hally.lotsms.feature.settings.SettingsActivity" />
+        <activity android:name="com.hally.lotsms.feature.plus.PlusActivity" />
         <activity
-            android:name=".feature.gallery.GalleryActivity"
+            android:name="com.hally.lotsms.feature.gallery.GalleryActivity"
             android:theme="@style/AppThemeBlack" />
-        <activity android:name=".feature.conversationinfo.ConversationInfoActivity" />
-        <activity android:name=".feature.notificationprefs.NotificationPrefsActivity" />
-        <activity android:name=".feature.blocked.BlockedActivity" />
+        <activity android:name="com.hally.lotsms.feature.conversationinfo.ConversationInfoActivity" />
+        <activity android:name="com.hally.lotsms.feature.notificationprefs.NotificationPrefsActivity" />
+        <activity android:name="com.hally.lotsms.feature.blocked.BlockedActivity" />
         <activity
-            android:name=".feature.qkreply.QkReplyActivity"
+            android:name="com.hally.lotsms.feature.qkreply.QkReplyActivity"
             android:excludeFromRecents="true"
             android:taskAffinity=""
             android:theme="@style/AppThemeLightDialog"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".feature.scheduled.ScheduledActivity" />
-        <activity android:name=".feature.backup.BackupActivity" />
+        <activity android:name="com.hally.lotsms.feature.scheduled.ScheduledActivity" />
+        <activity android:name="com.hally.lotsms.feature.backup.BackupActivity" />
 
-        <receiver android:name=".receiver.BootReceiver">
+        <receiver android:name="com.hally.lotsms.receiver.BootReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".receiver.DefaultSmsChangedReceiver">
+        <receiver android:name="com.hally.lotsms.receiver.DefaultSmsChangedReceiver">
             <intent-filter>
                 <action android:name="android.provider.action.DEFAULT_SMS_PACKAGE_CHANGED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".receiver.DeleteMessagesReceiver" />
+        <receiver android:name="com.hally.lotsms.receiver.DeleteMessagesReceiver" />
         <receiver
-            android:name=".receiver.SmsReceiver"
+            android:name="com.hally.lotsms.receiver.SmsReceiver"
             android:permission="android.permission.BROADCAST_SMS">
             <intent-filter>
                 <action android:name="android.provider.Telephony.SMS_DELIVER" />
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".receiver.MmsReceiver"
+            android:name="com.hally.lotsms.receiver.MmsReceiver"
             android:permission="android.permission.BROADCAST_WAP_PUSH">
             <intent-filter>
                 <action android:name="android.provider.Telephony.WAP_PUSH_DELIVER" />
@@ -136,28 +136,28 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".receiver.MmsSentReceiver"
-            android:taskAffinity="com.moez.QKSMS.MMS_SENT" />
+            android:name="com.hally.lotsms.receiver.MmsSentReceiver"
+            android:taskAffinity="com.hally.lotsms.MMS_SENT" />
         <receiver
-            android:name=".receiver.MmsUpdatedReceiver"
-            android:taskAffinity="com.moez.QKSMS.MMS_UPDATED" />
+            android:name="com.hally.lotsms.receiver.MmsUpdatedReceiver"
+            android:taskAffinity="com.hally.lotsms.MMS_UPDATED" />
         <receiver
-            android:name=".receiver.MmsReceivedReceiver"
+            android:name="com.hally.lotsms.receiver.MmsReceivedReceiver"
             android:taskAffinity="com.klinker.android.messaging.MMS_RECEIVED" />
-        <receiver android:name=".receiver.MarkSeenReceiver" />
-        <receiver android:name=".receiver.MarkReadReceiver" />
-        <receiver android:name=".receiver.RemoteMessagingReceiver" />
-        <receiver android:name=".receiver.NightModeReceiver" />
-        <receiver android:name=".receiver.SmsProviderChangedReceiver">
+        <receiver android:name="com.hally.lotsms.receiver.MarkSeenReceiver" />
+        <receiver android:name="com.hally.lotsms.receiver.MarkReadReceiver" />
+        <receiver android:name="com.hally.lotsms.receiver.RemoteMessagingReceiver" />
+        <receiver android:name="com.hally.lotsms.receiver.NightModeReceiver" />
+        <receiver android:name="com.hally.lotsms.receiver.SmsProviderChangedReceiver">
             <intent-filter>
                 <action android:name="android.provider.action.EXTERNAL_PROVIDER_CHANGE" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".receiver.SendScheduledMessageReceiver" />
-        <receiver android:name=".feature.widget.WidgetProvider">
+        <receiver android:name="com.hally.lotsms.receiver.SendScheduledMessageReceiver" />
+        <receiver android:name="com.hally.lotsms.feature.widget.WidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-                <action android:name="com.moez.QKSMS.intent.action.ACTION_NOTIFY_DATASET_CHANGED" />
+                <action android:name="com.hally.lotsms.intent.action.ACTION_NOTIFY_DATASET_CHANGED" />
             </intent-filter>
 
             <meta-data
@@ -166,13 +166,14 @@
         </receiver>
 
         <service android:name="com.android.mms.transaction.TransactionService" />
-        <service android:name=".feature.backup.RestoreBackupService" />
-        <receiver android:name=".receiver.SendSmsReceiver" />
+        <service android:name="com.hally.lotsms.feature.backup.RestoreBackupService" />
+
+        <receiver android:name="com.hally.lotsms.receiver.SendSmsReceiver" />
         <service
-            android:name=".feature.widget.WidgetService"
+            android:name="com.hally.lotsms.feature.widget.WidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
         <service
-            android:name=".service.HeadlessSmsSendService"
+            android:name="com.hally.lotsms.service.HeadlessSmsSendService"
             android:exported="true"
             android:permission="android.permission.SEND_RESPOND_VIA_MESSAGE">
             <intent-filter>
@@ -186,7 +187,7 @@
             </intent-filter>
         </service>
         <service
-            android:name=".common.util.QkChooserTargetService"
+            android:name="com.hally.lotsms.common.util.QkChooserTargetService"
             android:label="@string/app_name"
             android:permission="android.permission.BIND_CHOOSER_TARGET_SERVICE">
             <intent-filter>
