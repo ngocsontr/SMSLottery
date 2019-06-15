@@ -47,6 +47,7 @@ import com.hally.lotsms.common.util.DateFormatter
 import com.hally.lotsms.common.util.extensions.*
 import com.hally.lotsms.model.Attachment
 import com.hally.lotsms.model.Contact
+import com.hally.lotsms.model.Conversation
 import com.hally.lotsms.model.Message
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
@@ -55,6 +56,7 @@ import dagger.android.AndroidInjection
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
+import io.realm.RealmResults
 import kotlinx.android.synthetic.main.compose_activity.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -218,7 +220,7 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
         sendAsGroupSwitch.isChecked = state.sendAsGroup
 
         messageList.setVisible(state.sendAsGroup)
-        messageAdapter.data = state.messages
+        messageAdapter.data = filterData(state.messages)
         messageAdapter.highlight = state.searchSelectionId
 
         scheduledGroup.isVisible = state.scheduled != 0L
@@ -239,6 +241,16 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
 
         send.isEnabled = state.canSend
         send.imageAlpha = if (state.canSend) 255 else 128
+    }
+
+    private fun filterData(data: Pair<Conversation, RealmResults<Message>>?): Pair<Conversation, RealmResults<Message>>? {
+        if (!prefs.oneDaySms.get()) return data
+
+        val then = Calendar.getInstance()
+        then.add(Calendar.DAY_OF_YEAR, -1)
+        val con = data?.first
+        val mes = data?.second?.where()?.greaterThan("date", then.timeInMillis)?.findAll()
+        return if (con == null || mes == null) null else Pair(con, mes)
     }
 
     override fun clearSelection() = messageAdapter.clearSelection()
