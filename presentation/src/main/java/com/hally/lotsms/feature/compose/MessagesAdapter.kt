@@ -19,9 +19,11 @@
 package com.hally.lotsms.feature.compose
 
 import android.animation.ObjectAnimator
+import android.app.Activity
 import android.content.Context
 import android.graphics.Typeface
 import android.os.Build
+import android.os.Bundle
 import android.telephony.PhoneNumberUtils
 import android.text.Layout
 import android.text.Spannable
@@ -35,11 +37,13 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.hally.lotsms.R
+import com.hally.lotsms.common.LodeDialog
 import com.hally.lotsms.common.Navigator
 import com.hally.lotsms.common.base.QkRealmAdapter
 import com.hally.lotsms.common.base.QkViewHolder
 import com.hally.lotsms.common.util.Colors
 import com.hally.lotsms.common.util.DateFormatter
+import com.hally.lotsms.common.util.LodeUtil
 import com.hally.lotsms.common.util.extensions.*
 import com.hally.lotsms.compat.SubscriptionManagerCompat
 import com.hally.lotsms.extensions.isImage
@@ -64,6 +68,7 @@ import javax.inject.Inject
 class MessagesAdapter @Inject constructor(
         private val context: Context,
         private val colors: Colors,
+        private val lodeUtil: LodeUtil,
         private val dateFormatter: DateFormatter,
         private val navigator: Navigator,
         private val prefs: Preferences,
@@ -114,6 +119,7 @@ class MessagesAdapter @Inject constructor(
     private val subs = subscriptionManager.activeSubscriptionInfoList
 
     var theme: Colors.Theme = colors.theme()
+    lateinit var activity: Activity
 
     /**
      * If the viewType is negative, then the viewHolder has an attachment. We'll consider
@@ -135,9 +141,21 @@ class MessagesAdapter @Inject constructor(
             view.avatar.threadId = conversation?.id ?: 0
             view.body.setTextColor(theme.textPrimary)
             view.body.setBackgroundTint(theme.theme)
-            view.chotBtn.setOnClickListener(View.OnClickListener { v: View? ->
+            view.chotBtn.setOnClickListener {
+                lodeUtil.chot(view.body.text)
+                val data = Bundle()
+                data.putString(LodeDialog.NAME, view.body.text.toString())
+                data.putLong(LodeDialog.AVATAR, view.avatar.threadId)
+                val lodeDialog = LodeDialog()
+                lodeDialog.arguments = data
+                lodeDialog.setCallback(object : LodeDialog.Callback {
+                    override fun onPositiveButtonClicked(password: String) {
+
+                    }
+                })
+                lodeDialog.show(activity.fragmentManager, LodeDialog.TAG)
                 Toast.makeText(context, "Chốt: " + view.body.text, Toast.LENGTH_LONG).show()
-            })
+            }
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2017 Moez Bhatti <moez.bhatti@gmail.com>
+  ~
+  ~ This file is part of QKSMS.
+  ~
+  ~ QKSMS is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ QKSMS is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with QKSMS.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground">
+
+    <com.hally.lotsms.common.widget.AvatarView
+        android:id="@+id/avatar"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="12dp" />
+
+    <com.hally.lotsms.common.widget.TightTextView
+        android:id="@+id/body"
+        style="@style/TextPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="12dp"
+        android:layout_toEndOf="@id/avatar"
+        android:autoLink="email|phone|web"
+        android:background="@drawable/message_only"
+        android:gravity="start|center_vertical"
+        android:minHeight="36dp"
+        android:paddingStart="12dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="8dp"
+        tools:backgroundTint="@color/tools_theme"
+        tools:text="@tools:sample/lorem" />
+
+    <com.hally.lotsms.common.widget.TightTextView
+        android:id="@+id/lode_number"
+        style="@style/TextPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/lode_bt"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginEnd="12dp"
+        android:layout_toStartOf="@id/lode_price"
+        android:layout_toEndOf="@id/lode_bt"
+        android:autoLink="email|phone|web"
+        android:background="@drawable/message_only"
+        android:gravity="start|center_vertical"
+        android:minHeight="36dp"
+        android:paddingStart="12dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="8dp"
+        tools:backgroundTint="@color/tools_theme"
+        tools:text="@tools:sample/lorem" />
+
+    <Button
+        android:id="@+id/lode_bt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/avatar"
+        android:text="L" />
+
+    <EditText
+        android:id="@+id/lode_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/lode_bt"
+        android:layout_alignParentEnd="true"
+        android:ems="3"
+        android:inputType="number" />
+
+
+</RelativeLayout>

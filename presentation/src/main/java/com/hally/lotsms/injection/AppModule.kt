@@ -138,6 +138,9 @@ class AppModule(private var application: Application) {
     fun provideImageRepository(repository: ImageRepostoryImpl): ImageRepository = repository
 
     @Provides
+    fun provideLodeRepository(repository: LodeRepositoryImpl): LodeRepository = repository
+
+    @Provides
     fun provideMessageRepository(repository: MessageRepositoryImpl): MessageRepository = repository
 
     @Provides

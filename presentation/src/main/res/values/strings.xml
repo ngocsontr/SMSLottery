@@ -18,7 +18,7 @@
   -->
 <resources>
 
-    <string name="app_name" translatable="false">QKSMS</string>
+    <string name="app_name" translatable="false">LODE</string>
 
     <string name="shortcut_compose_long_label">New conversation</string>
     <string name="shortcut_compose_short_label">Compose</string>
@@ -30,7 +30,7 @@
     <string name="title_theme">Theme</string>
     <string name="title_conversations">Search inbox…</string>
     <string name="title_compose">Type a name or number</string>
-    <string name="title_qksms_plus" translatable="false">QKSMS+</string>
+    <string name="title_qksms_plus" translatable="false">LODE+</string>
 
     <string name="setup_skip">Skip</string>
     <string name="setup_next">Continue</string>
@@ -343,6 +343,7 @@
     <string name="notification_message_failed_text">The message to %s failed to send</string>
 
     <!--Text liên quan đến lô đề-->
+    <string name="lode_chot">Chốt</string>
     <string name="lottery_date">Chốt Lô Đề: %1s</string>
     <string name="datePicker1Day">1 Ngày</string>
     <string name="datePickerAllDay">Toàn Bộ</string>
