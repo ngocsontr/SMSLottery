@@ -35,6 +35,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.hally.lotsms.R
 import com.hally.lotsms.common.LodeDialog
@@ -61,6 +62,7 @@ import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.message_list_item_in.view.*
+import kotlinx.android.synthetic.main.widget.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -142,7 +144,6 @@ class MessagesAdapter @Inject constructor(
             view.body.setTextColor(theme.textPrimary)
             view.body.setBackgroundTint(theme.theme)
             view.chotBtn.setOnClickListener {
-                lodeUtil.chot(view.body.text)
                 val data = Bundle()
                 data.putString(LodeDialog.NAME, view.body.text.toString())
                 data.putLong(LodeDialog.AVATAR, view.avatar.threadId)
@@ -150,10 +151,11 @@ class MessagesAdapter @Inject constructor(
                 lodeDialog.arguments = data
                 lodeDialog.setCallback(object : LodeDialog.Callback {
                     override fun onPositiveButtonClicked(password: String) {
-
+                        lodeUtil.chot(view.body.text)
                     }
                 })
-                lodeDialog.show(activity.fragmentManager, LodeDialog.TAG)
+                lodeDialog.isCancelable = false
+                lodeDialog.show((activity as FragmentActivity).supportFragmentManager, LodeDialog.TAG)
                 Toast.makeText(context, "Chốt: " + view.body.text, Toast.LENGTH_LONG).show()
             }
         }

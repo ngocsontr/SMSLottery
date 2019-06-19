@@ -20,14 +20,13 @@ package com.hally.lotsms.common
 
 import android.app.AlertDialog
 import android.app.Dialog
-import android.app.DialogFragment
-import android.content.Context
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.fragment.app.DialogFragment
 import com.hally.lotsms.R
-import kotlinx.android.synthetic.main.lode_dialog.*
-
 
 /**
  * Created by HallyTran on 25.05.2019.
@@ -37,31 +36,36 @@ class LodeDialog : DialogFragment() {
     private var callback: Callback? = null
     private var name: String? = null
     private var avatar: Long? = null
-    private var alert: AlertDialog? = null
+    private var position: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        name = arguments.getString(NAME)
-        avatar = arguments.getLong(AVATAR)
+        name = arguments?.getString(NAME)
+        avatar = arguments?.getLong(AVATAR)
+        setStyle(STYLE_NO_FRAME, android.R.style.Theme_Material_Light_Dialog_MinWidth)
         super.onCreate(savedInstanceState)
     }
 
-    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.lode_dialog, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         if (callback == null) {
-            throw RuntimeException(activity.title.toString() + " should implements Callback")
+            throw RuntimeException(activity?.title.toString() + " should implements Callback")
         }
-        val layoutInflater = activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view = layoutInflater.inflate(R.layout.lode_dialog, null)
-        body.text = name
 
-        val builder = AlertDialog.Builder(activity)
-        builder.setView(view)
-                .setPositiveButton(R.string.lode_chot) { _: DialogInterface, _: Int ->
-                    callback!!.onPositiveButtonClicked("@")
-                }
-
-        alert = builder.create()
-        alert!!.setCancelable(false)
-        return alert as AlertDialog
+        view.findViewById<TextView>(R.id.body).text = name
+        view.findViewById<View>(R.id.lode_chot).setOnClickListener {
+            callback!!.onPositiveButtonClicked("@")
+            dialog?.dismiss()
+        }
+        view.findViewById<View>(R.id.lode_huy).setOnClickListener {
+            dialog?.dismiss()
+        }
+        view.findViewById<TextView>(R.id.lode_bt).setOnClickListener {
+            (it as TextView).text = LODE[(++position) % LODE.size]
+        }
     }
 
     fun setCallback(callback: Callback) {
@@ -77,5 +81,6 @@ class LodeDialog : DialogFragment() {
         val TAG = LodeDialog::class.java.simpleName
         val NAME = "RemoveSNSConfirmDialog.NAME"
         val AVATAR = "RemoveSNSConfirmDialog.AVATAR"
+        val LODE = arrayOf("Lô", "Đề", "3C")
     }
 }
