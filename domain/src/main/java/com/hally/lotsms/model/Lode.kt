@@ -23,23 +23,24 @@ import android.net.Uri
 import android.provider.Telephony.*
 import io.realm.RealmList
 import io.realm.RealmObject
-import io.realm.annotations.Index
 import io.realm.annotations.PrimaryKey
 
 open class Lode : RealmObject() {
-
-    enum class Type { DE, LO, BC, NONE }
+    enum class Type { de, lo, xien, bc }
 
     @PrimaryKey
     var id: Long = 0
+    // LO DE
+    var body: String = ""
+    var diem: Int = 0
+    var typeString: String = Type.de.toString()
+    var lodeType: Type
+        get() = Type.valueOf(typeString)
+        set(value) {
+            typeString = value.toString()
+        }
 
-    @Index
-    var threadId: Long = 0
 
-    // The MMS-SMS content provider returns messages where duplicate ids can exist. This is because
-    // SMS and MMS are stored in separate tables. We can't use these ids as our realm message id
-    // since it's our primary key for the single message object, so we'll store the original id in
-    // case we need to access the original message item in the content provider
     var contentId: Long = 0
     var address: String = ""
     var boxId: Int = 0
@@ -51,21 +52,6 @@ open class Lode : RealmObject() {
     var locked: Boolean = false
     var subId: Int = -1
 
-    // SMS only
-    var body: String = ""
-    var errorCode: Int = 0
-    var deliveryStatus: Int = Sms.STATUS_NONE
-
-    // Loai lo de
-    var typeString: String = Type.NONE.toString()
-    var lodeType: Type
-        get() = Type.valueOf(typeString)
-        set(value) {
-            typeString = value.toString()
-        }
-
-    var mmsDeliveryStatusString: String = ""
-    var readReportString: String = ""
     var errorType: Int = 0
     var messageSize: Int = 0
     var messageType: Int = 0
@@ -143,12 +129,6 @@ open class Lode : RealmObject() {
 
     fun isSending(): Boolean {
         return !isFailedMessage() && isOutgoingMessage()
-    }
-
-    fun isDelivered(): Boolean {
-        val isDeliveredMms = false // TODO
-        val isDeliveredSms = deliveryStatus == Sms.STATUS_COMPLETE
-        return isDeliveredMms || isDeliveredSms
     }
 
     fun isFailedMessage(): Boolean {

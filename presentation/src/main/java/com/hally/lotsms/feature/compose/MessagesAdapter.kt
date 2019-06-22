@@ -29,6 +29,7 @@ import android.text.Layout
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,6 +55,7 @@ import com.hally.lotsms.feature.compose.BubbleUtils.canGroup
 import com.hally.lotsms.feature.compose.BubbleUtils.getBubble
 import com.hally.lotsms.feature.compose.part.PartsAdapter
 import com.hally.lotsms.model.Conversation
+import com.hally.lotsms.model.Lode
 import com.hally.lotsms.model.Message
 import com.hally.lotsms.model.Recipient
 import com.hally.lotsms.util.Preferences
@@ -62,7 +64,6 @@ import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.message_list_item_in.view.*
-import kotlinx.android.synthetic.main.widget.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -143,21 +144,6 @@ class MessagesAdapter @Inject constructor(
             view.avatar.threadId = conversation?.id ?: 0
             view.body.setTextColor(theme.textPrimary)
             view.body.setBackgroundTint(theme.theme)
-            view.chotBtn.setOnClickListener {
-                val data = Bundle()
-                data.putString(LodeDialog.NAME, view.body.text.toString())
-                data.putLong(LodeDialog.AVATAR, view.avatar.threadId)
-                val lodeDialog = LodeDialog()
-                lodeDialog.arguments = data
-                lodeDialog.setCallback(object : LodeDialog.Callback {
-                    override fun onPositiveButtonClicked(password: String) {
-                        lodeUtil.chot(view.body.text)
-                    }
-                })
-                lodeDialog.isCancelable = false
-                lodeDialog.show((activity as FragmentActivity).supportFragmentManager, LodeDialog.TAG)
-                Toast.makeText(context, "Chốt: " + view.body.text, Toast.LENGTH_LONG).show()
-            }
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -195,6 +181,22 @@ class MessagesAdapter @Inject constructor(
         val next = if (position == itemCount - 1) null else getItem(position + 1)
         val view = viewHolder.containerView
 
+        view.chotBtn?.setOnClickListener {
+            val data = Bundle()
+            data.putString(LodeDialog.MESSAGE, view.body.text.toString())
+            data.putLong(LodeDialog.AVATAR, view.avatar.threadId)
+            val lodeDialog = LodeDialog()
+            lodeDialog.arguments = data
+            lodeDialog.setCallback(object : LodeDialog.Callback {
+                override fun onPositiveButtonClicked(lode: Lode) {
+                    Toast.makeText(context, "Chốt: ${lode.lodeType} : ${lode.body} : ${lode.diem}", Toast.LENGTH_LONG).show()
+                    Log.d("TNS", message.toString())
+                    lodeUtil.chot(view.body.text)
+                }
+            })
+            lodeDialog.isCancelable = false
+            lodeDialog.show((activity as FragmentActivity).supportFragmentManager, LodeDialog.TAG)
+        }
 
         // Update the selected state
         view.isActivated = isSelected(message.id) || highlight == message.id

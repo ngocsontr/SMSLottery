@@ -59,7 +59,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/lode_bt"
-        android:layout_toStartOf="@id/lode_price"
+        android:layout_toStartOf="@id/lode_so_diem"
         android:layout_toEndOf="@id/lode_bt"
         android:gravity="start|center_vertical"
         android:hint="số"
@@ -69,7 +69,7 @@
         android:paddingEnd="8dp" />
 
     <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/lode_price"
+        android:id="@+id/lode_so_diem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/lode_bt"
