@@ -184,6 +184,7 @@ dependencies {
     implementation "com.squareup.moshi:moshi:$moshi_version"
     implementation "me.leolin:ShortcutBadger:1.1.21"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.rengwuxian.materialedittext:library:2.1.4'
     implementation project(":android-smsmms")
     implementation project(":common")
     implementation project(':data')

@@ -343,9 +343,9 @@
     <string name="notification_message_failed_text">The message to %s failed to send</string>
 
     <!--Text liên quan đến lô đề-->
-    <string name="lode_chot">Chốt</string>
+    <string name="lode_chot">Xử lý</string>
     <string name="lode_huy">Hủy</string>
-    <string name="lottery_date">Chốt Lô Đề: %1s</string>
+    <string name="lottery_date">Lô Đề: %1s</string>
     <string name="datePicker1Day">1 Ngày</string>
     <string name="datePickerAllDay">Toàn Bộ</string>
 

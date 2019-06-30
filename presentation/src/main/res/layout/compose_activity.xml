@@ -36,15 +36,7 @@
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintVertical_bias="0.0">
 
-        <com.hally.lotsms.common.widget.QkTextView
-            android:id="@+id/lottery_date"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:gravity="center"
-            android:text="@string/lottery_date"
-            app:textColor="tertiary"
-            app:textSize="secondary" />
+        <include layout="@layout/lode_current_time_view" />
 
         <com.hally.lotsms.common.widget.QkTextView
             android:id="@+id/lottery_lo"

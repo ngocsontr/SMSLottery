@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:minWidth="1000dp"
+    android:orientation="horizontal">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/lode_bt"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/message_out_first"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/white" />
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/lode_number"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="1"
+        android:hint="mã lô đề"
+        android:inputType="textMultiLine"
+        android:minHeight="36dp"
+        app:met_errorColor="#ddaa00"
+        app:met_floatingLabel="highlight"
+        app:met_primaryColor="#982360" />
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:id="@+id/lode_so_diem"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:ems="3"
+        android:hint="điểm/k"
+        android:inputType="number"
+        app:met_errorColor="#ddaa00"
+        app:met_floatingLabel="highlight"
+        app:met_primaryColor="#982360" />
+
+</LinearLayout>

@@ -182,20 +182,9 @@ class MessagesAdapter @Inject constructor(
         val view = viewHolder.containerView
 
         view.chotBtn?.setOnClickListener {
-            val data = Bundle()
-            data.putString(LodeDialog.MESSAGE, view.body.text.toString())
-            data.putLong(LodeDialog.AVATAR, view.avatar.threadId)
-            val lodeDialog = LodeDialog()
-            lodeDialog.arguments = data
-            lodeDialog.setCallback(object : LodeDialog.Callback {
-                override fun onPositiveButtonClicked(lode: Lode) {
-                    Toast.makeText(context, "Chốt: ${lode.lodeType} : ${lode.body} : ${lode.diem}", Toast.LENGTH_LONG).show()
-                    Log.d("TNS", message.toString())
-                    lodeUtil.chot(view.body.text)
-                }
-            })
-            lodeDialog.isCancelable = false
-            lodeDialog.show((activity as FragmentActivity).supportFragmentManager, LodeDialog.TAG)
+            if (isLodeFormat(message)) {
+                showDialogLode(message)
+            }
         }
 
         // Update the selected state
@@ -287,6 +276,37 @@ class MessagesAdapter @Inject constructor(
         // Bind the attachments
         val partsAdapter = view.attachments.adapter as PartsAdapter
         partsAdapter.setData(message, previous, next, view)
+    }
+
+    private fun isLodeFormat(mes: Message): Boolean {
+        if (!mes.isSms()) {
+            Toast.makeText(context, "Chỉ dùng với tin nhắn SMS!", Toast.LENGTH_LONG).show()
+            return false
+        }
+        val messNoSign = LodeUtil.removeVietnamese(mes.body)
+        for (type in Lode.Type.values()) {
+            if (messNoSign.contains(type.name + " "))
+                return true
+        }
+        Toast.makeText(context, "SMS không thấy LÔ ĐỀ!", Toast.LENGTH_LONG).show()
+        return false
+    }
+
+    private fun showDialogLode(message: Message) {
+        val data = Bundle()
+        data.putString(LodeDialog.MESSAGE, message.body)
+//        data.putLong(LodeDialog.AVATAR, view.avatar.threadId)
+        val lodeDialog = LodeDialog()
+        lodeDialog.arguments = data
+        lodeDialog.setCallback(object : LodeDialog.Callback {
+            override fun onPositiveButtonClicked(lode: Lode) {
+                Toast.makeText(context, "Xử lý: ${lode.lodeType} : ${lode.body} x${lode.diem}", Toast.LENGTH_LONG).show()
+                Log.d("TNS", message.toString())
+                lodeUtil.chot(message, lode)
+            }
+        })
+        lodeDialog.isCancelable = false
+        lodeDialog.show((activity as FragmentActivity).supportFragmentManager, LodeDialog.TAG)
     }
 
     private fun bindStatus(viewHolder: QkViewHolder, message: Message, next: Message?) {

@@ -159,7 +159,6 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
             messageBackground.setBackgroundTint(resolveThemeColor(R.attr.bubbleColor))
             composeBackground.setBackgroundTint(resolveThemeColor(R.attr.composeBackground))
         }
-        lottery_date.text = getString(R.string.lottery_date, Calendar.getInstance().time.toString())
     }
 
     override fun onStart() {

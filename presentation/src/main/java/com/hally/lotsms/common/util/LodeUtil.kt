@@ -19,7 +19,10 @@
 package com.hally.lotsms.common.util
 
 import android.content.Context
+import com.hally.lotsms.model.Lode
+import com.hally.lotsms.model.Message
 import com.hally.lotsms.repository.ConversationRepository
+import com.hally.lotsms.repository.LodeRepository
 import com.hally.lotsms.repository.MessageRepository
 import com.hally.lotsms.util.Preferences
 import javax.inject.Inject
@@ -29,15 +32,34 @@ import javax.inject.Singleton
 class LodeUtil @Inject constructor(
         private val context: Context,
         private val prefs: Preferences,
+        private val lodeRepo: LodeRepository,
         private val conversationRepo: ConversationRepository,
         private val messageRepo: MessageRepository) {
 
-    fun chot(text: CharSequence?) {
+    fun chot(text: Message, lode: Lode) {
 
 
     }
 
+
     companion object {
+        val VietNamChar = arrayOf("aAeEoOuUiIdDyY",
+                "áàạảãâấầậẩẫăắằặẳẵ", "ÁÀẠẢÃÂẤẦẬẨẪĂẮẰẶẲẴ", "éèẹẻẽêếềệểễ", "ÉÈẸẺẼÊẾỀỆỂỄ", "óòọỏõôốồộổỗơớờợởỡ",
+                "ÓÒỌỎÕÔỐỒỘỔỖƠỚỜỢỞỠ", "úùụủũưứừựửữ", "ÚÙỤỦŨƯỨỪỰỬỮ", "íìịỉĩ", "ÍÌỊỈĨ", "đ", "Đ", "ýỳỵỷỹ", "ÝỲỴỶỸ")
+
+        fun removeVietnamese(s: String): String {
+//        Toast.makeText(activity, "Xóa Vietnamese!!", Toast.LENGTH_LONG).show()
+            var str = s.trim()
+            str = str.toLowerCase()
+
+            //Thay thế và lọc dấu từng char
+            for (i in 1 until VietNamChar.size) {
+                for (j in 0 until VietNamChar[i].length)
+                    str = str.replace(VietNamChar[i][j], VietNamChar[0][i - 1])
+            }
+            return str
+        }
+
         val MA_LENH = listOf(
                 listOf("kép bằng", "kep bang", "00 11 22 33 44 55 66 77 88 99"),
                 listOf("kép lệch", "kep lech", "05 50 16 61 27 72 38 83 49 94"),

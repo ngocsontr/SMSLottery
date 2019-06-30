@@ -29,7 +29,7 @@ import androidx.fragment.app.DialogFragment
 import com.hally.lotsms.R
 import com.hally.lotsms.common.util.LodeUtil
 import com.hally.lotsms.model.Lode
-import kotlinx.android.synthetic.main.lode_dialog.*
+import kotlinx.android.synthetic.main.lode_view_row.*
 
 /**
  * Created by HallyTran on 25.05.2019.
@@ -61,9 +61,9 @@ class LodeDialog : DialogFragment() {
         lode_bt.text = TYPE[position].name
 
 //        message = "Đánh cho tao lô chan chan 10 diem"
-        message = removeVietnamese(message)
+        message = LodeUtil.removeVietnamese(message)
         view.findViewById<TextView>(R.id.body).text = message
-        message = message.toLowerCase()
+//        message = message.toLowerCase()
 
         for (key in TYPE)
             if (message.contains(key.name)) {
@@ -112,7 +112,7 @@ class LodeDialog : DialogFragment() {
             return false
         }
 
-        val arr = number?.split(REGIX)
+        val arr = number?.split(SPACE)
         if (arr != null) {
             for (num in arr) {
                 if (num.isBlank() || !num.isDigitsOnly()) {
@@ -142,22 +142,9 @@ class LodeDialog : DialogFragment() {
     }
 
     private fun removeText(txt: String): String {
-        return txt.replace("[^0-9]".toRegex(), REGIX).replace("\\s+".toRegex(), REGIX).trim()
+        return txt.replace("[^0-9]".toRegex(), SPACE).replace("\\s+".toRegex(), SPACE).trim()
     }
 
-    private fun removeVietnamese(s: String): String {
-//        Toast.makeText(activity, "Xóa Vietnamese!!", Toast.LENGTH_LONG).show()
-        var str = s
-//        str = str.toLowerCase()
-        str = str.trim()
-
-        //Thay thế và lọc dấu từng char
-        for (i in 1 until VietNamChar.size) {
-            for (j in 0 until VietNamChar[i].length)
-                str = str.replace(VietNamChar[i][j], VietNamChar[0][i - 1])
-        }
-        return str
-    }
 
     fun setCallback(callback: Callback) {
         this.callback = callback
@@ -169,12 +156,11 @@ class LodeDialog : DialogFragment() {
     }
 
     companion object {
-        val TAG = LodeDialog::class.java.simpleName
+        val TAG: String = LodeDialog::class.java.simpleName
         val MESSAGE = "RemoveSNSConfirmDialog.MESSAGE"
         val AVATAR = "RemoveSNSConfirmDialog.AVATAR"
 
         val TYPE = Lode.Type.values()
-        val REGIX = " "
-        private var VietNamChar = arrayOf("aAeEoOuUiIdDyY", "áàạảãâấầậẩẫăắằặẳẵ", "ÁÀẠẢÃÂẤẦẬẨẪĂẮẰẶẲẴ", "éèẹẻẽêếềệểễ", "ÉÈẸẺẼÊẾỀỆỂỄ", "óòọỏõôốồộổỗơớờợởỡ", "ÓÒỌỎÕÔỐỒỘỔỖƠỚỜỢỞỠ", "úùụủũưứừựửữ", "ÚÙỤỦŨƯỨỪỰỬỮ", "íìịỉĩ", "ÍÌỊỈĨ", "đ", "Đ", "ýỳỵỷỹ", "ÝỲỴỶỸ")
+        val SPACE = " "
     }
 }

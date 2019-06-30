@@ -42,64 +42,44 @@
         android:gravity="start|center_vertical"
         android:minHeight="36dp" />
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/lode_bt"
-        android:layout_width="50dp"
+
+    <LinearLayout
+        android:id="@+id/lode_container"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/body"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/message_only"
-        android:gravity="center"
-        android:text="L"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/lode_number"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/lode_bt"
-        android:layout_toStartOf="@id/lode_so_diem"
-        android:layout_toEndOf="@id/lode_bt"
-        android:gravity="start|center_vertical"
-        android:hint="số"
-        android:inputType="textMultiLine"
-        android:minHeight="36dp"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp" />
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/lode_so_diem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/lode_bt"
         android:layout_alignParentEnd="true"
-        android:ems="3"
-        android:hint="điểm"
-        android:inputType="number" />
+        android:orientation="vertical">
+
+        <include layout="@layout/lode_view_row" />
+
+    </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/lode_huy"
         android:layout_width="70dp"
         android:layout_height="45dp"
-        android:layout_below="@id/lode_number"
+        android:layout_below="@id/lode_container"
         android:layout_alignParentStart="true"
         android:layout_margin="8dp"
-        android:background="@drawable/message_only"
+        android:background="@drawable/message_out_first"
         android:gravity="center"
         android:text="@string/lode_huy"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/white" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/lode_chot"
         android:layout_width="70dp"
         android:layout_height="45dp"
-        android:layout_below="@id/lode_number"
+        android:layout_below="@id/lode_container"
         android:layout_alignParentEnd="true"
         android:layout_margin="8dp"
-        android:background="@drawable/message_only"
+        android:background="@drawable/message_out_first"
         android:gravity="center"
         android:text="@string/lode_chot"
-        android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:textColor="@color/white" />
 
 </RelativeLayout>
