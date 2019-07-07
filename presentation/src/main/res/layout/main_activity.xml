@@ -74,18 +74,48 @@
             tools:text="Your conversations will appear here"
             tools:visibility="invisible" />
 
-        <TextView
-            android:id="@+id/datePicker"
-            style="@style/TextSecondary"
+        <LinearLayout
+            android:id="@+id/hally_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:padding="8dp"
-            android:text="@string/datePicker1Day"
-            android:textSize="25sp"
+            android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@id/recyclerView"
-            app:layout_constraintTop_toBottomOf="@id/toolbar" />
+            app:layout_constraintTop_toBottomOf="@id/toolbar">
+
+            <TextView
+                android:id="@+id/datePicker"
+                style="@style/TextSecondary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="@string/datePicker1Day"
+                android:textSize="25sp" />
+
+            <TextView
+                android:id="@+id/kq_xsmb"
+                style="@style/TextSecondary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="XSMB"
+                android:textSize="25sp" />
+
+            <TextView
+                android:id="@+id/tongket"
+                style="@style/TextSecondary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="Tổng hợp"
+                android:textSize="25sp" />
+        </LinearLayout>
+
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
@@ -96,7 +126,7 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             app:layout_constraintBottom_toTopOf="@id/bottom"
-            app:layout_constraintTop_toBottomOf="@id/datePicker"
+            app:layout_constraintTop_toBottomOf="@id/hally_layout"
             tools:listitem="@layout/conversation_list_item" />
 
         <ImageView

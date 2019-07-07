@@ -24,6 +24,7 @@ import android.app.AlertDialog
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.*
+import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.app.ActivityCompat
@@ -39,6 +40,8 @@ import com.hally.lotsms.common.Navigator
 import com.hally.lotsms.common.androidxcompat.drawerOpen
 import com.hally.lotsms.common.androidxcompat.scope
 import com.hally.lotsms.common.base.QkThemedActivity
+import com.hally.lotsms.common.network.ApiUtils
+import com.hally.lotsms.common.network.model.XsmbRss
 import com.hally.lotsms.common.util.extensions.*
 import com.hally.lotsms.feature.conversations.ConversationItemTouchCallback
 import com.hally.lotsms.feature.conversations.ConversationsAdapter
@@ -58,6 +61,9 @@ import kotlinx.android.synthetic.main.drawer_view.*
 import kotlinx.android.synthetic.main.main_activity.*
 import kotlinx.android.synthetic.main.main_permission_hint.*
 import kotlinx.android.synthetic.main.main_syncing.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 import javax.inject.Inject
 
@@ -129,6 +135,8 @@ class MainActivity : QkThemedActivity(), MainView {
         val is1Day = prefs.oneDaySms.get()
         datePicker.setText(if (is1Day) R.string.datePicker1Day else R.string.datePickerAllDay)
         datePicker.setOnClickListener { v -> changeDatePicker(v as TextView) }
+        kq_xsmb.setOnClickListener { getKqXsmb() }
+
         viewModel.bindView(this)
 
         (snackbar as? ViewStub)?.setOnInflateListener { _, _ ->
@@ -183,6 +191,31 @@ class MainActivity : QkThemedActivity(), MainView {
 
         itemTouchCallback.adapter = conversationsAdapter
         conversationsAdapter.autoScrollToStart(recyclerView)
+    }
+
+    private fun getKqXsmb() {
+        val builder = AlertDialog.Builder(this)
+        val arrayAdapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1)
+
+        ApiUtils.getXsmb(object : Callback<XsmbRss> {
+            override fun onResponse(call: Call<XsmbRss>, response: Response<XsmbRss>) {
+                val res = response.body()
+
+                for ((index, item) in res?.items!!.withIndex()) {
+                    if (index == 3) break
+                    arrayAdapter.add(item.title + "\n" + item.description)
+                }
+
+                builder.setTitle(res.feed?.title)
+                        .setAdapter(arrayAdapter, null)
+                        .setPositiveButton("OK", null)
+                        .create()
+                        .show()
+            }
+
+            override fun onFailure(call: Call<XsmbRss>, t: Throwable) {
+            }
+        })
     }
 
     private fun changeDatePicker(textView: TextView) {

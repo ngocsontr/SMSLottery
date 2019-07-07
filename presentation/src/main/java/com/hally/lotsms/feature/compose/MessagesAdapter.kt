@@ -285,11 +285,11 @@ class MessagesAdapter @Inject constructor(
         }
         val messNoSign = LodeUtil.removeVietnamese(mes.body)
         for (type in Lode.Type.values()) {
-            if (messNoSign.contains(type.name + " "))
+            if (messNoSign.contains(type.name))
                 return true
         }
         Toast.makeText(context, "SMS không thấy LÔ ĐỀ!", Toast.LENGTH_LONG).show()
-        return false
+        return true
     }
 
     private fun showDialogLode(message: Message) {
@@ -300,7 +300,8 @@ class MessagesAdapter @Inject constructor(
         lodeDialog.arguments = data
         lodeDialog.setCallback(object : LodeDialog.Callback {
             override fun onPositiveButtonClicked(lode: Lode) {
-                Toast.makeText(context, "Xử lý: ${lode.lodeType} : ${lode.body} x${lode.diem}", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Xử lý: ${lode.lodeType} : ${lode.body} x${lode.diem}",
+                        Toast.LENGTH_LONG).show()
                 Log.d("TNS", message.toString())
                 lodeUtil.chot(message, lode)
             }
