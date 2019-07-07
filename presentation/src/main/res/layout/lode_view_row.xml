@@ -23,22 +23,10 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_weight="1"
-        android:hint="mã lô đề"
         android:inputType="textMultiLine"
         android:minHeight="36dp"
         app:met_errorColor="#ddaa00"
-        app:met_floatingLabel="highlight"
-        app:met_primaryColor="#982360" />
-
-    <com.rengwuxian.materialedittext.MaterialEditText
-        android:id="@+id/lode_so_diem"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:ems="3"
-        android:hint="điểm/k"
-        android:inputType="number"
-        app:met_errorColor="#ddaa00"
-        app:met_floatingLabel="highlight"
+        app:met_helperText="Kiểm tra xem mã lệnh đã đúng chưa."
         app:met_primaryColor="#982360" />
 
 </LinearLayout>

@@ -28,18 +28,26 @@ import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.DialogFragment
 import com.hally.lotsms.R
 import com.hally.lotsms.common.util.LodeUtil
+import com.hally.lotsms.common.util.LodeUtil.Companion.SIGNAL
+import com.hally.lotsms.common.util.LodeUtil.Companion.SIGNX
 import com.hally.lotsms.model.Lode
+import kotlinx.android.synthetic.main.lode_dialog.*
 import kotlinx.android.synthetic.main.lode_view_row.*
+import kotlinx.android.synthetic.main.lode_view_row.view.*
 
 /**
  * Created by HallyTran on 25.05.2019.
  */
 class LodeDialog : DialogFragment() {
 
-    private var callback: Callback? = null
+    private lateinit var inflater: LayoutInflater
     private lateinit var message: String
+    private var callback: Callback? = null
     private var avatar: Long? = null
     private var position: Int = 0
+    private var rows: ArrayList<View> = ArrayList()
+
+    private var diem = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         message = arguments?.getString(MESSAGE).toString()
@@ -49,6 +57,7 @@ class LodeDialog : DialogFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        this.inflater = inflater
         return inflater.inflate(R.layout.lode_dialog, container, false)
     }
 
@@ -58,32 +67,71 @@ class LodeDialog : DialogFragment() {
             return
         }
 
-        lode_bt.text = TYPE[position].name
-
-//        message = "Đánh cho tao lô chan chan 10 diem"
-        message = LodeUtil.removeVietnamese(message)
+//        lode_bt.text = TYPE[position].name
+        message = "Đánh cho tao lô chan   chan 10diem 10x   21d 20x20d, 22   5 diem, 11x5, de 20x20k, bộ   01    100n"
+        message = message.removeSpace()
         view.findViewById<TextView>(R.id.body).text = message
-//        message = message.toLowerCase()
+        message = LodeUtil.removeVietnamese(message)
+        Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
 
-        for (key in TYPE)
-            if (message.contains(key.name)) {
-                lode_bt.text = key.name.toUpperCase()
-                position = TYPE.indexOf(key)
-                message = message.substring(message.indexOf(key.name))
-                val s = removeText(message)
-                val arr = s.split(" ").toMutableList()
-                lode_so_diem.setText(arr[arr.size - 1])
-                arr.removeAt(arr.size - 1)
-                lode_number.setText(removeText(arr.toString()))
+        // xử lý chia các view LÔ ĐỀ riêng
+        var index = 0
+        while (index != -1) {
+            for (key in TYPE) {
+                index = message.lastIndexOf(key.name)
+                if (index != -1) {
+                    val row = inflater.inflate(R.layout.lode_view_row, null)
+                    rows.add(row)
+                    row.lode_bt.text = key.name.toUpperCase()
+                    // cắt bỏ chữ lô đề.
+                    row.lode_number.setText(message.substring(index + key.name.length))
+                    message = message.substring(0, index - 1)
+                    break
+                }
+            }
+        }
+        rows.reverse()
+        rows.forEach { row -> lode_container.addView(row) }
+
+
+        // xử lý chuẩn format x điểm lô đề : 'x'
+        rows.forEach { row ->
+            var text = row.lode_number.text.toString()
+            for (i in 0 until text.length) {
+                for ((j, key) in SIGNAL.withIndex()) {
+                    if (key.equals(text[i])) {
+                        if (j <= 2) {
+                            if (SPACE.equals(text[i + 1]))
+                                text = text.removeRange(i + 1, i + 2)
+                        } else {
+                            if (SPACE.equals(text[i - 1]))
+                                text = text.removeRange(i - 1, i)
+                        }
+                    }
+                }
             }
 
-        // tìm mã lệnh
-        val maLenh = LodeUtil.MA_LENH.map { it[1] }
-        for (key in maLenh)
-            if (message.contains(key)) {
-                val value = LodeUtil.MA_LENH.map { it[2] }
-                lode_number.setText(value[maLenh.indexOf(key)])
+            val arrs = text.split(SPACE).toMutableList()
+            for ((i, it) in arrs.withIndex()) {
+                for (key in SIGNAL) {
+                    val num = removeText(it)
+                    if (it.contains(key) && num.isNotBlank() && num.isDigitsOnly()) {
+                        arrs[i] = "$SIGNX$num" /*+ if (row.lode_bt.text == "LO") "d" else "k"*/
+                    } else if (it.contains(key) && num.split(SPACE).size == 2) {
+                        arrs[i] = num.replace(SPACE, SIGNX)
+                    }
+                }
             }
+            row.lode_number.setText(arrs.toText())
+        }
+
+//        // tìm mã lệnh
+//        val maLenh = LodeUtil.MA_LENH.map { it[1] }
+//        for (key in maLenh)
+//            if (message.contains(key)) {
+//                val value = LodeUtil.MA_LENH.map { it[2] }
+//                lode_number.setText(value[maLenh.indexOf(key)])
+//            }
 
 
         view.findViewById<View>(R.id.lode_chot).setOnClickListener {
@@ -91,7 +139,7 @@ class LodeDialog : DialogFragment() {
                 val lode = Lode()
                 lode.lodeType = TYPE[position % TYPE.size]
                 lode.body = lode_number.text.toString()
-                lode.diem = lode_so_diem.text.toString().toInt()
+//                lode.diem = lode_so_diem.text.toString().toInt()
                 callback!!.onPositiveButtonClicked(lode)
 
                 dialog?.dismiss()
@@ -103,6 +151,23 @@ class LodeDialog : DialogFragment() {
         view.findViewById<TextView>(R.id.lode_bt).setOnClickListener {
             (it as TextView).text = TYPE[(++position) % TYPE.size].name.toUpperCase()
         }
+    }
+
+    private fun findEndIndex(text: String, index: Int): Int {
+        var isNumber = false
+        var start = 0
+        for ((i, c) in text.withIndex()) {
+            if (i > index && c.isDigit()) {
+                start = i
+                isNumber = true
+            }
+            if (isNumber && !c.isDigit()) {
+                diem = text.substring(start, i)
+                return i
+            }
+        }
+        diem = text.substring(start, text.length)
+        return text.length
     }
 
     private fun checkValidLode(): Boolean {
@@ -132,16 +197,17 @@ class LodeDialog : DialogFragment() {
             return false
         }
 
-        if (lode_so_diem.text?.trim().isNullOrBlank()) {
-            Toast.makeText(activity, "Không bỏ trống, bao nhiêu ĐIỂM!!", Toast.LENGTH_LONG).show()
-            return false
-        }
-        if (lode_so_diem.text.toString().toInt() < 1) return false
+//        if (lode_so_diem.text?.trim().isNullOrBlank()) {
+//            Toast.makeText(activity, "Không bỏ trống, bao nhiêu ĐIỂM!!", Toast.LENGTH_LONG).show()
+//            return false
+//        }
+//        if (lode_so_diem.text.toString().toInt() < 1) return false
 
         return true
     }
 
     private fun removeText(txt: String): String {
+        // tra nay day cac so phan tach = dau SPACE
         return txt.replace("[^0-9]".toRegex(), SPACE).replace("\\s+".toRegex(), SPACE).trim()
     }
 
@@ -163,4 +229,14 @@ class LodeDialog : DialogFragment() {
         val TYPE = Lode.Type.values()
         val SPACE = " "
     }
+}
+
+private fun String.removeSpace(): String {
+    return this.replace("\\s+".toRegex(), LodeDialog.SPACE).trim()
+}
+
+private fun <E> MutableList<E>.toText(): String {
+    val builder = StringBuffer()
+    this.forEach { builder.append(it.toString() + " ") }
+    return builder.toString()
 }
