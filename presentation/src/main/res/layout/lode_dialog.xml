@@ -44,22 +44,27 @@
         android:minHeight="36dp" />
 
 
-    <LinearLayout
-        android:id="@+id/lode_container"
+    <ScrollView
+        android:id="@+id/lode_scroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/body"
         android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:orientation="vertical">
+        android:layout_alignParentEnd="true">
 
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/lode_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@android:drawable/divider_horizontal_dark"
+            android:orientation="vertical" />
+    </ScrollView>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/lode_huy"
         android:layout_width="70dp"
         android:layout_height="45dp"
-        android:layout_below="@id/lode_container"
+        android:layout_below="@id/lode_scroll"
         android:layout_alignParentStart="true"
         android:layout_margin="8dp"
         android:background="@drawable/message_out_first"
@@ -72,7 +77,7 @@
         android:id="@+id/lode_chot"
         android:layout_width="70dp"
         android:layout_height="45dp"
-        android:layout_below="@id/lode_container"
+        android:layout_below="@id/lode_scroll"
         android:layout_alignParentEnd="true"
         android:layout_margin="8dp"
         android:background="@drawable/message_out_first"

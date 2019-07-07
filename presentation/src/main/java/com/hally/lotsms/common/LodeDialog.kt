@@ -30,6 +30,7 @@ import com.hally.lotsms.R
 import com.hally.lotsms.common.util.LodeUtil
 import com.hally.lotsms.common.util.LodeUtil.Companion.SIGNAL
 import com.hally.lotsms.common.util.LodeUtil.Companion.SIGNX
+import com.hally.lotsms.common.util.LodeUtil.Companion.TEST
 import com.hally.lotsms.model.Lode
 import kotlinx.android.synthetic.main.lode_dialog.*
 import kotlinx.android.synthetic.main.lode_view_row.*
@@ -69,6 +70,7 @@ class LodeDialog : DialogFragment() {
 
 //        lode_bt.text = TYPE[position].name
         message = "Đánh cho tao lô chan   chan 10diem 10x   21d 20x20d, 22   5 diem, 11x5, de 20x20k, bộ   01    100n"
+        message = TEST
         message = message.removeSpace()
         view.findViewById<TextView>(R.id.body).text = message
         message = LodeUtil.removeVietnamese(message)
@@ -77,17 +79,23 @@ class LodeDialog : DialogFragment() {
         // xử lý chia các view LÔ ĐỀ riêng
         var index = 0
         while (index != -1) {
+            var type = ""
+            index = -1
             for (key in TYPE) {
-                index = message.lastIndexOf(key.name)
-                if (index != -1) {
-                    val row = inflater.inflate(R.layout.lode_view_row, null)
-                    rows.add(row)
-                    row.lode_bt.text = key.name.toUpperCase()
-                    // cắt bỏ chữ lô đề.
-                    row.lode_number.setText(message.substring(index + key.name.length))
-                    message = message.substring(0, index - 1)
-                    break
+                if (index < message.lastIndexOf(key.name)) {
+                    index = message.lastIndexOf(key.name)
+                    type = key.name
                 }
+            }
+
+            if (index != -1) {
+                val row = inflater.inflate(R.layout.lode_view_row, null)
+                rows.add(row)
+
+                row.lode_bt.text = type.toUpperCase()
+                // cắt bỏ chữ lô đề.
+                row.lode_number.setText(message.substring(index + type.length).trim())
+                message = message.substring(0, index)
             }
         }
         rows.reverse()
@@ -97,18 +105,20 @@ class LodeDialog : DialogFragment() {
         // xử lý chuẩn format x điểm lô đề : 'x'
         rows.forEach { row ->
             var text = row.lode_number.text.toString()
-            for (i in 0 until text.length) {
+            var i = 1
+            while (i < text.length) {
                 for ((j, key) in SIGNAL.withIndex()) {
-                    if (key.equals(text[i])) {
+                    if (i < text.length && key == text[i]) {
                         if (j <= 2) {
-                            if (SPACE.equals(text[i + 1]))
+                            if (i < text.length && SPACE == text[i + 1].toString())
                                 text = text.removeRange(i + 1, i + 2)
                         } else {
-                            if (SPACE.equals(text[i - 1]))
+                            if (i >= 1 && SPACE == text[i - 1].toString())
                                 text = text.removeRange(i - 1, i)
                         }
                     }
                 }
+                i++
             }
 
             val arrs = text.split(SPACE).toMutableList()
