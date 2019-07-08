@@ -26,20 +26,15 @@ import io.realm.RealmObject
 import io.realm.annotations.PrimaryKey
 
 open class Lode : RealmObject() {
-    enum class Type { de, lo, xien, bc }
 
     @PrimaryKey
     var id: Long = 0
     // LO DE
     var body: String = ""
-    var diem: Int = 0
-    var typeString: String = Type.de.toString()
-    var lodeType: Type
-        get() = Type.valueOf(typeString)
-        set(value) {
-            typeString = value.toString()
-        }
-
+    var lo: RealmList<Int> = RealmList(100)
+    var de: RealmList<Int> = RealmList(100)
+    var xien: RealmList<Int> = RealmList(100)
+    var bc: RealmList<Int> = RealmList(100)
 
     var contentId: Long = 0
     var address: String = ""

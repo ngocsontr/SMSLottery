@@ -23,7 +23,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.text.isDigitsOnly
 import androidx.fragment.app.DialogFragment
 import com.hally.lotsms.R
@@ -44,15 +43,11 @@ class LodeDialog : DialogFragment() {
     private lateinit var inflater: LayoutInflater
     private lateinit var message: String
     private var callback: Callback? = null
-    private var avatar: Long? = null
     private var position: Int = 0
     private var rows: ArrayList<View> = ArrayList()
 
-    private var diem = ""
-
     override fun onCreate(savedInstanceState: Bundle?) {
         message = arguments?.getString(MESSAGE).toString()
-        avatar = arguments?.getLong(AVATAR)
         setStyle(STYLE_NO_FRAME, android.R.style.Theme_Material_Light_Dialog_MinWidth)
         super.onCreate(savedInstanceState)
     }
@@ -68,15 +63,41 @@ class LodeDialog : DialogFragment() {
             return
         }
 
-//        lode_bt.text = TYPE[position].name
-        message = "Đánh cho tao lô chan   chan 10diem 10x   21d 20x20d, 22   5 diem, 11x5, de 20x20k, bộ   01    100n"
+//        message = "Đánh cho tao lô chan   chan 10diem 10x   21d 20x20d, 22   5 diem, 11x5, de 20x20k, bộ   01    100n"
         message = TEST
-        message = message.removeSpace()
-        view.findViewById<TextView>(R.id.body).text = message
-        message = LodeUtil.removeVietnamese(message)
-        Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
+//        message = message.removeSpace()
+        body.setText(message)
+        reload.setOnClickListener {
+            message = body.text.toString()
+            handleLodeText()
+        }
 
+        handleLodeText()
+
+
+        lode_chot.setOnClickListener {
+            var valid = false
+            rows.forEach { row ->
+                val lode = Lode()
+                valid = checkValidLode(row, lode)
+                if (valid) {
+                    callback!!.onPositiveButtonClicked(lode)
+                    dialog?.dismiss()
+                }
+            }
+        }
+        lode_huy.setOnClickListener {
+            dialog?.dismiss()
+        }
+        lode_type.setOnClickListener {
+            (it as TextView).text = TYPE[(++position) % TYPE.size].name.toUpperCase()
+        }
+    }
+
+    private fun handleLodeText() {
         // xử lý chia các view LÔ ĐỀ riêng
+        message = message.removeSpace()
+        message = LodeUtil.removeVietnamese(message)
         var index = 0
         while (index != -1) {
             var type = ""
@@ -92,13 +113,14 @@ class LodeDialog : DialogFragment() {
                 val row = inflater.inflate(R.layout.lode_view_row, null)
                 rows.add(row)
 
-                row.lode_bt.text = type.toUpperCase()
+                row.lode_type.text = type.toUpperCase()
                 // cắt bỏ chữ lô đề.
                 row.lode_number.setText(message.substring(index + type.length).trim())
                 message = message.substring(0, index)
             }
         }
         rows.reverse()
+        lode_container.removeAllViews()
         rows.forEach { row -> lode_container.addView(row) }
 
 
@@ -126,7 +148,7 @@ class LodeDialog : DialogFragment() {
                 for (key in SIGNAL) {
                     val num = removeText(it)
                     if (it.contains(key) && num.isNotBlank() && num.isDigitsOnly()) {
-                        arrs[i] = "$SIGNX$num" /*+ if (row.lode_bt.text == "LO") "d" else "k"*/
+                        arrs[i] = "$SIGNX$num" /*+ if (row.lode_type.text == "LO") "d" else "k"*/
                     } else if (it.contains(key) && num.split(SPACE).size == 2) {
                         arrs[i] = num.replace(SPACE, SIGNX)
                     }
@@ -134,8 +156,30 @@ class LodeDialog : DialogFragment() {
             }
             row.lode_number.setText(arrs.toText())
         }
+    }
 
-//        // tìm mã lệnh
+//    private fun findEndIndex(text: String, index: Int): Int {
+//        var isNumber = false
+//        var start = 0
+//        for ((i, c) in text.withIndex()) {
+//            if (i > index && c.isDigit()) {
+//                start = i
+//                isNumber = true
+//            }
+//            if (isNumber && !c.isDigit()) {
+//                diem = text.substring(start, i)
+//                return i
+//            }
+//        }
+//        diem = text.substring(start, text.length)
+//        return text.length
+//    }
+
+    private fun checkValidLode(row: View, lode: Lode): Boolean {
+        val type = row.lode_type.text
+        val number = row.lode_number.text
+
+        // tìm mã lệnh
 //        val maLenh = LodeUtil.MA_LENH.map { it[1] }
 //        for (key in maLenh)
 //            if (message.contains(key)) {
@@ -144,46 +188,8 @@ class LodeDialog : DialogFragment() {
 //            }
 
 
-        view.findViewById<View>(R.id.lode_chot).setOnClickListener {
-            if (checkValidLode()) {
-                val lode = Lode()
-                lode.lodeType = TYPE[position % TYPE.size]
-                lode.body = lode_number.text.toString()
-//                lode.diem = lode_so_diem.text.toString().toInt()
-                callback!!.onPositiveButtonClicked(lode)
-
-                dialog?.dismiss()
-            }
-        }
-        view.findViewById<View>(R.id.lode_huy).setOnClickListener {
-            dialog?.dismiss()
-        }
-        view.findViewById<TextView>(R.id.lode_bt).setOnClickListener {
-            (it as TextView).text = TYPE[(++position) % TYPE.size].name.toUpperCase()
-        }
-    }
-
-    private fun findEndIndex(text: String, index: Int): Int {
-        var isNumber = false
-        var start = 0
-        for ((i, c) in text.withIndex()) {
-            if (i > index && c.isDigit()) {
-                start = i
-                isNumber = true
-            }
-            if (isNumber && !c.isDigit()) {
-                diem = text.substring(start, i)
-                return i
-            }
-        }
-        diem = text.substring(start, text.length)
-        return text.length
-    }
-
-    private fun checkValidLode(): Boolean {
-        val number = lode_number.text
         if (number?.trim().isNullOrBlank()) {
-            Toast.makeText(activity, "Không bỏ trống, số LÔ ĐỀ!!", Toast.LENGTH_LONG).show()
+            row.lode_number.error = "Không bỏ trống, số LÔ ĐỀ!!"
             return false
         }
 
@@ -192,26 +198,20 @@ class LodeDialog : DialogFragment() {
             for (num in arr) {
                 if (num.isBlank() || !num.isDigitsOnly()) {
                     lode_number.setText(removeText(number.toString()))
-                    Toast.makeText(activity, "Xóa ký tự chữ, kiểm tra lại xem!!", Toast.LENGTH_LONG).show()
+                    row.lode_number.error = "Xóa ký tự chữ, kiểm tra lại xem!!"
                     return false
                 }
 
                 if (num.toInt() !in 0..99) {
-                    Toast.makeText(activity, "Chỉ đánh số: từ 00 đến 99!!", Toast.LENGTH_LONG).show()
+                    row.lode_number.error = "Chỉ đánh số: từ 00 đến 99!!"
                     return false
                 }
             }
 
         } else if (number?.toString()?.toInt() !in 0..99) {
-            Toast.makeText(activity, "Chỉ đánh số: từ 00 đến 99!!", Toast.LENGTH_LONG).show()
+            row.lode_number.error = "Chỉ đánh số: từ 00 đến 99!!"
             return false
         }
-
-//        if (lode_so_diem.text?.trim().isNullOrBlank()) {
-//            Toast.makeText(activity, "Không bỏ trống, bao nhiêu ĐIỂM!!", Toast.LENGTH_LONG).show()
-//            return false
-//        }
-//        if (lode_so_diem.text.toString().toInt() < 1) return false
 
         return true
     }
@@ -234,11 +234,11 @@ class LodeDialog : DialogFragment() {
     companion object {
         val TAG: String = LodeDialog::class.java.simpleName
         val MESSAGE = "RemoveSNSConfirmDialog.MESSAGE"
-        val AVATAR = "RemoveSNSConfirmDialog.AVATAR"
-
-        val TYPE = Lode.Type.values()
+        val TYPE = Type.values()
         val SPACE = " "
     }
+
+    enum class Type { de, lo, xien, bc }
 }
 
 private fun String.removeSpace(): String {

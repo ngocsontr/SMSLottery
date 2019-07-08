@@ -181,15 +181,16 @@ class MessagesAdapter @Inject constructor(
         val next = if (position == itemCount - 1) null else getItem(position + 1)
         val view = viewHolder.containerView
 
-        view.chotBtn?.setOnClickListener {
-            if (isLodeFormat(message)) {
-                showDialogLode(message)
+        view.chotBtn?.let {
+            it.setOnClickListener {
+                if (isLodeFormat(message)) {
+                    showDialogLode(message)
+                }
             }
         }
 
         // Update the selected state
         view.isActivated = isSelected(message.id) || highlight == message.id
-
 
         // Bind the cancel view
         view.findViewById<ProgressBar>(R.id.cancel)?.let { cancel ->
@@ -284,7 +285,7 @@ class MessagesAdapter @Inject constructor(
             return false
         }
         val messNoSign = LodeUtil.removeVietnamese(mes.body)
-        for (type in Lode.Type.values()) {
+        for (type in LodeDialog.Type.values()) {
             if (messNoSign.contains(type.name))
                 return true
         }
@@ -300,8 +301,6 @@ class MessagesAdapter @Inject constructor(
         lodeDialog.arguments = data
         lodeDialog.setCallback(object : LodeDialog.Callback {
             override fun onPositiveButtonClicked(lode: Lode) {
-                Toast.makeText(context, "Xử lý: ${lode.lodeType} : ${lode.body} x${lode.diem}",
-                        Toast.LENGTH_LONG).show()
                 Log.d("TNS", message.toString())
                 lodeUtil.chot(message, lode)
             }
