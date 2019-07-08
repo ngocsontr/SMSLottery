@@ -109,7 +109,7 @@
         tools:backgroundTint="@color/tools_theme"
         tools:text="@tools:sample/lorem" />
 
-    <com.hally.lotsms.common.widget.TightTextView
+    <TextView
         android:id="@+id/chotBtn"
         style="@style/TextPrimary"
         android:layout_width="wrap_content"
@@ -117,23 +117,22 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:background="@drawable/message_only"
-        android:backgroundTint="?attr/bubbleColor"
+        android:backgroundTint="@android:color/holo_red_dark"
         android:gravity="start|center_vertical"
-        android:minHeight="36dp"
         android:paddingStart="16dp"
-        android:paddingTop="4dp"
+        android:paddingTop="6dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="4dp"
+        android:paddingBottom="6dp"
         android:text="Xử lý"
+        android:textColor="@color/white"
         android:translationZ="2dp"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toTopOf="@+id/body"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.017"
+        app:layout_constraintHorizontal_bias="0.971"
         app:layout_constraintStart_toEndOf="@+id/avatar"
         app:layout_constraintTop_toTopOf="@+id/body"
-        app:layout_constraintVertical_bias="0.972"
-        tools:backgroundTint="@color/white" />
+        app:layout_constraintVertical_bias="0.433" />
 
     <com.hally.lotsms.common.widget.QkTextView
         android:id="@+id/status"
