@@ -58,14 +58,14 @@ class LodeUtil @Inject constructor(
                 "\n" +
                 "Lô 323 x 10d\n" +
                 "\n" +
-                "De dau chan x28n.t2\n" +
+                "De chan chan x28n.t2\n" +
                 "\n" +
                 "Lo 80x40 đ\n" +
                 "\n" +
                 "Lô 16-141 điểm\n" +
                 "\n" +
                 "Lô 86.89 x60d 90.25x40d\n" +
-                "Dê kép x70n\n" +
+                "Dê kép bang x70n\n" +
                 "Đề 66.22 x70n t1\n" +
                 "\n" +
                 "lô 36.63 x141đ\n" +
@@ -151,7 +151,7 @@ class LodeUtil @Inject constructor(
 //                "020,080,454x100k\n" +
 //                "242,595,565x70k.393x100.t10\n"
 
-        val SIGNX = "x"
+        val SIGNX = 'x'
         val SIGNAL = arrayOf('x', '*', '/', 'd', 'n', 'k')
         val VietNamChar = arrayOf("aAeEoOuUiIdDyY",
                 "áàạảãâấầậẩẫăắằặẳẵ", "ÁÀẠẢÃÂẤẦẬẨẪĂẮẰẶẲẴ", "éèẹẻẽêếềệểễ", "ÉÈẸẺẼÊẾỀỆỂỄ", "óòọỏõôốồộổỗơớờợởỡ",

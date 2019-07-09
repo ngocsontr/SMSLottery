@@ -25,6 +25,9 @@
         android:inputType="textMultiLine"
         android:minHeight="36dp"
         app:met_errorColor="#982360"
+        app:met_floatingLabel="highlight"
+        app:met_floatingLabelTextColor="#122360"
+        app:met_floatingLabelAlwaysShown="true"
         app:met_helperText="Kiểm tra xem mã lệnh đã đúng chưa."
         app:met_primaryColor="#122360" />
 

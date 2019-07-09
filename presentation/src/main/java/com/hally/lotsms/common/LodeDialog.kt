@@ -31,6 +31,7 @@ import com.hally.lotsms.common.util.LodeUtil.Companion.SIGNAL
 import com.hally.lotsms.common.util.LodeUtil.Companion.SIGNX
 import com.hally.lotsms.common.util.LodeUtil.Companion.TEST
 import com.hally.lotsms.model.Lode
+import kotlinx.android.synthetic.main.backup_controller.*
 import kotlinx.android.synthetic.main.lode_dialog.*
 import kotlinx.android.synthetic.main.lode_view_row.*
 import kotlinx.android.synthetic.main.lode_view_row.view.*
@@ -128,7 +129,7 @@ class LodeDialog : DialogFragment() {
         rows.forEach { row ->
             var text = row.lode_number.text.toString()
             var i = 1
-            while (i < text.length) {
+            while (i < text.length) { // xóa SPACE trước sau các SIGNAL
                 for ((j, key) in SIGNAL.withIndex()) {
                     if (i < text.length && key == text[i]) {
                         if (j <= 2) {
@@ -143,6 +144,7 @@ class LodeDialog : DialogFragment() {
                 i++
             }
 
+            // chuyển hết về dạng  5 4 3x99
             val arrs = text.split(SPACE).toMutableList()
             for ((i, it) in arrs.withIndex()) {
                 for (key in SIGNAL) {
@@ -150,7 +152,7 @@ class LodeDialog : DialogFragment() {
                     if (it.contains(key) && num.isNotBlank() && num.isDigitsOnly()) {
                         arrs[i] = "$SIGNX$num" /*+ if (row.lode_type.text == "LO") "d" else "k"*/
                     } else if (it.contains(key) && num.split(SPACE).size == 2) {
-                        arrs[i] = num.replace(SPACE, SIGNX)
+                        arrs[i] = num.replace(SPACE, SIGNX.toString())
                     }
                 }
             }
@@ -176,44 +178,50 @@ class LodeDialog : DialogFragment() {
 //    }
 
     private fun checkValidLode(row: View, lode: Lode): Boolean {
+        var result = true
         val type = row.lode_type.text
-        val number = row.lode_number.text
+        val number = row.lode_number.text.toString()
 
-        // tìm mã lệnh
-//        val maLenh = LodeUtil.MA_LENH.map { it[1] }
-//        for (key in maLenh)
-//            if (message.contains(key)) {
-//                val value = LodeUtil.MA_LENH.map { it[2] }
-//                lode_number.setText(value[maLenh.indexOf(key)])
-//            }
-
-
-        if (number?.trim().isNullOrBlank()) {
-            row.lode_number.error = "Không bỏ trống, số LÔ ĐỀ!!"
-            return false
+        // Tách mã lệnh: 1 bên mã, 1 bên số điểm
+        val lenh: HashMap<String, String> = HashMap()
+        var start = 0
+        for ((i, it) in number.withIndex()) {
+            if (SIGNX == it) {
+                val end = number.indexOf(SPACE, i, false)
+                lenh[number.substring(start, i)] = number.substring(i, end)
+                start = end + 1
+            }
         }
 
-        val arr = number?.split(SPACE)
-        if (arr != null) {
-            for (num in arr) {
-                if (num.isBlank() || !num.isDigitsOnly()) {
-                    lode_number.setText(removeText(number.toString()))
-                    row.lode_number.error = "Xóa ký tự chữ, kiểm tra lại xem!!"
-                    return false
-                }
-
-                if (num.toInt() !in 0..99) {
-                    row.lode_number.error = "Chỉ đánh số: từ 00 đến 99!!"
-                    return false
+        // tìm mã lệnh
+        val maLenh = LodeUtil.MA_LENH.map { it[1] }
+        val value = LodeUtil.MA_LENH.map { it[2] }
+        for (ma in lenh.keys) {
+            for ((index, key) in maLenh.withIndex()) {
+                if (ma.contains(key) && ma.replace(key, "").removeSpace().isEmpty()) {
+                    if (lenh[ma]!!.removeText().isDigitsOnly()) {
+                        row.lode_number.floatingLabelText = value[index] + SIGNX + lenh[ma]!!.removeText()
+                    }
                 }
             }
 
-        } else if (number?.toString()?.toInt() !in 0..99) {
-            row.lode_number.error = "Chỉ đánh số: từ 00 đến 99!!"
-            return false
+            if (row.lode_number.floatingLabelText.isNullOrBlank()) {
+                if (lenh[ma]!!.removeText().isDigitsOnly()) {
+                    var check = true
+                    for (n in ma.removeText().split(SPACE)){
+                        check = n.isDigitsOnly()
+                    }
+                    if (check) row.lode_number.floatingLabelText = ma.removeText() + SIGNX + lenh[ma]!!.removeText()
+                }
+            }
         }
 
-        return true
+        if (row.lode_number.floatingLabelText.isNullOrBlank()) {
+            row.lode_number.error = "Kiểm tra lại số LÔ ĐỀ!!"
+            result = false
+        }
+
+        return false
     }
 
     private fun removeText(txt: String): String {
@@ -239,6 +247,11 @@ class LodeDialog : DialogFragment() {
     }
 
     enum class Type { de, lo, xien, bc }
+}
+
+private fun String.removeText(): String {
+    // tra nay day cac so phan tach = dau SPACE
+    return this.replace("[^0-9]".toRegex(), LodeDialog.SPACE).replace("\\s+".toRegex(), LodeDialog.SPACE).trim()
 }
 
 private fun String.removeSpace(): String {
