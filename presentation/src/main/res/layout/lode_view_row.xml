@@ -22,12 +22,13 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_weight="1"
+        android:imeOptions="actionDone"
         android:inputType="textMultiLine"
         android:minHeight="36dp"
         app:met_errorColor="#982360"
         app:met_floatingLabel="highlight"
-        app:met_floatingLabelTextColor="#122360"
         app:met_floatingLabelAlwaysShown="true"
+        app:met_floatingLabelTextColor="#122360"
         app:met_helperText="Kiểm tra xem mã lệnh đã đúng chưa."
         app:met_primaryColor="#122360" />
 

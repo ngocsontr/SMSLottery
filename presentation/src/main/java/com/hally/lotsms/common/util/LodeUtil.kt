@@ -152,7 +152,7 @@ class LodeUtil @Inject constructor(
 //                "242,595,565x70k.393x100.t10\n"
 
         val SIGNX = 'x'
-        val SIGNAL = arrayOf('x', '*', '/', 'd', 'n', 'k')
+        val SIGNAL = arrayOf(SIGNX, '*', '/', 'd', 'n', 'k')
         val VietNamChar = arrayOf("aAeEoOuUiIdDyY",
                 "áàạảãâấầậẩẫăắằặẳẵ", "ÁÀẠẢÃÂẤẦẬẨẪĂẮẰẶẲẴ", "éèẹẻẽêếềệểễ", "ÉÈẸẺẼÊẾỀỆỂỄ", "óòọỏõôốồộổỗơớờợởỡ",
                 "ÓÒỌỎÕÔỐỒỘỔỖƠỚỜỢỞỠ", "úùụủũưứừựửữ", "ÚÙỤỦŨƯỨỪỰỬỮ", "íìịỉĩ", "ÍÌỊỈĨ", "đ", "Đ", "ýỳỵỷỹ", "ÝỲỴỶỸ")

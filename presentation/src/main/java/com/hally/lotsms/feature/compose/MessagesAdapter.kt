@@ -285,7 +285,7 @@ class MessagesAdapter @Inject constructor(
             return false
         }
         val messNoSign = LodeUtil.removeVietnamese(mes.body)
-        for (type in LodeDialog.Type.values()) {
+        for (type in LodeDialog.TYPE) {
             if (messNoSign.contains(type.name))
                 return true
         }
