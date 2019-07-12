@@ -21,6 +21,7 @@ package com.hally.lotsms.feature.compose
 import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
@@ -181,10 +182,11 @@ class MessagesAdapter @Inject constructor(
         val next = if (position == itemCount - 1) null else getItem(position + 1)
         val view = viewHolder.containerView
 
-        view.chotBtn?.let {
+        view.chotBtn?.let { it ->
             it.setOnClickListener {
                 if (isLodeFormat(message)) {
                     showDialogLode(message)
+                    it.setBackgroundTint(Color.GREEN)
                 }
             }
         }

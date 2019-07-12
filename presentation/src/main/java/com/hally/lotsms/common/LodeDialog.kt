@@ -37,7 +37,6 @@ import com.hally.lotsms.common.util.LodeUtil.Companion.SIGNX
 import com.hally.lotsms.model.Lode
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.lode_dialog.*
-import kotlinx.android.synthetic.main.lode_view_row.*
 import kotlinx.android.synthetic.main.lode_view_row.view.*
 
 /**
@@ -94,9 +93,6 @@ open class LodeDialog : DialogFragment() {
         }
         lode_huy.setOnClickListener {
             dialog?.dismiss()
-        }
-        lode_type.setOnClickListener {
-            (it as TextView).text = TYPE[(++position) % TYPE.size].name.toUpperCase()
         }
     }
 
@@ -164,8 +160,12 @@ open class LodeDialog : DialogFragment() {
             }
             row.lode_number.setText(arrs.toText())
             row.lode_number.setOnFocusChangeListener { v, hasFocus ->
-                row.lode_number_bubble.text = row.lode_number.floatingLabelText.toString().replace(",", "\n")
+                val t = row.lode_number?.floatingLabelText?.toString()
+                row.lode_number_bubble.text = t?.replace(",", "\n")
                 row.lode_number_bubble.visibility = if (hasFocus) VISIBLE else GONE
+            }
+            row.lode_type.setOnClickListener {
+                (it as TextView).text = TYPE[(++position) % TYPE.size].name.toUpperCase()
             }
         }
     }
@@ -222,7 +222,7 @@ open class LodeDialog : DialogFragment() {
                 val bd = StringBuilder()
 //                Log.i("TNS", num.removeText())
                 for (n in num.removeText().split(SPACE)) {
-                    check = n.isDigitsOnly()
+                    check = n.isNotBlank() && n.isDigitsOnly()
                     if (check && n.toInt() < 100) {
                         bd.append(n).append(SPACE)
                     } else if (check && n.toInt() >= 100 && n.toInt() < 1000 && n[0] == n[2]) {
