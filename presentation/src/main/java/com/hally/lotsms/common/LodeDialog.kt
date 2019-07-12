@@ -141,7 +141,7 @@ open class LodeDialog : DialogFragment() {
                                 text = text.removeRange(i + 1, i + 2)
                         } else {
                             if (i >= 1 && SPACE == text[i - 1].toString()
-                                    && (text[i + 1].isDigit() || text[i + 1] == ' '))
+                                    && (i + 1 < text.length && (text[i + 1].isDigit() || text[i + 1] == ' ')))
                                 text = text.removeRange(i - 1, i)
                         }
                     }
@@ -224,9 +224,9 @@ open class LodeDialog : DialogFragment() {
 //                Log.i("TNS", num.removeText())
                 for (n in num.removeText().split(SPACE)) {
                     check = n.isNotBlank() && n.isDigitsOnly()
-                    if (check && n.toInt() < 100) {
+                    if (check && n.length == 2) {
                         bd.append(n).append(SPACE)
-                    } else if (check && n.toInt() >= 100 && n.toInt() < 1000 && n[0] == n[2]) {
+                    } else if (check && n.length == 3 && n[0] == n[2]) {
                         bd.append(n.substring(0, 2)).append(SPACE)
                         bd.append(n.substring(1, 3)).append(SPACE)
                     } else check = false
