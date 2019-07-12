@@ -23,6 +23,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
@@ -32,7 +34,6 @@ import com.hally.lotsms.R
 import com.hally.lotsms.common.util.LodeUtil
 import com.hally.lotsms.common.util.LodeUtil.Companion.SIGNAL
 import com.hally.lotsms.common.util.LodeUtil.Companion.SIGNX
-import com.hally.lotsms.common.util.LodeUtil.Companion.TEST
 import com.hally.lotsms.model.Lode
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.lode_dialog.*
@@ -68,7 +69,7 @@ open class LodeDialog : DialogFragment() {
         }
 
 //        message = "Đánh cho tao lô chan   chan 10diem 10x   21d 20x20d, 22   5 diem, 11x5, de 20x20k, bộ   01    100n"
-        message = TEST
+//        message = TEST
 //        message = message.removeSpace()
         body.setText(message)
         reload.setOnClickListener {
@@ -162,7 +163,20 @@ open class LodeDialog : DialogFragment() {
                 }
             }
             row.lode_number.setText(arrs.toText())
+            row.lode_number.setOnFocusChangeListener { v, hasFocus ->
+                row.lode_number_bubble.text = row.lode_number.floatingLabelText.toString().replace(",", "\n")
+                row.lode_number_bubble.visibility = if (hasFocus) VISIBLE else GONE
+            }
         }
+    }
+
+    private fun findEndIndex(text: String, index: Int): Int {
+        var isNumber = false
+        for ((i, c) in text.withIndex()) {
+            if (i > index && c.isDigit()) isNumber = true
+            if (isNumber && !c.isDigit()) return i
+        }
+        return text.length
     }
 
     private fun checkValidLode(row: View, lode: Lode): Boolean {
@@ -173,8 +187,8 @@ open class LodeDialog : DialogFragment() {
         val lenh: ArrayList<Pair<String, String>> = ArrayList()
         var start = 0
         for ((i, it) in number.withIndex()) {
-            if (SIGNX == it) {
-                var end = number.indexOf(SPACE, i, false)
+            if (SIGNX == it && i >= start) {
+                var end = findEndIndex(number, i)
                 if (end < i) end = number.length
                 lenh.add(Pair(number.substring(start, i), number.substring(i, end)))
                 start = end + 1
@@ -230,8 +244,11 @@ open class LodeDialog : DialogFragment() {
 //            if (!isValid) break
         }
 
-        if (builder.isNotBlank()) row.lode_number.floatingLabelText = builder
-        if (!isValid) {
+        if (builder.isNotBlank()) {
+            row.lode_number.setTextColor(Color.BLACK)
+            row.lode_number.floatingLabelText = builder.delete(builder.length - 2, builder.length - 1)
+        }
+        if (!isValid || builder.isBlank()) {
             row.lode_number.setTextColor(Color.RED)
             row.lode_number.error = "Kiểm tra lại số LÔ ĐỀ!!"
         }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -10,6 +10,7 @@
         android:id="@+id/lode_type"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
+        android:layout_below="@id/lode_number_bubble"
         android:background="@drawable/message_out_first"
         android:gravity="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
@@ -17,19 +18,32 @@
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/lode_number"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/lode_number_bubble"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_weight="1"
+        android:layout_toEndOf="@id/lode_type"
         android:imeOptions="actionDone"
         android:inputType="textMultiLine"
         android:minHeight="36dp"
-        app:met_errorColor="#982360"
+        app:met_errorColor="#ff0000"
         app:met_floatingLabel="highlight"
         app:met_floatingLabelAlwaysShown="true"
-        app:met_floatingLabelTextColor="#122360"
-        app:met_helperText="Kiểm tra xem mã lệnh đã đúng chưa."
-        app:met_primaryColor="#122360" />
+        app:met_floatingLabelTextColor="#303F9F"
+        app:met_helperText="Xem dãy số đã đúng chưa!" />
 
-</LinearLayout>
+    <com.cpiz.android.bubbleview.BubbleTextView
+        android:id="@+id/lode_number_bubble"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:padding="6dp"
+        android:textColor="#303F9F"
+        android:visibility="gone"
+        app:bb_arrowDirection="Down"
+        app:bb_borderColor="#ff0000"
+        app:bb_borderWidth="1dp"
+        app:bb_cornerRadius="4dp"
+        app:bb_fillColor="@android:color/white" />
+
+</RelativeLayout>

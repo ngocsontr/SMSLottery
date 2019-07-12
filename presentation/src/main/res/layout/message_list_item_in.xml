@@ -115,7 +115,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
         android:background="@drawable/message_only"
         android:backgroundTint="@android:color/holo_red_dark"
         android:gravity="start|center_vertical"
@@ -125,14 +124,14 @@
         android:paddingBottom="6dp"
         android:text="Xử lý"
         android:textColor="@color/white"
-        android:translationZ="2dp"
+        android:translationZ="3dp"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toTopOf="@+id/body"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.971"
+        app:layout_constraintHorizontal_bias="0.939"
         app:layout_constraintStart_toEndOf="@+id/avatar"
-        app:layout_constraintTop_toTopOf="@+id/body"
-        app:layout_constraintVertical_bias="0.433" />
+        app:layout_constraintTop_toBottomOf="@+id/body"
+        app:layout_constraintVertical_bias="0.27" />
 
     <com.hally.lotsms.common.widget.QkTextView
         android:id="@+id/status"
