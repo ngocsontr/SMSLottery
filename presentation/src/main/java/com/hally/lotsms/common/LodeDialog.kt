@@ -75,6 +75,7 @@ open class LodeDialog : DialogFragment() {
             message = body.text.toString()
             Toast.makeText(context, "Load: $message", Toast.LENGTH_LONG).show()
             handleLodeText()
+            rows.forEach { row -> checkValidLode(row, Lode()) }
         }
 
         handleLodeText()
@@ -130,6 +131,7 @@ open class LodeDialog : DialogFragment() {
         // xử lý chuẩn format x điểm lô đề : 'x'
         rows.forEach { row ->
             var text = row.lode_number.text.toString()
+            Log.i("TNS", "row.lode_number.text : $text")
             var i = 1
             while (i < text.length) { // xóa SPACE trước sau các SIGNAL
                 for ((j, key) in SIGNAL.withIndex()) {
@@ -138,7 +140,8 @@ open class LodeDialog : DialogFragment() {
                             if (i < text.length && SPACE == text[i + 1].toString())
                                 text = text.removeRange(i + 1, i + 2)
                         } else {
-                            if (i >= 1 && SPACE == text[i - 1].toString())
+                            if (i >= 1 && SPACE == text[i - 1].toString()
+                                    && (text[i + 1].isDigit() || text[i + 1] == ' '))
                                 text = text.removeRange(i - 1, i)
                         }
                     }
@@ -146,7 +149,7 @@ open class LodeDialog : DialogFragment() {
                 i++
             }
 
-            // chuyển hết về dạng  5 4 3x99
+            // chuyển hết về dạng:  5 4 3x99
             val arrs = text.split(SPACE).toMutableList()
             for ((i, it) in arrs.withIndex()) {
                 for (key in SIGNAL) {
@@ -160,8 +163,6 @@ open class LodeDialog : DialogFragment() {
             }
             row.lode_number.setText(arrs.toText())
             row.lode_number.setOnFocusChangeListener { v, hasFocus ->
-                val t = row.lode_number?.floatingLabelText?.toString()
-                row.lode_number_bubble.text = t?.replace(",", "\n")
                 row.lode_number_bubble.visibility = if (hasFocus) VISIBLE else GONE
             }
             row.lode_type.setOnClickListener {
@@ -194,7 +195,7 @@ open class LodeDialog : DialogFragment() {
                 start = end + 1
             }
         }
-        for (l in lenh) Log.i("TNS", l.toString())
+        for (l in lenh) Log.i("TNS", "Pair<numbers, points> : $l")
 
         // tìm mã lệnh
         val numbers = lenh.map { it.first }
@@ -247,6 +248,8 @@ open class LodeDialog : DialogFragment() {
         if (builder.isNotBlank()) {
             row.lode_number.setTextColor(Color.BLACK)
             row.lode_number.floatingLabelText = builder.delete(builder.length - 2, builder.length - 1)
+            val t = row.lode_number?.floatingLabelText?.toString()
+            row.lode_number_bubble.text = t?.replace(",", "\n")
         }
         if (!isValid || builder.isBlank()) {
             row.lode_number.setTextColor(Color.RED)
