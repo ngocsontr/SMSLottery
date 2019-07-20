@@ -18,6 +18,7 @@
 
 package com.hally.lotsms.common
 
+import android.app.Dialog
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -26,6 +27,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.text.isDigitsOnly
@@ -34,6 +36,7 @@ import com.hally.lotsms.R
 import com.hally.lotsms.common.util.LodeUtil
 import com.hally.lotsms.common.util.LodeUtil.Companion.SIGNAL
 import com.hally.lotsms.common.util.LodeUtil.Companion.SIGNX
+import com.hally.lotsms.common.util.LodeUtil.Companion.TEST
 import com.hally.lotsms.model.Lode
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.lode_dialog.*
@@ -61,6 +64,12 @@ open class LodeDialog : DialogFragment() {
         return inflater.inflate(R.layout.lode_dialog, container, false)
     }
 
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dl = super.onCreateDialog(savedInstanceState)
+        dl.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        return dl
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (callback == null || message.isBlank()) {
@@ -68,21 +77,19 @@ open class LodeDialog : DialogFragment() {
         }
 
 //        message = "Đánh cho tao lô chan   chan 10diem 10x   21d 20x20d, 22   5 diem, 11x5, de 20x20k, bộ   01    100n"
-//        message = TEST
-//        message = message.removeSpace()
+        message = TEST
+        message = message.removeSpace()
         body.setText(message)
         reload.setOnClickListener {
             message = body.text.toString()
             Toast.makeText(context, "Load: $message", Toast.LENGTH_LONG).show()
             handleLodeText()
-            rows.forEach { row -> checkValidLode(row, Lode()) }
         }
 
         handleLodeText()
-        rows.forEach { row -> checkValidLode(row, Lode()) }
 
         lode_chot.setOnClickListener {
-            var valid = false
+            var valid: Boolean
             rows.forEach { row ->
                 val lode = Lode()
                 valid = checkValidLode(row, lode)
@@ -127,41 +134,8 @@ open class LodeDialog : DialogFragment() {
         rows.reverse()
         rows.forEach { row -> lode_container.addView(row) }
 
-
-        // xử lý chuẩn format x điểm lô đề : 'x'
         rows.forEach { row ->
-            var text = row.lode_number.text.toString()
-            Log.i("TNS", "row.lode_number.text : $text")
-            var i = 1
-            while (i < text.length) { // xóa SPACE trước sau các SIGNAL
-                for ((j, key) in SIGNAL.withIndex()) {
-                    if (i < text.length && key == text[i]) {
-                        if (j <= 2) {
-                            if (i < text.length && SPACE == text[i + 1].toString())
-                                text = text.removeRange(i + 1, i + 2)
-                        } else {
-                            if (i >= 1 && SPACE == text[i - 1].toString()
-                                    && (i + 1 < text.length && (text[i + 1].isDigit() || text[i + 1] == ' ')))
-                                text = text.removeRange(i - 1, i)
-                        }
-                    }
-                }
-                i++
-            }
-
-            // chuyển hết về dạng:  5 4 3x99
-            val arrs = text.split(SPACE).toMutableList()
-            for ((i, it) in arrs.withIndex()) {
-                for (key in SIGNAL) {
-                    val num = removeText(it)
-                    if (it.contains(key) && num.isNotBlank() && num.isDigitsOnly()) {
-                        arrs[i] = "$SIGNX$num" /*+ if (row.lode_type.text == "LO") "d" else "k"*/
-                    } else if (it.contains(key) && num.split(SPACE).size == 2) {
-                        arrs[i] = num.replace(SPACE, SIGNX.toString())
-                    }
-                }
-            }
-            row.lode_number.setText(arrs.toText())
+            checkValidLode(row, Lode())
             row.lode_number.setOnFocusChangeListener { v, hasFocus ->
                 row.lode_number_bubble.visibility = if (hasFocus) VISIBLE else GONE
             }
@@ -181,6 +155,41 @@ open class LodeDialog : DialogFragment() {
     }
 
     private fun checkValidLode(row: View, lode: Lode): Boolean {
+
+        // xử lý chuẩn format x điểm lô đề : 'x'
+        var text = row.lode_number.text.toString()
+        Log.i("TNS", "row.lode_number.text : $text")
+        var i = 1
+        while (i < text.length) { // xóa SPACE trước sau các SIGNAL
+            for ((j, key) in SIGNAL.withIndex()) {
+                if (i < text.length && key == text[i]) {
+                    if (j <= 2) {
+                        if (i < text.length && SPACE == text[i + 1].toString())
+                            text = text.removeRange(i + 1, i + 2)
+                    } else {
+                        if (i >= 1 && SPACE == text[i - 1].toString()
+                                && (i + 1 < text.length && (text[i + 1].isDigit() || text[i + 1] == ' ')))
+                            text = text.removeRange(i - 1, i)
+                    }
+                }
+            }
+            i++
+        }
+
+        // chuyển hết về dạng:  5 4 3x99
+        val arrs = text.split(SPACE).toMutableList()
+        for ((i, it) in arrs.withIndex()) {
+            for (key in SIGNAL) {
+                val num = removeText(it)
+                if (it.contains(key) && num.isNotBlank() && num.isDigitsOnly()) {
+                    arrs[i] = "$SIGNX$num" /*+ if (row.lode_type.text == "LO") "d" else "k"*/
+                } else if (it.contains(key) && num.split(SPACE).size == 2) {
+                    arrs[i] = num.replace(SPACE, SIGNX.toString())
+                }
+            }
+        }
+        row.lode_number.setText(arrs.toText())
+
         val type = row.lode_type.text.toString()
         val number = row.lode_number.text.toString()
 

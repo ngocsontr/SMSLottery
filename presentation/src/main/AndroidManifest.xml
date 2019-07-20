@@ -57,6 +57,7 @@
         </activity>
         <activity
             android:name="com.hally.lotsms.feature.compose.ComposeActivity"
+            android:windowSoftInputMode="adjustResize|stateHidden"
             android:parentActivityName="com.hally.lotsms.feature.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
