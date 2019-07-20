@@ -27,17 +27,17 @@
         android:minWidth="1000dp"
         android:padding="8dp">
 
-        <com.google.android.material.button.MaterialButton
+        <Button
             android:id="@+id/reload"
+            style="@style/TextPrimary"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:background="@drawable/message_out_first"
+            android:background="@drawable/message_only"
+            android:backgroundTint="@android:color/holo_green_dark"
             android:gravity="center"
-            android:text="Load"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:textColor="@color/white" />
+            android:text="Load" />
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/body"
@@ -49,7 +49,6 @@
             android:layout_toEndOf="@id/reload"
             android:gravity="start|center_vertical"
             android:inputType="textMultiLine"
-            android:maxLines="5"
             android:minHeight="36dp"
             app:met_errorColor="#ddaa00"
             app:met_helperText="Tin nhắn gốc."
@@ -63,30 +62,30 @@
             android:divider="@android:drawable/divider_horizontal_dark"
             android:orientation="vertical" />
 
-        <com.google.android.material.button.MaterialButton
+        <Button
             android:id="@+id/lode_huy"
             android:layout_width="70dp"
             android:layout_height="45dp"
             android:layout_below="@id/lode_container"
             android:layout_alignParentStart="true"
             android:layout_margin="8dp"
-            android:background="#982360"
+            android:background="@drawable/message_only"
+            android:backgroundTint="@android:color/holo_red_dark"
             android:gravity="center"
             android:text="@string/lode_huy"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@color/white" />
 
-        <com.google.android.material.button.MaterialButton
+        <Button
             android:id="@+id/lode_chot"
             android:layout_width="70dp"
             android:layout_height="45dp"
             android:layout_below="@id/lode_container"
             android:layout_alignParentEnd="true"
             android:layout_margin="8dp"
-            android:background="@drawable/message_out_first"
+            android:background="@drawable/message_only"
+            android:backgroundTint="@android:color/holo_green_dark"
             android:gravity="center"
             android:text="@string/lode_chot"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@color/white" />
 
     </RelativeLayout>

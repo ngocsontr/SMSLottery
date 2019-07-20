@@ -36,7 +36,6 @@ import com.hally.lotsms.R
 import com.hally.lotsms.common.util.LodeUtil
 import com.hally.lotsms.common.util.LodeUtil.Companion.SIGNAL
 import com.hally.lotsms.common.util.LodeUtil.Companion.SIGNX
-import com.hally.lotsms.common.util.LodeUtil.Companion.TEST
 import com.hally.lotsms.model.Lode
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.lode_dialog.*
@@ -76,26 +75,28 @@ open class LodeDialog : DialogFragment() {
             return
         }
 
-//        message = "Đánh cho tao lô chan   chan 10diem 10x   21d 20x20d, 22   5 diem, 11x5, de 20x20k, bộ   01    100n"
-        message = TEST
-        message = message.removeSpace()
+        message = "Đe giai nhat 77x10 lô chan   chan 10diem dau le x2 dit 4 x10 10x   21d 22,23,20x20d, 22   5 diem, 11x5, de 20x20k, bộ   01    100n"
+//        message = TEST
         body.setText(message)
+        message = message.removeSpace()
+        handleLodeText()
+
+        // set listener
         reload.setOnClickListener {
             message = body.text.toString()
             Toast.makeText(context, "Load: $message", Toast.LENGTH_LONG).show()
             handleLodeText()
         }
-
-        handleLodeText()
-
         lode_chot.setOnClickListener {
             var valid: Boolean
+            val lode = Lode()
             rows.forEach { row ->
-                val lode = Lode()
                 valid = checkValidLode(row, lode)
                 if (valid) {
                     callback!!.onPositiveButtonClicked(lode)
-                    dialog?.dismiss()
+                    Toast.makeText(context, "Xử lý OK!", Toast.LENGTH_SHORT).show()
+                    Log.i("TNS", "Result : $lode")
+//                    dialog?.dismiss()
                 }
             }
         }
@@ -115,9 +116,9 @@ open class LodeDialog : DialogFragment() {
             var type = ""
             index = -1
             for (key in TYPE) {
-                if (index < message.lastIndexOf(key.name)) {
-                    index = message.lastIndexOf(key.name)
-                    type = key.name
+                if (index < message.lastIndexOf(key)) {
+                    index = message.lastIndexOf(key)
+                    type = key
                 }
             }
 
@@ -140,7 +141,7 @@ open class LodeDialog : DialogFragment() {
                 row.lode_number_bubble.visibility = if (hasFocus) VISIBLE else GONE
             }
             row.lode_type.setOnClickListener {
-                (it as TextView).text = TYPE[(++position) % TYPE.size].name.toUpperCase()
+                (it as TextView).text = TYPE[(++position) % TYPE.size].toUpperCase()
             }
         }
     }
@@ -152,6 +153,10 @@ open class LodeDialog : DialogFragment() {
             if (isNumber && !c.isDigit()) return i
         }
         return text.length
+    }
+
+    private fun isNotCode(s: String): Boolean {
+        return s != "dau" && s != "dit" && s != "du " && s != "nho" && s != "kep"
     }
 
     private fun checkValidLode(row: View, lode: Lode): Boolean {
@@ -167,9 +172,9 @@ open class LodeDialog : DialogFragment() {
                         if (i < text.length && SPACE == text[i + 1].toString())
                             text = text.removeRange(i + 1, i + 2)
                     } else {
-                        if (i >= 1 && SPACE == text[i - 1].toString()
-                                && (i + 1 < text.length && (text[i + 1].isDigit() || text[i + 1] == ' ')))
-                            text = text.removeRange(i - 1, i)
+                        if (i >= 1 && SPACE == text[i - 1].toString())
+                            if (i + 2 < text.length && isNotCode(text.substring(i, i + 3)))
+                                text = text.removeRange(i - 1, i)
                     }
                 }
             }
@@ -180,9 +185,9 @@ open class LodeDialog : DialogFragment() {
         val arrs = text.split(SPACE).toMutableList()
         for ((i, it) in arrs.withIndex()) {
             for (key in SIGNAL) {
-                val num = removeText(it)
+                val num = it.removeText()
                 if (it.contains(key) && num.isNotBlank() && num.isDigitsOnly()) {
-                    arrs[i] = "$SIGNX$num" /*+ if (row.lode_type.text == "LO") "d" else "k"*/
+                    arrs[i] = "$SIGNX$num"
                 } else if (it.contains(key) && num.split(SPACE).size == 2) {
                     arrs[i] = num.replace(SPACE, SIGNX.toString())
                 }
@@ -219,10 +224,11 @@ open class LodeDialog : DialogFragment() {
             val point = points[k]
             for ((index, key) in codes.withIndex()) {
                 if (num.contains(key)) {
-                    if (point.removeText().isDigitsOnly() && num.replace(key, "").removeSpace().isBlank()) {
+                    if (point.removeText().isDigitsOnly() &&
+                            num.replace(key, "").removeSpace().isBlank()) {
                         builder.append(values[index] + SIGNX + point.removeText() + ", ")
                         addLode(lode.byType(type), values[index], point.removeText())
-                    }
+                    } else isValid = false
                     b = false
                 }
             }
@@ -250,8 +256,11 @@ open class LodeDialog : DialogFragment() {
                     b = false
                 }
             }
+
+            // check valid tat ca cac code vs lenh??
             isValid = isValid && !b
 //            if (!isValid) break
+//            Log.i("TNS", "isValid : $isValid")
         }
 
         if (builder.isNotBlank()) {
@@ -265,25 +274,20 @@ open class LodeDialog : DialogFragment() {
             row.lode_number.error = "Kiểm tra lại số LÔ ĐỀ!!"
         }
 
-        return false
+        return isValid
     }
 
     private fun addLode(lode: RealmList<Int>, numbers: String, point: String) {
+        Log.i("TNS", "addLode : $numbers --  $point")
         for (num in numbers.removeSpace().split(SPACE)) {
             lode[num.toInt()]?.plus(point.toInt())
         }
-    }
-
-    private fun removeText(txt: String): String {
-        // tra nay day cac so phan tach = dau SPACE
-        return txt.replace("[^0-9]".toRegex(), SPACE).replace("\\s+".toRegex(), SPACE).trim()
     }
 
 
     fun setCallback(callback: Callback) {
         this.callback = callback
     }
-
 
     interface Callback {
         fun onPositiveButtonClicked(lode: Lode)
@@ -292,16 +296,14 @@ open class LodeDialog : DialogFragment() {
     companion object {
         val TAG: String = LodeDialog::class.java.simpleName
         val MESSAGE = "RemoveSNSConfirmDialog.MESSAGE"
-        val TYPE = Type.values()
+        val TYPE = arrayOf("de giai nhat", "de", "lo", "xien", "bc")
         val SPACE = " "
-
-        enum class Type { de, lo, xien, bc }
     }
 }
 
 private fun String.removeText(): String {
     // tra nay day cac so phan tach = dau SPACE
-    return this.replace("[^0-9]".toRegex(), LodeDialog.SPACE).replace("\\s+".toRegex(), LodeDialog.SPACE).trim()
+    return this.replace("[^0-9]".toRegex(), LodeDialog.SPACE).removeSpace()
 }
 
 private fun String.removeSpace(): String {

@@ -29,6 +29,7 @@ open class Lode : RealmObject() {
     // LO DE
     var body: String = ""
     var lo: RealmList<Int> = RealmList()
+    var degiainhat: RealmList<Int> = RealmList()
     var de: RealmList<Int> = RealmList()
     var xien: RealmList<Int> = RealmList()
     var bc: RealmList<Int> = RealmList()
@@ -37,11 +38,13 @@ open class Lode : RealmObject() {
         for (i in 0..99) {
             lo.add(i, 0)
             de.add(i, 0)
+            degiainhat.add(i, 0)
         }
     }
 
     fun byType(type: String): RealmList<Int> {
         when (type.toLowerCase()) {
+            "de giai nhat" -> return degiainhat
             "lo" -> return lo
             "de" -> return de
             "xien" -> return xien
@@ -57,6 +60,6 @@ open class Lode : RealmObject() {
     var seen: Boolean = false
 
     override fun toString(): String {
-        return "Lode(id=$id, body='$body', \nlo=$lo, \nde=$de, \nxien=$xien, \nbc=$bc, contentId=$contentId, boxId=$boxId, date=$date, dateSent=$dateSent, seen=$seen)"
+        return "Lode(id=$id, body='$body',\ndegiainhat=$degiainhat, \nlo=$lo, \nde=$de, \nxien=$xien, \nbc=$bc, contentId=$contentId, boxId=$boxId, date=$date, dateSent=$dateSent, seen=$seen)"
     }
 }

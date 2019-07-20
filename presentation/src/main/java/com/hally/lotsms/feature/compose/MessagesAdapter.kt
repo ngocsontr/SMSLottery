@@ -288,7 +288,7 @@ class MessagesAdapter @Inject constructor(
         }
         val messNoSign = LodeUtil.removeVietnamese(mes.body)
         for (type in LodeDialog.TYPE) {
-            if (messNoSign.contains(type.name))
+            if (messNoSign.contains(type))
                 return true
         }
         Toast.makeText(context, "SMS không thấy LÔ ĐỀ!", Toast.LENGTH_LONG).show()
