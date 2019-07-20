@@ -26,13 +26,13 @@ open class Lode : RealmObject() {
 
     @PrimaryKey
     var id: Long = 0
-    // LO DE
     var body: String = ""
+
     var lo: RealmList<Int> = RealmList()
     var degiainhat: RealmList<Int> = RealmList()
     var de: RealmList<Int> = RealmList()
-    var xien: RealmList<Int> = RealmList()
-    var bc: RealmList<Int> = RealmList()
+    var xien: RealmList<String> = RealmList()
+    var bc: RealmList<String> = RealmList()
 
     init {
         for (i in 0..99) {
@@ -47,8 +47,6 @@ open class Lode : RealmObject() {
             "de giai nhat" -> return degiainhat
             "lo" -> return lo
             "de" -> return de
-            "xien" -> return xien
-            "bc" -> return bc
         }
         return RealmList()
     }

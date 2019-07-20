@@ -75,7 +75,7 @@ open class LodeDialog : DialogFragment() {
             return
         }
 
-        message = "Đe giai nhat 77x10 lô chan   chan 10diem dau le x2 dit 4 x10 10x   21d 22,23,20x20d, 22   5 diem, 11x5, de 20x20k, bộ   01    100n"
+        message = "3 cang 876/123,234 x20k Đe giai nhat 77x10 lô chan   chan 10diem dau le x2 dit 4 x10 10x   21d 22,23,20x20d, 22   5 diem, 11x5, de 20x20k, bộ   01    100n"
 //        message = TEST
         body.setText(message)
         message = message.removeSpace()
@@ -88,16 +88,15 @@ open class LodeDialog : DialogFragment() {
             handleLodeText()
         }
         lode_chot.setOnClickListener {
-            var valid: Boolean
+            var valid = true
             val lode = Lode()
-            rows.forEach { row ->
-                valid = checkValidLode(row, lode)
-                if (valid) {
-                    callback!!.onPositiveButtonClicked(lode)
-                    Toast.makeText(context, "Xử lý OK!", Toast.LENGTH_SHORT).show()
-                    Log.i("TNS", "Result : $lode")
+            rows.forEach { valid = valid && isValidRow(it, lode) }
+
+            Log.i("TNS", "Result : $lode")
+            if (valid) {
+                callback!!.onPositiveButtonClicked(lode)
+                Toast.makeText(context, "Xử lý OK!", Toast.LENGTH_SHORT).show()
 //                    dialog?.dismiss()
-                }
             }
         }
         lode_huy.setOnClickListener {
@@ -133,10 +132,10 @@ open class LodeDialog : DialogFragment() {
             }
         }
         rows.reverse()
-        rows.forEach { row -> lode_container.addView(row) }
+        rows.forEach { lode_container.addView(it) }
 
         rows.forEach { row ->
-            checkValidLode(row, Lode())
+            isValidRow(row, Lode())
             row.lode_number.setOnFocusChangeListener { v, hasFocus ->
                 row.lode_number_bubble.visibility = if (hasFocus) VISIBLE else GONE
             }
@@ -159,17 +158,17 @@ open class LodeDialog : DialogFragment() {
         return s != "dau" && s != "dit" && s != "du " && s != "nho" && s != "kep"
     }
 
-    private fun checkValidLode(row: View, lode: Lode): Boolean {
+    private fun isValidRow(row: View, lode: Lode): Boolean {
 
         // xử lý chuẩn format x điểm lô đề : 'x'
         var text = row.lode_number.text.toString()
-        Log.i("TNS", "row.lode_number.text : $text")
+        Log.i("TNS", "Before: ${row.lode_type.text} $text")
         var i = 1
         while (i < text.length) { // xóa SPACE trước sau các SIGNAL
             for ((j, key) in SIGNAL.withIndex()) {
                 if (i < text.length && key == text[i]) {
                     if (j <= 2) {
-                        if (i < text.length && SPACE == text[i + 1].toString())
+                        if (i + 1 < text.length && SPACE == text[i + 1].toString())
                             text = text.removeRange(i + 1, i + 2)
                     } else {
                         if (i >= 1 && SPACE == text[i - 1].toString())
@@ -197,6 +196,8 @@ open class LodeDialog : DialogFragment() {
 
         val type = row.lode_type.text.toString()
         val number = row.lode_number.text.toString()
+        Log.i("TNS", "After: $type $text")
+        if (number.removeSpace().isBlank()) return true
 
         // Tách mã lệnh: 1 bên mã, 1 bên số điểm
         val lenh: ArrayList<Pair<String, String>> = ArrayList()
@@ -205,11 +206,10 @@ open class LodeDialog : DialogFragment() {
             if (SIGNX == it && i >= start) {
                 var end = findEndIndex(number, i)
                 if (end < i) end = number.length
-                lenh.add(Pair(number.substring(start, i), number.substring(i, end)))
+                lenh.add(Pair(number.substring(start, i).trim(), number.substring(i, end).trim()))
                 start = end + 1
             }
         }
-        for (l in lenh) Log.i("TNS", "Pair<numbers, points> : $l")
 
         // tìm mã lệnh
         val numbers = lenh.map { it.first }
@@ -220,20 +220,43 @@ open class LodeDialog : DialogFragment() {
 
         var isValid = true
         for ((k, num) in numbers.withIndex()) {
-            var b = true
-            val point = points[k]
-            for ((index, key) in codes.withIndex()) {
-                if (num.contains(key)) {
-                    if (point.removeText().isDigitsOnly() &&
-                            num.replace(key, "").removeSpace().isBlank()) {
-                        builder.append(values[index] + SIGNX + point.removeText() + ", ")
-                        addLode(lode.byType(type), values[index], point.removeText())
-                    } else isValid = false
-                    b = false
+            var flag = true
+            val point = points[k].removeText()
+            Log.i("TNS", "$type<$num|$point>")
+
+            // xử lý 3 càng
+            if (type.toLowerCase() == TYPE[E.BC.ordinal]) {
+                var check = true
+                val bd = StringBuilder()
+                for (n in num.removeText().split(SPACE)) {
+                    check = n.isNotBlank() && n.isDigitsOnly() && (n.length == 3)
+                    if (check) bd.append(n).append(SPACE)
+                    else break
+                }
+
+                if (check && point.isDigitsOnly()) {
+                    builder.append("$bd$SIGNX$point, ")
+                    add3Cang(lode.bc, bd.toString(), point)
+                    flag = false
+                }
+                isValid = isValid && !flag
+                flag = false
+            }
+
+            if (flag) {
+                for ((index, key) in codes.withIndex()) {
+                    if (num.contains(key)) {
+                        if (point.isDigitsOnly() &&
+                                num.replace(key, "").removeSpace().isBlank()) {
+                            builder.append(values[index] + SIGNX + point + ", ")
+                            addLode(lode.byType(type), values[index], point)
+                        } else isValid = false
+                        flag = false
+                    }
                 }
             }
 
-            if (b) {
+            if (flag) {
                 var check = true
                 val bd = StringBuilder()
 //                Log.i("TNS", num.removeText())
@@ -249,16 +272,16 @@ open class LodeDialog : DialogFragment() {
                     if (!check) break
                 }
 
-//                Log.i("TNS", "$check " + point.removeText())
-                if (check && point.removeText().isDigitsOnly()) {
-                    builder.append(bd.toString() + SIGNX + point.removeText() + ", ")
-                    addLode(lode.byType(type), bd.toString(), point.removeText())
-                    b = false
+//                Log.i("TNS", "$check " + point)
+                if (check && point.isDigitsOnly()) {
+                    builder.append("$bd$SIGNX$point, ")
+                    addLode(lode.byType(type), bd.toString(), point)
+                    flag = false
                 }
             }
 
             // check valid tat ca cac code vs lenh??
-            isValid = isValid && !b
+            isValid = isValid && !flag
 //            if (!isValid) break
 //            Log.i("TNS", "isValid : $isValid")
         }
@@ -277,11 +300,18 @@ open class LodeDialog : DialogFragment() {
         return isValid
     }
 
+    private fun add3Cang(bc: RealmList<String>, num: String, point: String) {
+        for (n in num.removeSpace().split(SPACE))
+            bc.add("$n$SIGNX$point")
+        Log.d("TNS", "add3Cang : $num : $point  => $bc")
+    }
+
     private fun addLode(lode: RealmList<Int>, numbers: String, point: String) {
-        Log.i("TNS", "addLode : $numbers --  $point")
         for (num in numbers.removeSpace().split(SPACE)) {
-            lode[num.toInt()]?.plus(point.toInt())
+            val value = lode[num.toInt()]!! + point.toInt()
+            lode.add(num.toInt(), value)
         }
+        Log.d("TNS", "addLode : $numbers : $point  => $lode")
     }
 
 
@@ -296,8 +326,10 @@ open class LodeDialog : DialogFragment() {
     companion object {
         val TAG: String = LodeDialog::class.java.simpleName
         val MESSAGE = "RemoveSNSConfirmDialog.MESSAGE"
-        val TYPE = arrayOf("de giai nhat", "de", "lo", "xien", "bc")
+        val TYPE = arrayOf("de giai nhat", "de", "lo", "xien", "3 cang")
         val SPACE = " "
+
+        enum class E { DE1, DE, LO, XIEN, BC }
     }
 }
 
@@ -314,5 +346,5 @@ private fun String.removeSpace(): String {
 private fun <E> MutableList<E>.toText(): String {
     val builder = StringBuffer()
     this.forEach { builder.append(it.toString() + " ") }
-    return builder.toString()
+    return builder.toString().trim()
 }
