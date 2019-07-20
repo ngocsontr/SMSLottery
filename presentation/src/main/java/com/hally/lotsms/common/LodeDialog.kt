@@ -90,7 +90,7 @@ open class LodeDialog : DialogFragment() {
         lode_chot.setOnClickListener {
             var valid = true
             val lode = Lode()
-            rows.forEach { valid = valid && isValidRow(it, lode) }
+            rows.forEach { row: View -> valid = valid && isValidRow(row, lode) }
 
             Log.i("TNS", "Result : $lode")
             if (valid) {
@@ -223,6 +223,10 @@ open class LodeDialog : DialogFragment() {
             var flag = true
             val point = points[k].removeText()
             Log.i("TNS", "$type<$num|$point>")
+            if (point.isBlank() || !point.isDigitsOnly()) {
+                isValid = false
+                break
+            }
 
             // xử lý 3 càng
             if (type.toLowerCase() == TYPE[E.BC.ordinal]) {
