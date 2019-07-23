@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/lode_number_bubble"
         android:background="@drawable/message_out_first"
-        android:backgroundTint="#33100F9F"
+        android:backgroundTint="#33700F9F"
         android:gravity="center"
         android:textColor="@android:color/white" />
 

@@ -58,12 +58,12 @@ interface MessageRepository {
     fun markUnread(vararg threadIds: Long)
 
     fun sendMessage(
-        subId: Int,
-        threadId: Long,
-        addresses: List<String>,
-        body: String,
-        attachments: List<Attachment>,
-        delay: Int = 0
+            subId: Int,
+            threadId: Long,
+            addresses: List<String>,
+            body: String,
+            attachments: List<Attachment>,
+            delay: Int = 0
     )
 
     /**
@@ -92,6 +92,8 @@ interface MessageRepository {
     fun markDelivered(id: Long)
 
     fun markDeliveryFailed(id: Long, resultCode: Int)
+
+    fun markXuly(id: Long, flag: Boolean)
 
     fun deleteMessages(vararg messageIds: Long)
 

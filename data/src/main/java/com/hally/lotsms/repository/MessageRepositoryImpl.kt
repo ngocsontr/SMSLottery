@@ -160,6 +160,20 @@ class MessageRepositoryImpl @Inject constructor(
         realm.close()
     }
 
+    override fun markXuly(id: Long, flag: Boolean) {
+        val realm = Realm.getDefaultInstance()
+        val messages = realm.where(Message::class.java)
+                .equalTo("id", id)
+                .findAll()
+
+        realm.executeTransaction {
+            messages.forEach { message ->
+                message.xuly = flag
+            }
+        }
+        realm.close()
+    }
+
     override fun markRead(vararg threadIds: Long) {
         Realm.getDefaultInstance()?.use { realm ->
             val messages = realm.where(Message::class.java)

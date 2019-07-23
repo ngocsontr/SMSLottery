@@ -30,7 +30,6 @@ import android.text.Layout
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,6 +38,7 @@ import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.github.javiersantos.bottomdialogs.BottomDialog
 import com.hally.lotsms.R
 import com.hally.lotsms.common.LodeDialog
 import com.hally.lotsms.common.Navigator
@@ -184,12 +184,16 @@ class MessagesAdapter @Inject constructor(
 
         view.chotBtn?.let { it ->
             it.setOnClickListener {
-                if (isLodeFormat(message)) {
+                if (message.xuly) {
+                    showDialogDelLode(message)
+                } else {
+                    isLodeFormat(message)
                     showDialogLode(message)
-                    it.setBackgroundTint(Color.GREEN)
                 }
             }
         }
+        view.chotBtn.setBackgroundTint(if (message.xuly) Color.GREEN else Color.RED)
+        view.chotBtn.text = if (message.xuly) "Hủy" else "Xử lý"
 
         // Update the selected state
         view.isActivated = isSelected(message.id) || highlight == message.id
@@ -303,12 +307,21 @@ class MessagesAdapter @Inject constructor(
         lodeDialog.arguments = data
         lodeDialog.setCallback(object : LodeDialog.Callback {
             override fun onPositiveButtonClicked(lode: Lode) {
-                Log.d("TNS", message.toString())
-                lodeUtil.chot(message, lode)
+                Toast.makeText(context, "Xử lý OK!", Toast.LENGTH_SHORT).show()
+                lodeUtil.xuly(message, lode)
             }
         })
         lodeDialog.isCancelable = false
         lodeDialog.show((activity as FragmentActivity).supportFragmentManager, LodeDialog.TAG)
+    }
+
+    private fun showDialogDelLode(message: Message) {
+        BottomDialog.Builder(activity).setTitle("Chú ý")
+                .setContent("Chắc chắn hủy lô đề cho tin nhắn này!!")
+                .setPositiveText("OK")
+                .setNegativeText("Không")
+                .onPositive { lodeUtil.huy(message.id) }
+                .show()
     }
 
     private fun bindStatus(viewHolder: QkViewHolder, message: Message, next: Message?) {

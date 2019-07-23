@@ -19,6 +19,7 @@
 package com.hally.lotsms.common.util
 
 import android.content.Context
+import android.util.Log
 import com.hally.lotsms.model.Lode
 import com.hally.lotsms.model.Message
 import com.hally.lotsms.repository.ConversationRepository
@@ -36,11 +37,23 @@ class LodeUtil @Inject constructor(
         private val conversationRepo: ConversationRepository,
         private val messageRepo: MessageRepository) {
 
-    fun chot(text: Message, lode: Lode) {
-
-
+    fun xuly(message: Message, lode: Lode) {
+        Log.d("TNS", message.toString())
+        lode.smsId = message.id
+        lode.threadId = message.threadId
+        lode.body = message.body
+        lode.date = message.date
+        lode.dateSent = message.dateSent
+        Log.d("TNS", "xuly: $lode")
+        messageRepo.markXuly(message.id, true)
+        lodeRepo.insertLode(lode)
     }
 
+    fun huy(id: Long) {
+        Log.d("TNS", "huy $id")
+        messageRepo.markXuly(id, false)
+        lodeRepo.deleteLodes(id)
+    }
 
     companion object {
         val SIGNX = 'x'

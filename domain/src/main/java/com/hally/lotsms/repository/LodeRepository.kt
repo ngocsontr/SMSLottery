@@ -18,7 +18,6 @@
  */
 package com.hally.lotsms.repository
 
-import com.hally.lotsms.model.Attachment
 import com.hally.lotsms.model.Lode
 import io.realm.RealmResults
 
@@ -52,42 +51,7 @@ interface LodeRepository {
 
     fun markUnread(vararg threadIds: Long)
 
-    fun sendLode(
-            subId: Int,
-            threadId: Long,
-            addresses: List<String>,
-            body: String,
-            attachments: List<Attachment>,
-            delay: Int = 0
-    )
-
-    /**
-     * Attempts to send the SMS Lode. This can be called if the Lode has already been persisted
-     */
-    fun sendSms(Lode: Lode)
-
-    /**
-     * Attempts to cancel sending the Lode with the given id
-     */
-    fun cancelDelayedSms(id: Long)
-
-    fun insertSentSms(subId: Int, threadId: Long, address: String, body: String, date: Long): Lode
-
-    fun insertReceivedSms(subId: Int, address: String, body: String, sentTime: Long): Lode
-
-    /**
-     * Marks the Lode as sending, in case we need to retry sending it
-     */
-    fun markSending(id: Long)
-
-    fun markSent(id: Long)
-
-    fun markFailed(id: Long, resultCode: Int)
-
-    fun markDelivered(id: Long)
-
-    fun markDeliveryFailed(id: Long, resultCode: Int)
-
     fun deleteLodes(vararg LodeIds: Long)
 
+    fun insertLode(lode: Lode): Lode?
 }

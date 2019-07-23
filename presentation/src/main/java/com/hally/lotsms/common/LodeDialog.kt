@@ -92,11 +92,10 @@ open class LodeDialog : DialogFragment() {
             val lode = Lode()
             rows.forEach { row: View -> valid = valid && isValidRow(row, lode) }
 
-            Log.i("TNS", "Result : $lode")
             if (valid) {
+//                Log.i("TNS", "Result : $lode")
                 callback!!.onPositiveButtonClicked(lode)
-                Toast.makeText(context, "Xử lý OK!", Toast.LENGTH_SHORT).show()
-//                    dialog?.dismiss()
+                dialog?.dismiss()
             }
         }
         lode_huy.setOnClickListener {
@@ -162,7 +161,7 @@ open class LodeDialog : DialogFragment() {
 
         // xử lý chuẩn format x điểm lô đề : 'x'
         var text = row.lode_number.text.toString()
-        Log.i("TNS", "Before: ${row.lode_type.text} $text")
+//        Log.i("TNS", "Before: ${row.lode_type.text} $text")
         var i = 1
         while (i < text.length) { // xóa SPACE trước sau các SIGNAL
             for ((j, key) in SIGNAL.withIndex()) {
@@ -296,7 +295,7 @@ open class LodeDialog : DialogFragment() {
             val t = row.lode_number?.floatingLabelText?.toString()
             row.lode_number_bubble.text = t?.replace(",", "\n")
         }
-        if (!isValid || builder.isBlank()) {
+        if (!isValid) {
             row.lode_number.setTextColor(Color.RED)
             row.lode_number.error = "Kiểm tra lại số LÔ ĐỀ!!"
         }
@@ -307,7 +306,7 @@ open class LodeDialog : DialogFragment() {
     private fun add3Cang(bc: RealmList<String>, num: String, point: String) {
         for (n in num.removeSpace().split(SPACE))
             bc.add("$n$SIGNX$point")
-        Log.d("TNS", "add3Cang : $num : $point  => $bc")
+//        Log.d("TNS", "add3Cang : $num : $point  => $bc")
     }
 
     private fun addLode(lode: RealmList<Int>, numbers: String, point: String) {
@@ -315,7 +314,7 @@ open class LodeDialog : DialogFragment() {
             val value = lode[num.toInt()]!! + point.toInt()
             lode.add(num.toInt(), value)
         }
-        Log.d("TNS", "addLode : $numbers : $point  => $lode")
+//        Log.d("TNS", "addLode : $numbers : $point  => $lode")
     }
 
 

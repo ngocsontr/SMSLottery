@@ -20,13 +20,13 @@ package com.hally.lotsms.model
 
 import io.realm.RealmList
 import io.realm.RealmObject
+import io.realm.annotations.Index
 import io.realm.annotations.PrimaryKey
 
 open class Lode : RealmObject() {
 
     @PrimaryKey
     var id: Long = 0
-    var body: String = ""
 
     var lo: RealmList<Int> = RealmList()
     var degiainhat: RealmList<Int> = RealmList()
@@ -51,13 +51,16 @@ open class Lode : RealmObject() {
         return RealmList()
     }
 
-    var contentId: Long = 0
+    @Index
+    var threadId: Long = 0
+    var smsId: Long = 0
+    var body: String = ""
     var boxId: Int = 0
     var date: Long = 0
     var dateSent: Long = 0
     var seen: Boolean = false
 
     override fun toString(): String {
-        return "Lode(id=$id, body='$body',\ndegiainhat=$degiainhat, \nlo=$lo, \nde=$de, \nxien=$xien, \nbc=$bc, contentId=$contentId, boxId=$boxId, date=$date, dateSent=$dateSent, seen=$seen)"
+        return "Lode(id=$id, body='$body',\ndegiainhat=$degiainhat, \nlo=$lo, \nde=$de, \nxien=$xien, \nbc=$bc, threadId=$threadId,smsId=$smsId, boxId=$boxId, date=$date, dateSent=$dateSent, seen=$seen)"
     }
 }

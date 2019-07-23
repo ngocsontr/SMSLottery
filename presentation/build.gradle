@@ -186,6 +186,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
     implementation 'com.cpiz.bubbleview:bubbleview:1.0.2'
+    implementation 'com.github.javiersantos:BottomDialogs:1.2.1'
 
     // retrofit 2
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'

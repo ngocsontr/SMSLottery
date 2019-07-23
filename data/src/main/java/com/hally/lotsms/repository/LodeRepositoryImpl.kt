@@ -18,13 +18,20 @@
  */
 package com.hally.lotsms.repository
 
+import android.content.ContentUris
+import android.content.ContentValues
 import android.content.Context
+import android.provider.Telephony
+import com.hally.lotsms.extensions.anyOf
 import com.hally.lotsms.manager.ActiveConversationManager
 import com.hally.lotsms.manager.KeyManager
-import com.hally.lotsms.model.Attachment
+import com.hally.lotsms.model.Conversation
 import com.hally.lotsms.model.Lode
 import com.hally.lotsms.util.Preferences
+import io.realm.Case
+import io.realm.Realm
 import io.realm.RealmResults
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -38,88 +45,147 @@ class LodeRepositoryImpl @Inject constructor(
         private val syncRepository: SyncRepository
 ) : LodeRepository {
 
+    override fun insertLode(lode: Lode): Lode? {
+        lode.id = messageIds.newId()
+        val realm = Realm.getDefaultInstance()
+        var managedLode: Lode? = null
+        realm.executeTransaction { managedLode = realm.copyToRealmOrUpdate(lode) }
+        realm.close()
+        return managedLode
+    }
+
     override fun getLodes(threadId: Long, query: String): RealmResults<Lode> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return Realm.getDefaultInstance()
+                .where(Lode::class.java)
+                .equalTo("threadId", threadId)
+                .let { if (query.isEmpty()) it else it.contains("body", query, Case.INSENSITIVE) }
+                .sort("date")
+                .findAllAsync()
     }
 
     override fun getLode(id: Long): Lode? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return Realm.getDefaultInstance()
+                .where(Lode::class.java)
+                .equalTo("id", id)
+                .findFirst()
     }
 
     override fun getLodeForPart(id: Long): Lode? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return Realm.getDefaultInstance()
+                .where(Lode::class.java)
+                .equalTo("parts.id", id)
+                .findFirst()
     }
 
     override fun getUnreadCount(): Long {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return Realm.getDefaultInstance()
+                .where(Conversation::class.java)
+                .equalTo("archived", false)
+                .equalTo("blocked", false)
+                .equalTo("read", false)
+                .count()
     }
 
+    /**
+     * Retrieves the list of Lodes which should be shown in the notification
+     * for a given conversation
+     */
     override fun getUnreadUnseenLodes(threadId: Long): RealmResults<Lode> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return Realm.getDefaultInstance()
+                .also { it.refresh() }
+                .where(Lode::class.java)
+                .equalTo("seen", false)
+                .equalTo("read", false)
+                .equalTo("threadId", threadId)
+                .sort("date")
+                .findAll()
     }
 
     override fun getUnreadLodes(threadId: Long): RealmResults<Lode> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return Realm.getDefaultInstance()
+                .where(Lode::class.java)
+                .equalTo("read", false)
+                .equalTo("threadId", threadId)
+                .sort("date")
+                .findAll()
     }
 
     override fun markAllSeen() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val realm = Realm.getDefaultInstance()
+        val messages = realm.where(Lode::class.java).equalTo("seen", false).findAll()
+        realm.executeTransaction { messages.forEach { message -> message.seen = true } }
+        realm.close()
     }
 
     override fun markSeen(threadId: Long) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val realm = Realm.getDefaultInstance()
+        val messages = realm.where(Lode::class.java)
+                .equalTo("threadId", threadId)
+                .equalTo("seen", false)
+                .findAll()
+
+        realm.executeTransaction {
+            messages.forEach { message ->
+                message.seen = true
+            }
+        }
+        realm.close()
     }
 
     override fun markRead(vararg threadIds: Long) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Realm.getDefaultInstance()?.use { realm ->
+            val messages = realm.where(Lode::class.java)
+                    .anyOf("threadId", threadIds)
+                    .beginGroup()
+                    .equalTo("read", false)
+                    .or()
+                    .equalTo("seen", false)
+                    .endGroup()
+                    .findAll()
+
+            realm.executeTransaction {
+                messages.forEach { message ->
+                    message.seen = true
+                }
+            }
+        }
+
+        val values = ContentValues()
+        values.put(Telephony.Sms.SEEN, true)
+        values.put(Telephony.Sms.READ, true)
+
+        threadIds.forEach { threadId ->
+            try {
+                val uri = ContentUris.withAppendedId(Telephony.MmsSms.CONTENT_CONVERSATIONS_URI, threadId)
+                context.contentResolver.update(uri, values, "${Telephony.Sms.READ} = 0", null)
+            } catch (exception: Exception) {
+                Timber.w(exception)
+            }
+        }
     }
 
     override fun markUnread(vararg threadIds: Long) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        Realm.getDefaultInstance()?.use { realm ->
+            val conversation = realm.where(Conversation::class.java)
+                    .anyOf("id", threadIds)
+                    .equalTo("read", true)
+                    .findAll()
+
+            realm.executeTransaction {
+                conversation.forEach { it.read = false }
+            }
+        }
     }
 
-    override fun sendLode(subId: Int, threadId: Long, addresses: List<String>, body: String, attachments: List<Attachment>, delay: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun deleteLodes(vararg lodeIds: Long) {
+        Realm.getDefaultInstance().use { realm ->
+            realm.refresh()
 
-    override fun sendSms(Lode: Lode) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun cancelDelayedSms(id: Long) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun insertSentSms(subId: Int, threadId: Long, address: String, body: String, date: Long): Lode {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun insertReceivedSms(subId: Int, address: String, body: String, sentTime: Long): Lode {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun markSending(id: Long) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun markSent(id: Long) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun markFailed(id: Long, resultCode: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun markDelivered(id: Long) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun markDeliveryFailed(id: Long, resultCode: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun deleteLodes(vararg LodeIds: Long) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            val messages = realm.where(Lode::class.java)
+                    .anyOf("smsId", lodeIds)
+                    .findAll()
+            realm.executeTransaction { messages.deleteAllFromRealm() }
+        }
     }
 
 }
