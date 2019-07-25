@@ -75,7 +75,7 @@ open class LodeDialog : DialogFragment() {
             return
         }
 
-        message = "3 cang 876/123,234 x20k Đe giai nhat 77x10 lô chan   chan 10diem dau le x2 dit 4 x10 10x   21d 22,23,20x20d, 22   5 diem, 11x5, de 20x20k, bộ   01    100n"
+//        message = "3 cang 876/123,234 x20k Đe giai nhat 77x10 lô chan   chan 10diem dau le x2 dit 4 x10 10x   21d 22,23,20x20d, 22   5 diem, 11x5, de 20x20k, bộ   01    100n"
 //        message = TEST
         body.setText(message)
         message = message.removeSpace()
@@ -89,7 +89,7 @@ open class LodeDialog : DialogFragment() {
         }
         lode_chot.setOnClickListener {
             var valid = true
-            val lode = Lode()
+            val lode = Lode().init()
             rows.forEach { row: View -> valid = valid && isValidRow(row, lode) }
 
             if (valid) {
@@ -134,7 +134,7 @@ open class LodeDialog : DialogFragment() {
         rows.forEach { lode_container.addView(it) }
 
         rows.forEach { row ->
-            isValidRow(row, Lode())
+            isValidRow(row, Lode().init())
             row.lode_number.setOnFocusChangeListener { v, hasFocus ->
                 row.lode_number_bubble.visibility = if (hasFocus) VISIBLE else GONE
             }
@@ -311,8 +311,8 @@ open class LodeDialog : DialogFragment() {
 
     private fun addLode(lode: RealmList<Int>, numbers: String, point: String) {
         for (num in numbers.removeSpace().split(SPACE)) {
-            val value = lode[num.toInt()]!! + point.toInt()
-            lode.add(num.toInt(), value)
+            val value = lode[num.toInt()]!!
+            lode[num.toInt()] = value.plus(point.toInt())
         }
 //        Log.d("TNS", "addLode : $numbers : $point  => $lode")
     }

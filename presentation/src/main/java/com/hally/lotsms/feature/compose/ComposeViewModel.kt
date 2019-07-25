@@ -45,6 +45,7 @@ import com.hally.lotsms.manager.PermissionManager
 import com.hally.lotsms.model.*
 import com.hally.lotsms.repository.ContactRepository
 import com.hally.lotsms.repository.ConversationRepository
+import com.hally.lotsms.repository.LodeRepository
 import com.hally.lotsms.repository.MessageRepository
 import com.hally.lotsms.util.ActiveSubscriptionObservable
 import com.hally.lotsms.util.Preferences
@@ -66,30 +67,31 @@ import javax.inject.Inject
 import javax.inject.Named
 
 class ComposeViewModel @Inject constructor(
-    @Named("query") private val query: String,
-    @Named("threadId") private val threadId: Long,
-    @Named("address") private val address: String,
-    @Named("text") private val sharedText: String,
-    @Named("attachments") private val sharedAttachments: Attachments,
-    private val context: Context,
-    private val activeConversationManager: ActiveConversationManager,
-    private val addScheduledMessage: AddScheduledMessage,
-    private val billingManager: BillingManager,
-    private val cancelMessage: CancelDelayedMessage,
-    private val contactFilter: ContactFilter,
-    private val contactsRepo: ContactRepository,
-    private val conversationRepo: ConversationRepository,
-    private val deleteMessages: DeleteMessages,
-    private val markRead: MarkRead,
-    private val messageDetailsFormatter: MessageDetailsFormatter,
-    private val messageRepo: MessageRepository,
-    private val navigator: Navigator,
-    private val permissionManager: PermissionManager,
-    private val prefs: Preferences,
-    private val retrySending: RetrySending,
-    private val sendMessage: SendMessage,
-    private val subscriptionManager: SubscriptionManagerCompat,
-    private val syncContacts: ContactSync
+        @Named("query") private val query: String,
+        @Named("threadId") private val threadId: Long,
+        @Named("address") private val address: String,
+        @Named("text") private val sharedText: String,
+        @Named("attachments") private val sharedAttachments: Attachments,
+        private val context: Context,
+        private val activeConversationManager: ActiveConversationManager,
+        private val addScheduledMessage: AddScheduledMessage,
+        private val billingManager: BillingManager,
+        private val cancelMessage: CancelDelayedMessage,
+        private val contactFilter: ContactFilter,
+        private val contactsRepo: ContactRepository,
+        private val conversationRepo: ConversationRepository,
+        private val deleteMessages: DeleteMessages,
+        private val markRead: MarkRead,
+        private val messageDetailsFormatter: MessageDetailsFormatter,
+        private val messageRepo: MessageRepository,
+        private val lodeRepo: LodeRepository,
+        private val navigator: Navigator,
+        private val permissionManager: PermissionManager,
+        private val prefs: Preferences,
+        private val retrySending: RetrySending,
+        private val sendMessage: SendMessage,
+        private val subscriptionManager: SubscriptionManagerCompat,
+        private val syncContacts: ContactSync
 ) : QkViewModel<ComposeView, ComposeState>(ComposeState(
         editingMode = threadId == 0L && address.isBlank(),
         selectedConversation = threadId,
@@ -104,6 +106,7 @@ class ComposeViewModel @Inject constructor(
     private val searchSelection: Subject<Long> = BehaviorSubject.createDefault(-1)
     private val conversation: Subject<Conversation> = BehaviorSubject.create()
     private val messages: Subject<List<Message>> = BehaviorSubject.create()
+    private val lodes: Subject<List<Lode>> = BehaviorSubject.create()
 
     init {
         val initialConversation = threadId.takeIf { it != 0L }
@@ -177,6 +180,17 @@ class ComposeViewModel @Inject constructor(
                 }
                 .switchMap { messages -> messages.asObservable() }
                 .subscribe(messages::onNext)
+
+        disposables += conversation
+                .distinctUntilChanged { conversation -> conversation.id }
+                .observeOn(AndroidSchedulers.mainThread())
+                .map { conversation ->
+                    val lodes = lodeRepo.getLodes(conversation.id)
+                    newState { copy(selectedConversation = conversation.id, lodes = Pair(conversation, lodes)) }
+                    lodes
+                }
+                .switchMap { lodes -> lodes.asObservable() }
+                .subscribe(lodes::onNext)
 
         disposables += conversation
                 .map { conversation -> conversation.getTitle() }

@@ -20,12 +20,15 @@ package com.hally.lotsms.common.util
 
 import android.content.Context
 import android.util.Log
+import com.hally.lotsms.common.LodeDialog.Companion.E
 import com.hally.lotsms.model.Lode
 import com.hally.lotsms.model.Message
 import com.hally.lotsms.repository.ConversationRepository
 import com.hally.lotsms.repository.LodeRepository
 import com.hally.lotsms.repository.MessageRepository
 import com.hally.lotsms.util.Preferences
+import io.realm.RealmList
+import io.realm.RealmResults
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -39,20 +42,21 @@ class LodeUtil @Inject constructor(
 
     fun xuly(message: Message, lode: Lode) {
         Log.d("TNS", message.toString())
+        lode.id = message.id
         lode.smsId = message.id
         lode.threadId = message.threadId
         lode.body = message.body
         lode.date = message.date
         lode.dateSent = message.dateSent
         Log.d("TNS", "xuly: $lode")
-        messageRepo.markXuly(message.id, true)
         lodeRepo.insertLode(lode)
+        messageRepo.markXuly(message.id, true)
     }
 
     fun huy(id: Long) {
         Log.d("TNS", "huy $id")
-        messageRepo.markXuly(id, false)
         lodeRepo.deleteLodes(id)
+        messageRepo.markXuly(id, false)
     }
 
     companion object {
@@ -74,6 +78,21 @@ class LodeUtil @Inject constructor(
                     str = str.replace(VietNamChar[i][j], VietNamChar[0][i - 1])
             }
             return str
+        }
+
+        fun getText(type: E, data: RealmResults<Lode>): String? {
+            var maps: List<RealmList<Int>>? = null
+            when (type) {
+                E.DE1 -> maps = data.map { lode -> lode.degiainhat }
+                E.DE -> maps = data.map { lode -> lode.de }
+                E.LO -> maps = data.map { lode -> lode.lo }
+                E.XIEN -> return ""
+                E.BC -> return ""
+            }
+            if (maps.isNotEmpty()) {
+                return maps.getTotal().toString()
+            }
+            return ""
         }
 
         val MA_LENH = listOf(
@@ -367,4 +386,13 @@ class LodeUtil @Inject constructor(
                 "020,080,454x100k\n" +
                 "242,595,565x70k.393x100.t10\n"
     }
+}
+
+private fun <E> List<E>.getTotal(): Int {
+    var result = 0
+    forEach {
+        result += if (it is List<*>) it.getTotal()
+        else it as Int
+    }
+    return result
 }

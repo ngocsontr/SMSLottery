@@ -29,21 +29,31 @@
     <RelativeLayout
         android:id="@+id/lotteryList"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@id/composeBackground"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintVertical_bias="0.0">
 
-        <include layout="@layout/lode_current_time_view" />
+        <android.widget.TextClock
+            android:id="@+id/lottery_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:format12Hour="@null"
+            android:format24Hour="dd MMM yyyy - k:mm:ss"
+            android:layout_margin="@dimen/default_padding_bottom"
+            android:gravity="center"
+            android:textStyle="bold"
+            android:timeZone="GMT+7" />
 
         <com.hally.lotsms.common.widget.QkTextView
             android:id="@+id/lottery_lo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/lottery_date"
-            android:layout_margin="8dp"
+            android:layout_marginStart="20dp"
             android:gravity="left"
             android:text="Lô: "
             app:textColor="tertiary"
@@ -57,6 +67,7 @@
             android:layout_margin="8dp"
             android:gravity="left"
             android:text="Đề: "
+            android:visibility="gone"
             app:textColor="tertiary"
             app:textSize="secondary" />
     </RelativeLayout>

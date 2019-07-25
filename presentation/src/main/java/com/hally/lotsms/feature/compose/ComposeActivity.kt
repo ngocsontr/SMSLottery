@@ -41,9 +41,11 @@ import androidx.lifecycle.ViewModelProviders
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.hally.lotsms.R
+import com.hally.lotsms.common.LodeDialog
 import com.hally.lotsms.common.androidxcompat.scope
 import com.hally.lotsms.common.base.QkThemedActivity
 import com.hally.lotsms.common.util.DateFormatter
+import com.hally.lotsms.common.util.LodeUtil
 import com.hally.lotsms.common.util.extensions.*
 import com.hally.lotsms.model.Attachment
 import com.hally.lotsms.model.Contact
@@ -222,6 +224,17 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
         messageList.setVisible(state.sendAsGroup)
         messageAdapter.data = filterData(state.messages)
         messageAdapter.highlight = state.searchSelectionId
+
+        lotteryList.setOnClickListener { this.makeToast("Lô đề") }
+        state.lodes?.second?.let {
+            val builder = StringBuilder()
+            for (e in LodeDialog.Companion.E.values()) {
+                val txt = LodeUtil.getText(e, it)
+                if (txt.isNullOrBlank().not())
+                    builder.append(e.name + ": ").append(txt).append("\t")
+            }
+            lottery_lo.text = builder
+        }
 
         scheduledGroup.isVisible = state.scheduled != 0L
         scheduledTime.text = dateFormatter.getScheduledTimestamp(state.scheduled)

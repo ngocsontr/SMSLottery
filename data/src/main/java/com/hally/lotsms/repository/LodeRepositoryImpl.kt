@@ -32,6 +32,7 @@ import io.realm.Case
 import io.realm.Realm
 import io.realm.RealmResults
 import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -46,7 +47,6 @@ class LodeRepositoryImpl @Inject constructor(
 ) : LodeRepository {
 
     override fun insertLode(lode: Lode): Lode? {
-        lode.id = messageIds.newId()
         val realm = Realm.getDefaultInstance()
         var managedLode: Lode? = null
         realm.executeTransaction { managedLode = realm.copyToRealmOrUpdate(lode) }
@@ -55,10 +55,13 @@ class LodeRepositoryImpl @Inject constructor(
     }
 
     override fun getLodes(threadId: Long, query: String): RealmResults<Lode> {
+        val then = Calendar.getInstance()
+        then.add(Calendar.DAY_OF_YEAR, -1)
         return Realm.getDefaultInstance()
                 .where(Lode::class.java)
                 .equalTo("threadId", threadId)
                 .let { if (query.isEmpty()) it else it.contains("body", query, Case.INSENSITIVE) }
+                .greaterThan("date", then.timeInMillis)
                 .sort("date")
                 .findAllAsync()
     }

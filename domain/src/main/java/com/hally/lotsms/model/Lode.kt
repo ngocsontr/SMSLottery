@@ -34,12 +34,13 @@ open class Lode : RealmObject() {
     var xien: RealmList<String> = RealmList()
     var bc: RealmList<String> = RealmList()
 
-    init {
+    fun init(): Lode {
         for (i in 0..99) {
             lo.add(i, 0)
             de.add(i, 0)
             degiainhat.add(i, 0)
         }
+        return this
     }
 
     fun byType(type: String): RealmList<Int> {
