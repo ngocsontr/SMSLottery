@@ -87,7 +87,12 @@ class Preferences @Inject constructor(private val rxPrefs: RxSharedPreferences) 
     val mobileOnly = rxPrefs.getBoolean("mobileOnly", false)
     val mmsSize = rxPrefs.getInteger("mmsSize", 300)
     val logging = rxPrefs.getBoolean("logging", false)
+
     val oneDaySms = rxPrefs.getBoolean("oneDaySms", true)
+    val lastDayXSMB = rxPrefs.getString("lastDayXSMB", "")
+    val kqRaw = rxPrefs.getString("kqRaw", "")
+    val kqLode = rxPrefs.getString("kqLode", "")
+    val kqBC = rxPrefs.getString("kqBC", "")
 
     fun theme(threadId: Long = 0): Preference<Int> {
         val default = rxPrefs.getInteger("theme", 0xFF0097A7.toInt())

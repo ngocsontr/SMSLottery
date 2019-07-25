@@ -191,9 +191,9 @@ class MessagesAdapter @Inject constructor(
                     showDialogLode(message)
                 }
             }
+            it.setBackgroundTint(if (message.xuly) Color.GREEN else Color.RED)
+            it.text = if (message.xuly) "Hủy" else "Xử lý"
         }
-        view.chotBtn.setBackgroundTint(if (message.xuly) Color.GREEN else Color.RED)
-        view.chotBtn.text = if (message.xuly) "Hủy" else "Xử lý"
 
         // Update the selected state
         view.isActivated = isSelected(message.id) || highlight == message.id

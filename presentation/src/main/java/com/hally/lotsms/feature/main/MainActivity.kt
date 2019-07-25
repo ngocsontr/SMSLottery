@@ -42,6 +42,7 @@ import com.hally.lotsms.common.androidxcompat.scope
 import com.hally.lotsms.common.base.QkThemedActivity
 import com.hally.lotsms.common.network.ApiUtils
 import com.hally.lotsms.common.network.model.XsmbRss
+import com.hally.lotsms.common.util.LodeUtil
 import com.hally.lotsms.common.util.extensions.*
 import com.hally.lotsms.feature.conversations.ConversationItemTouchCallback
 import com.hally.lotsms.feature.conversations.ConversationsAdapter
@@ -83,6 +84,8 @@ class MainActivity : QkThemedActivity(), MainView {
     lateinit var itemTouchCallback: ConversationItemTouchCallback
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject
+    lateinit var lodeUtil: LodeUtil
 
     override val activityResumedIntent: Subject<Unit> = PublishSubject.create()
     override val queryChangedIntent by lazy { toolbarSearch.textChanges() }
@@ -196,24 +199,27 @@ class MainActivity : QkThemedActivity(), MainView {
     private fun getKqXsmb() {
         val builder = AlertDialog.Builder(this)
         val arrayAdapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1)
-
+        builder.setTitle("Kết quả XSMB")
+                .setAdapter(arrayAdapter, null)
+                .setPositiveButton("OK", null)
+                .create()
+                .show()
         ApiUtils.getXsmb(object : Callback<XsmbRss> {
             override fun onResponse(call: Call<XsmbRss>, response: Response<XsmbRss>) {
                 val res = response.body()
+                if (res?.items == null || res.items.isEmpty()) return
 
-                for ((index, item) in res?.items!!.withIndex()) {
-                    if (index == 3) break
+                for ((index, item) in res.items.withIndex()) {
+                    if (index == 5) break
                     arrayAdapter.add(item.title + "\n" + item.description)
                 }
-
-                builder.setTitle(res.feed?.title)
-                        .setAdapter(arrayAdapter, null)
-                        .setPositiveButton("OK", null)
-                        .create()
-                        .show()
+                arrayAdapter.notifyDataSetChanged()
+                if (lodeUtil.isSameDay(res.items[0].pubDate))
+                    lodeUtil.saveXSMB(res.items[0])
             }
 
             override fun onFailure(call: Call<XsmbRss>, t: Throwable) {
+                makeToast(t.toString())
             }
         })
     }

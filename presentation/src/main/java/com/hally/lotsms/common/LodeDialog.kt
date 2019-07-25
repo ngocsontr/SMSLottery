@@ -75,7 +75,7 @@ open class LodeDialog : DialogFragment() {
             return
         }
 
-//        message = "3 cang 876/123,234 x20k Đe giai nhat 77x10 lô chan   chan 10diem dau le x2 dit 4 x10 10x   21d 22,23,20x20d, 22   5 diem, 11x5, de 20x20k, bộ   01    100n"
+        message = "3 cang 876/123,234 x120k 111 100,200 x200k Đe giai nhat 79 97 12x200 lo chan chan x9  22,23,20x20d, 63   5 diem, 11x5, de 20x20k, bộ   01    100n"
 //        message = TEST
         body.setText(message)
         message = message.removeSpace()
@@ -336,17 +336,17 @@ open class LodeDialog : DialogFragment() {
     }
 }
 
-private fun String.removeText(): String {
+public fun String.removeText(): String {
     // tra nay day cac so phan tach = dau SPACE
     return this.replace("[^0-9]".toRegex(), LodeDialog.SPACE).removeSpace()
 }
 
-private fun String.removeSpace(): String {
+public fun String.removeSpace(): String {
     // remove duplicate SPACE
     return this.replace("\\s+".toRegex(), LodeDialog.SPACE).trim()
 }
 
-private fun <E> MutableList<E>.toText(): String {
+public fun <E> MutableList<E>.toText(): String {
     val builder = StringBuffer()
     this.forEach { builder.append(it.toString() + " ") }
     return builder.toString().trim()

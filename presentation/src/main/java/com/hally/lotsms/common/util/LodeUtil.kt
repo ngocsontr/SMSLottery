@@ -21,6 +21,9 @@ package com.hally.lotsms.common.util
 import android.content.Context
 import android.util.Log
 import com.hally.lotsms.common.LodeDialog.Companion.E
+import com.hally.lotsms.common.network.model.XsmbRss
+import com.hally.lotsms.common.removeText
+import com.hally.lotsms.common.util.extensions.isSameDay
 import com.hally.lotsms.model.Lode
 import com.hally.lotsms.model.Message
 import com.hally.lotsms.repository.ConversationRepository
@@ -29,6 +32,8 @@ import com.hally.lotsms.repository.MessageRepository
 import com.hally.lotsms.util.Preferences
 import io.realm.RealmList
 import io.realm.RealmResults
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -57,6 +62,39 @@ class LodeUtil @Inject constructor(
         Log.d("TNS", "huy $id")
         lodeRepo.deleteLodes(id)
         messageRepo.markXuly(id, false)
+    }
+
+    fun isSameDay(pubDate: String?): Boolean {
+        if (pubDate.isNullOrEmpty()) return false
+
+        val now = Calendar.getInstance()
+        val then = Calendar.getInstance()
+        val pattern = "yyyy-MM-dd HH:mm:ss"
+        val simpleDateFormat = SimpleDateFormat(pattern)
+        val date = simpleDateFormat.parse(pubDate)
+        then.timeInMillis = date.time
+        return now.isSameDay(then)
+    }
+
+    fun saveXSMB(item: XsmbRss.Item) {
+        prefs.lastDayXSMB.set(item.pubDate.toString())
+        prefs.kqRaw.set(item.title + "\n" + item.description)
+
+        val bd = StringBuilder()
+        val kqList = item.description?.split("\n")
+        kqList?.forEachIndexed { index, s ->
+            run {
+                val kq = s.split(":").toMutableList()
+                kq[1] = kq[1].removeText()
+                if (index == 0) {
+                    prefs.kqBC.set(kq[1].substring(kq[1].length - 3))
+                }
+                kq[1].split(" ").forEach { s ->
+                    bd.append(s.substring(s.length - 2)).append(" ")
+                }
+            }
+        }
+        prefs.kqLode.set(bd.trim().toString())
     }
 
     companion object {
