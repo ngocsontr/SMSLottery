@@ -18,6 +18,17 @@
   -->
 <resources>
 
+    <style name="MyBottomDialogs" parent="Theme.MaterialComponents.Light.Dialog.MinWidth">
+        <!--<item name="android:windowIsTranslucent">true</item>-->
+        <!--<item name="android:windowBackground">@android:color/transparent</item>-->
+        <!--<item name="android:windowContentOverlay">@null</item>-->
+        <!--<item name="android:windowNoTitle">false</item>-->
+        <item name="android:windowIsFloating">false</item>
+        <!--<item name="android:layout_gravity">bottom</item>-->
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowAnimationStyle">@style/BottomDialogsAnimation</item>
+    </style>
+
     <style name="TextPrimary">
         <item name="textColor">primary</item>
         <item name="textSize">primary</item>

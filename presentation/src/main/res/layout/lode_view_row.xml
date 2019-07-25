@@ -10,7 +10,7 @@
         android:id="@+id/lode_type"
         style="@style/TextPrimary"
         android:layout_width="60dp"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_below="@id/lode_number_bubble"
         android:background="@drawable/message_out_first"
         android:backgroundTint="#303F9F"

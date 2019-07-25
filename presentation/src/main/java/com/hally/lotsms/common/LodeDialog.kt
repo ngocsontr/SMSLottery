@@ -24,10 +24,9 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.text.isDigitsOnly
@@ -54,7 +53,7 @@ open class LodeDialog : DialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         message = arguments?.getString(MESSAGE).toString()
-        setStyle(STYLE_NO_FRAME, android.R.style.Theme_Material_Light_Dialog_MinWidth)
+        setStyle(STYLE_NO_FRAME, R.style.MyBottomDialogs)
         super.onCreate(savedInstanceState)
     }
 
@@ -64,9 +63,12 @@ open class LodeDialog : DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        val dl = super.onCreateDialog(savedInstanceState)
-        dl.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
-        return dl
+        val dialog = super.onCreateDialog(savedInstanceState)
+        dialog.window!!.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        dialog.window!!.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+//        dialog.window!!.setGravity(Gravity.BOTTOM)
+//        dialog.setTitle("Xử lý Lô Đề")
+        return dialog
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -136,7 +138,7 @@ open class LodeDialog : DialogFragment() {
         rows.forEach { row ->
             isValidRow(row, Lode().init())
             row.lode_number.setOnFocusChangeListener { v, hasFocus ->
-                row.lode_number_bubble.visibility = if (hasFocus) VISIBLE else GONE
+                row.lode_number_bubble.visibility = if (hasFocus) View.VISIBLE else View.GONE
             }
             row.lode_type.setOnClickListener {
                 (it as TextView).text = TYPE[(++position) % TYPE.size].toUpperCase()
