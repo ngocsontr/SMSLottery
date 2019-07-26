@@ -79,43 +79,49 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:paddingTop="10dp"
+            android:paddingStart="10dp"
             app:layout_constraintBottom_toTopOf="@id/recyclerView"
             app:layout_constraintTop_toBottomOf="@id/toolbar">
 
             <TextView
                 android:id="@+id/datePicker"
-                style="@style/TextSecondary"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/default_padding_bottom"
+                android:background="@drawable/lode_button"
                 android:gravity="center"
-                android:padding="8dp"
+                android:padding="@dimen/bottom_ellipsis_height"
                 android:text="@string/datePicker1Day"
-                android:textSize="25sp" />
+                android:textColor="@color/tools_theme"
+                android:textSize="22sp" />
 
             <TextView
                 android:id="@+id/kq_xsmb"
-                style="@style/TextSecondary"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/default_padding_bottom"
+                android:background="@drawable/lode_button"
                 android:gravity="center"
-                android:padding="8dp"
+                android:padding="@dimen/bottom_ellipsis_height"
                 android:text="XSMB"
-                android:textSize="25sp" />
+                android:textColor="@color/tools_theme"
+                android:textSize="22sp" />
 
             <TextView
                 android:id="@+id/tongket"
-                style="@style/TextSecondary"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_height="40dp"
+                android:layout_marginEnd="@dimen/default_padding_bottom"
+                android:background="@drawable/lode_button"
                 android:gravity="center"
-                android:padding="8dp"
+                android:padding="@dimen/bottom_ellipsis_height"
                 android:text="Tổng hợp"
-                android:textSize="25sp" />
+                android:textColor="@color/tools_theme"
+                android:textSize="22sp" />
         </LinearLayout>
-
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"

@@ -22,7 +22,6 @@ import android.content.Context
 import android.util.Log
 import com.hally.lotsms.common.LodeDialog.Companion.E
 import com.hally.lotsms.common.network.model.XsmbRss
-import com.hally.lotsms.common.removeText
 import com.hally.lotsms.common.util.extensions.isSameDay
 import com.hally.lotsms.model.Lode
 import com.hally.lotsms.model.Message
@@ -88,6 +87,7 @@ class LodeUtil @Inject constructor(
                 kq[1] = kq[1].removeText()
                 if (index == 0) {
                     prefs.kqBC.set(kq[1].substring(kq[1].length - 3))
+                    bd.append(s.substring(s.length - 2)).append(" ")
                 }
                 kq[1].split(" ").forEach { s ->
                     bd.append(s.substring(s.length - 2)).append(" ")
@@ -96,6 +96,37 @@ class LodeUtil @Inject constructor(
         }
         prefs.kqLode.set(bd.trim().toString())
     }
+
+    fun getText(type: E, data: RealmResults<Lode>): String? {
+        var maps: List<RealmList<Int>>? = null
+        var count = 0
+        val lo = prefs.kqLode.get().split(" ").toTypedArray()
+        val bc = arrayOf(prefs.kqBC.get())
+        val de = arrayOf(lo[0])
+        val de1 = arrayOf(lo[1])
+        when (type) {
+            E.DE1 -> {
+                maps = data.map { lode -> lode.degiainhat }
+                count = maps.getSoTrungThuong(de1)
+            }
+            E.DE -> {
+                maps = data.map { lode -> lode.de }
+                count = maps.getSoTrungThuong(de)
+            }
+            E.LO -> {
+                maps = data.map { lode -> lode.lo }
+                count = maps.getSoTrungThuong(lo)
+            }
+            E.XIEN -> return ""
+            E.BC -> return ""
+        }
+        if (maps.isNotEmpty()) {
+            val i: Int = maps.getTongDanh()
+            return "$count/$i"
+        }
+        return ""
+    }
+
 
     companion object {
         val SIGNX = 'x'
@@ -116,21 +147,6 @@ class LodeUtil @Inject constructor(
                     str = str.replace(VietNamChar[i][j], VietNamChar[0][i - 1])
             }
             return str
-        }
-
-        fun getText(type: E, data: RealmResults<Lode>): String? {
-            var maps: List<RealmList<Int>>? = null
-            when (type) {
-                E.DE1 -> maps = data.map { lode -> lode.degiainhat }
-                E.DE -> maps = data.map { lode -> lode.de }
-                E.LO -> maps = data.map { lode -> lode.lo }
-                E.XIEN -> return ""
-                E.BC -> return ""
-            }
-            if (maps.isNotEmpty()) {
-                return maps.getTotal().toString()
-            }
-            return ""
         }
 
         val MA_LENH = listOf(
@@ -424,13 +440,4 @@ class LodeUtil @Inject constructor(
                 "020,080,454x100k\n" +
                 "242,595,565x70k.393x100.t10\n"
     }
-}
-
-private fun <E> List<E>.getTotal(): Int {
-    var result = 0
-    forEach {
-        result += if (it is List<*>) it.getTotal()
-        else it as Int
-    }
-    return result
 }

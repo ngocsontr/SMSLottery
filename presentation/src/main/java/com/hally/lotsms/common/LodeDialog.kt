@@ -35,6 +35,9 @@ import com.hally.lotsms.R
 import com.hally.lotsms.common.util.LodeUtil
 import com.hally.lotsms.common.util.LodeUtil.Companion.SIGNAL
 import com.hally.lotsms.common.util.LodeUtil.Companion.SIGNX
+import com.hally.lotsms.common.util.removeSpace
+import com.hally.lotsms.common.util.removeText
+import com.hally.lotsms.common.util.toText
 import com.hally.lotsms.model.Lode
 import io.realm.RealmList
 import kotlinx.android.synthetic.main.lode_dialog.*
@@ -336,20 +339,4 @@ open class LodeDialog : DialogFragment() {
 
         enum class E { DE1, DE, LO, XIEN, BC }
     }
-}
-
-public fun String.removeText(): String {
-    // tra nay day cac so phan tach = dau SPACE
-    return this.replace("[^0-9]".toRegex(), LodeDialog.SPACE).removeSpace()
-}
-
-public fun String.removeSpace(): String {
-    // remove duplicate SPACE
-    return this.replace("\\s+".toRegex(), LodeDialog.SPACE).trim()
-}
-
-public fun <E> MutableList<E>.toText(): String {
-    val builder = StringBuffer()
-    this.forEach { builder.append(it.toString() + " ") }
-    return builder.toString().trim()
 }

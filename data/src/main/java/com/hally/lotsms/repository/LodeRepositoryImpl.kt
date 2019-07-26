@@ -61,7 +61,7 @@ class LodeRepositoryImpl @Inject constructor(
                 .where(Lode::class.java)
                 .equalTo("threadId", threadId)
                 .let { if (query.isEmpty()) it else it.contains("body", query, Case.INSENSITIVE) }
-                .greaterThan("date", then.timeInMillis)
+//                .greaterThan("date", then.timeInMillis) // lấy giá trị trong ngày
                 .sort("date")
                 .findAllAsync()
     }

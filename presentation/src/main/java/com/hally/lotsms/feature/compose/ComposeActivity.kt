@@ -38,6 +38,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import com.github.javiersantos.bottomdialogs.BottomDialog
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.hally.lotsms.R
@@ -47,10 +48,7 @@ import com.hally.lotsms.common.base.QkThemedActivity
 import com.hally.lotsms.common.util.DateFormatter
 import com.hally.lotsms.common.util.LodeUtil
 import com.hally.lotsms.common.util.extensions.*
-import com.hally.lotsms.model.Attachment
-import com.hally.lotsms.model.Contact
-import com.hally.lotsms.model.Conversation
-import com.hally.lotsms.model.Message
+import com.hally.lotsms.model.*
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
 import com.uber.autodispose.kotlin.autoDisposable
@@ -60,6 +58,7 @@ import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.compose_activity.*
+import kotlinx.android.synthetic.main.lode_current_total.*
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -84,6 +83,8 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
     lateinit var messageAdapter: MessagesAdapter
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
+    @Inject
+    lateinit var lodeUtil: LodeUtil
 
     override val activityVisibleIntent: Subject<Boolean> = PublishSubject.create()
     override val queryChangedIntent: Observable<CharSequence> by lazy { chipsAdapter.textChanges }
@@ -225,17 +226,6 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
         messageAdapter.data = filterData(state.messages)
         messageAdapter.highlight = state.searchSelectionId
 
-        lotteryList.setOnClickListener { this.makeToast("Lô đề") }
-        state.lodes?.second?.let {
-            val builder = StringBuilder()
-            for (e in LodeDialog.Companion.E.values()) {
-                val txt = LodeUtil.getText(e, it)
-                if (txt.isNullOrBlank().not())
-                    builder.append(e.name + ": ").append(txt).append("\t")
-            }
-            lottery_lo.text = builder
-        }
-
         scheduledGroup.isVisible = state.scheduled != 0L
         scheduledTime.text = dateFormatter.getScheduledTimestamp(state.scheduled)
 
@@ -254,6 +244,37 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
 
         send.isEnabled = state.canSend
         send.imageAlpha = if (state.canSend) 255 else 128
+
+        lotteryList.setOnClickListener { showDetalDialog(state.lodes?.second) }
+        kq_xsmb.setOnClickListener { showKqDialog() }
+        lode_settings.setOnClickListener { showSettingDialog() }
+        state.lodes?.second?.let {
+            val builder = StringBuilder()
+            for (e in LodeDialog.Companion.E.values()) {
+                val txt = lodeUtil.getText(e, it)
+                if (txt.isNullOrBlank().not())
+                    builder.append(e.name + ": ").append(txt).append("\n")
+            }
+            lottery_lo.text = builder
+        }
+    }
+
+    private fun showDetalDialog(second: RealmResults<Lode>?) {
+        BottomDialog.Builder(this).setTitle("Tổng kết")
+                .setContent(second.toString())
+                .show()
+    }
+
+    private fun showSettingDialog() {
+        BottomDialog.Builder(this).setTitle("Settings")
+                .setCustomView(layoutInflater.inflate(R.layout.notification_action, null))
+                .show()
+    }
+
+    private fun showKqDialog() {
+        BottomDialog.Builder(this).setTitle("Kết quả XSMB")
+                .setContent(prefs.kqRaw.get())
+                .show()
     }
 
     private fun filterData(data: Pair<Conversation, RealmResults<Message>>?): Pair<Conversation, RealmResults<Message>>? {
