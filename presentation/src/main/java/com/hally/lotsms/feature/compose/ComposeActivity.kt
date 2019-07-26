@@ -25,6 +25,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.ContentValues
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -45,6 +46,8 @@ import com.hally.lotsms.R
 import com.hally.lotsms.common.LodeDialog.Companion.E
 import com.hally.lotsms.common.androidxcompat.scope
 import com.hally.lotsms.common.base.QkThemedActivity
+import com.hally.lotsms.common.network.ApiUtils
+import com.hally.lotsms.common.network.model.XsmbRss
 import com.hally.lotsms.common.util.DateFormatter
 import com.hally.lotsms.common.util.LodeUtil
 import com.hally.lotsms.common.util.extensions.*
@@ -60,6 +63,9 @@ import io.reactivex.subjects.Subject
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.compose_activity.*
 import kotlinx.android.synthetic.main.lode_current_total.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -249,8 +255,11 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
         lotteryList.setOnClickListener { showDetalDialog(state.lodes?.second) }
         kq_xsmb.setOnClickListener { showKqDialog() }
         lode_settings.setOnClickListener { showSettingDialog() }
+        loadLodeTongKet(state.lodes?.second)
+    }
 
-        state.lodes?.second?.let {
+    private fun loadLodeTongKet(second: RealmResults<Lode>?) {
+        second?.let {
             val giaLo = 23
             var chi = 0
             var thu = 0
@@ -259,9 +268,10 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
             for (e in E.values()) {
                 val txt = lodeUtil.getText(e, it)
                 if (!txt.isNullOrBlank()) {
+                    builder.append("${e.vni} : ")
                     builder.append(txt)
                     builder.append(if (e == E.LO || e == E.XIEN) " Điểm " else " k ")
-                    builder.append(" <${e.vni}>").append("\n")
+                    builder.append("\n")
 
                     val arr = txt.split("/")
                     chi += arr[0].toInt() * e.price
@@ -272,6 +282,7 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
             lottery_lo.text = builder//.delete(builder.length - 2, builder.length)
             val tk = thu - chi
             val emo = if (tk >= 0) "\uD83E\uDD29" else "\uD83D\uDE30"
+            if (tk < 0) tongket.setTextColor(Color.RED)
             tongket.text = "$emo ${tk.format()}k"
         }
     }
@@ -291,9 +302,28 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
     }
 
     private fun showKqDialog() {
-        BottomDialog.Builder(this).setTitle("Kết quả XSMB")
-                .setContent(prefs.kqRaw.get())
-                .show()
+        if (lodeUtil.isSameDay(prefs.lastDayXSMB.get())) {
+            BottomDialog.Builder(this).setTitle("Kết quả XSMB")
+                    .setContent(prefs.kqRaw.get())
+                    .show()
+
+        } else ApiUtils.getXsmb(object : Callback<XsmbRss> {
+            override fun onResponse(call: Call<XsmbRss>, response: Response<XsmbRss>) {
+                val res = response.body()
+                if (res?.items == null || res.items.isEmpty()) return
+
+                if (lodeUtil.isSameDay(res.items[0].pubDate))
+                    lodeUtil.saveXSMB(res.items[0])
+
+                BottomDialog.Builder(this@ComposeActivity).setTitle("Kết quả XSMB")
+                        .setContent(prefs.kqRaw.get())
+                        .show()
+            }
+
+            override fun onFailure(call: Call<XsmbRss>, t: Throwable) {
+                makeToast(t.toString())
+            }
+        })
     }
 
     private fun filterData(data: Pair<Conversation, RealmResults<Message>>?): Pair<Conversation, RealmResults<Message>>? {

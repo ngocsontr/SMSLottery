@@ -114,8 +114,13 @@ class LodeUtil @Inject constructor(
                 maps = data.map { lode -> lode.lo }
                 target = kqLo()
             }
-            E.XIEN -> return ""
-            E.BC -> return ""
+            E.XIEN -> {
+                return ""
+            }
+            E.BC -> {
+                target = kqBc()
+                return ""
+            }
         }
         if (maps.isNotEmpty()) {
             val arr = getLodeSummary(maps)
@@ -124,15 +129,24 @@ class LodeUtil @Inject constructor(
         return ""
     }
 
-    fun kqLo(): Array<Int> = prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()
+    fun kqLo(): Array<Int> =
+            if (isSameDay(prefs.lastDayXSMB.get()))
+                prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()
+            else arrayOf()
 
     fun kqDe(): Array<Int> =
-            arrayOf(prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()[0])
+            if (isSameDay(prefs.lastDayXSMB.get()))
+                arrayOf(prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()[0])
+            else arrayOf()
 
     fun kqDe1(): Array<Int> =
-            arrayOf(prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()[1])
+            if (isSameDay(prefs.lastDayXSMB.get()))
+                arrayOf(prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()[1])
+            else arrayOf()
 
-    fun kqBc(): Array<Int> = arrayOf(prefs.kqBC.get().toInt())
+    fun kqBc(): Array<Int> =
+            if (isSameDay(prefs.lastDayXSMB.get())) arrayOf(prefs.kqBC.get().toInt())
+            else arrayOf()
 
     fun getLodeAllArray(data: RealmResults<Lode>): Lode {
         val result = Lode().init()
