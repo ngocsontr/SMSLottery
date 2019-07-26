@@ -42,7 +42,7 @@ import com.github.javiersantos.bottomdialogs.BottomDialog
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.hally.lotsms.R
-import com.hally.lotsms.common.LodeDialog
+import com.hally.lotsms.common.LodeDialog.Companion.E
 import com.hally.lotsms.common.androidxcompat.scope
 import com.hally.lotsms.common.base.QkThemedActivity
 import com.hally.lotsms.common.util.DateFormatter
@@ -59,6 +59,7 @@ import io.reactivex.subjects.Subject
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.compose_activity.*
 import kotlinx.android.synthetic.main.lode_current_total.*
+import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -248,21 +249,40 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
         lotteryList.setOnClickListener { showDetalDialog(state.lodes?.second) }
         kq_xsmb.setOnClickListener { showKqDialog() }
         lode_settings.setOnClickListener { showSettingDialog() }
+
         state.lodes?.second?.let {
+            val giaLo = 23
+            var chi = 0
+            var thu = 0
+
             val builder = StringBuilder()
-            for (e in LodeDialog.Companion.E.values()) {
+            for (e in E.values()) {
                 val txt = lodeUtil.getText(e, it)
-                if (txt.isNullOrBlank().not())
-                    builder.append(e.name + ": ").append(txt).append("\n")
+                if (!txt.isNullOrBlank()) {
+                    builder.append(txt)
+                    builder.append(if (e == E.LO || e == E.XIEN) " Điểm " else " k ")
+                    builder.append(" <${e.vni}>").append("\n")
+
+                    val arr = txt.split("/")
+                    chi += arr[0].toInt() * e.price
+                    thu += arr[1].toInt() * if (e == E.LO || e == E.XIEN) giaLo else 1
+                }
             }
-            lottery_lo.text = builder
+            builder.append("Chi/Thu: <$chi / $thu>")
+            lottery_lo.text = builder//.delete(builder.length - 2, builder.length)
+            val tk = chi - thu
+            val dec = DecimalFormat("#,###.#")
+            val emo = if (tk >= 0) "\uD83E\uDD29" else "\uD83D\uDE30"
+            tongket.text = "$emo ${dec.format(tk)}k"
         }
     }
 
     private fun showDetalDialog(second: RealmResults<Lode>?) {
-        BottomDialog.Builder(this).setTitle("Tổng kết")
-                .setContent(second.toString())
-                .show()
+        second?.let {
+            BottomDialog.Builder(this).setTitle("Tổng kết")
+                    .setContent(lodeUtil.getLodeAllArray(it).toDisplay())
+                    .show()
+        }
     }
 
     private fun showSettingDialog() {

@@ -20,11 +20,14 @@ package com.hally.lotsms.common.util
 
 import com.hally.lotsms.common.LodeDialog
 
-fun <E> List<E>.getSoTrungThuong(targets: Array<String>): Int {
+fun <E> List<E>.getSoTrungThuong(targets: Array<Int>): Int {
     var result = 0
-    forEach {
-        if (it is List<*>) it.getTongDanh()
-        else if (targets.contains(it as String)) result += it as Int
+    forEachIndexed { index, it ->
+        result += when {
+            it is List<*> -> it.getSoTrungThuong(targets)
+            targets.contains(index) -> it as Int
+            else -> 0
+        }
     }
     return result
 }

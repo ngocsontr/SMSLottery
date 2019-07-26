@@ -20,6 +20,7 @@ package com.hally.lotsms.common.util
 
 import android.content.Context
 import android.util.Log
+import com.hally.lotsms.common.LodeDialog
 import com.hally.lotsms.common.LodeDialog.Companion.E
 import com.hally.lotsms.common.network.model.XsmbRss
 import com.hally.lotsms.common.util.extensions.isSameDay
@@ -35,6 +36,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.collections.ArrayList
 
 @Singleton
 class LodeUtil @Inject constructor(
@@ -98,33 +100,81 @@ class LodeUtil @Inject constructor(
     }
 
     fun getText(type: E, data: RealmResults<Lode>): String? {
-        var maps: List<RealmList<Int>>? = null
-        var count = 0
-        val lo = prefs.kqLode.get().split(" ").toTypedArray()
-        val bc = arrayOf(prefs.kqBC.get())
-        val de = arrayOf(lo[0])
-        val de1 = arrayOf(lo[1])
+        val maps: List<RealmList<Int>>
+        val target: Array<Int>
         when (type) {
             E.DE1 -> {
                 maps = data.map { lode -> lode.degiainhat }
-                count = maps.getSoTrungThuong(de1)
+                target = kqDe1()
             }
             E.DE -> {
                 maps = data.map { lode -> lode.de }
-                count = maps.getSoTrungThuong(de)
+                target = kqDe()
             }
             E.LO -> {
                 maps = data.map { lode -> lode.lo }
-                count = maps.getSoTrungThuong(lo)
+                target = kqLo()
             }
             E.XIEN -> return ""
             E.BC -> return ""
         }
         if (maps.isNotEmpty()) {
-            val i: Int = maps.getTongDanh()
-            return "$count/$i"
+            val arr = getLodeSummary(maps)
+            return "${arr.getSoTrungThuong(target)}/${arr.getTongDanh()}"
         }
         return ""
+    }
+
+    fun kqLo(): Array<Int> = prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()
+
+    fun kqDe(): Array<Int> =
+            arrayOf(prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()[0])
+
+    fun kqDe1(): Array<Int> =
+            arrayOf(prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()[1])
+
+    fun kqBc(): Array<Int> = arrayOf(prefs.kqBC.get().toInt())
+
+    fun getLodeAllArray(data: RealmResults<Lode>): Lode {
+        val result = Lode().init()
+        LodeDialog.Companion.E.values().forEach {
+            when (it) {
+                E.DE1 -> {
+                    getLodeSummary(data.map { lode -> lode.degiainhat }).forEachIndexed { index, value ->
+                        result.degiainhat[index] = result.degiainhat[index]!!.plus(value)
+                    }
+                }
+                E.DE -> {
+                    getLodeSummary(data.map { lode -> lode.de }).forEachIndexed { index, value ->
+                        result.de[index] = result.de[index]!!.plus(value)
+                    }
+                }
+                E.LO -> {
+                    getLodeSummary(data.map { lode -> lode.lo }).forEachIndexed { index, value ->
+                        result.lo[index] = result.lo[index]!!.plus(value)
+                    }
+                }
+                E.XIEN -> {
+                    data.map { lode -> lode.xien }.forEachIndexed { _, value ->
+                        result.xien.addAll(value)
+                    }
+                }
+                E.BC -> {
+                    data.map { lode -> lode.bc }.forEachIndexed { _, value ->
+                        result.bc.addAll(value)
+                    }
+                }
+            }
+        }
+        return result
+    }
+
+    fun getLodeSummary(maps: List<RealmList<Int>>): ArrayList<Int> {
+        val arr = ArrayList<Int>()
+        for (i in 0..99) {
+            arr.add(i, maps.map { it[i] }.sumBy { it ?: 0 })
+        }
+        return arr
     }
 
 

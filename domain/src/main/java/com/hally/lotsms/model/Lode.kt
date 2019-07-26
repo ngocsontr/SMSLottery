@@ -64,4 +64,28 @@ open class Lode : RealmObject() {
     override fun toString(): String {
         return "Lode(id=$id, body='$body',\ndegiainhat=$degiainhat, \nlo=$lo, \nde=$de, \nxien=$xien, \nbc=$bc, threadId=$threadId,smsId=$smsId, boxId=$boxId, date=$date, dateSent=$dateSent, seen=$seen)"
     }
+
+    fun toDisplay(): String {
+        val sb = StringBuilder()
+        sb.append("Lô\n${lo.toDisplay()}\n\n" +
+                "Đề giải nhất\n${degiainhat.toDisplay()}\n\n" +
+                "Đề\n${de.toDisplay()}\n\n" +
+                "Xiên\n${xien.toString()}\n\n" +
+                "Ba càng\n${bc}")
+
+        return sb.toString()
+    }
+}
+
+private fun <E> RealmList<E>.toDisplay(): String {
+    val sb = StringBuilder()
+    forEachIndexed { index, e ->
+        val prefix = "Đầu ${index / 10} : "
+        if (e as Int > 0) {
+            if (!sb.contains(prefix)) sb.append("\n").append(prefix)
+            sb.append("${index}x$e ")
+        }
+    }
+
+    return sb.delete(0, 1).toString()
 }

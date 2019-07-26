@@ -334,9 +334,11 @@ open class LodeDialog : DialogFragment() {
     companion object {
         val TAG: String = LodeDialog::class.java.simpleName
         val MESSAGE = "RemoveSNSConfirmDialog.MESSAGE"
-        val TYPE = arrayOf("de giai nhat", "de", "lo", "xien", "3 cang")
+        val TYPE = arrayOf("lo", "de giai nhat", "de", "xien", "3 cang")
         val SPACE = " "
 
-        enum class E { DE1, DE, LO, XIEN, BC }
+        enum class E(val vni: String, val price: Int) {
+            LO("Lô", 80), DE1("Đề giải nhất", 70), DE("Đề", 70), XIEN("Lô Xiên", 230), BC("Ba Càng", 400)
+        }
     }
 }
