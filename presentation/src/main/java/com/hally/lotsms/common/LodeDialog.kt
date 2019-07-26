@@ -338,7 +338,9 @@ open class LodeDialog : DialogFragment() {
         val SPACE = " "
 
         enum class E(val vni: String, val price: Int) {
-            LO("Lô", 80), DE1("Đề giải nhất", 70), DE("Đề", 70), XIEN("Lô Xiên", 230), BC("Ba Càng", 400)
+            LO("Lô", 80),
+            DE1("Đề giải nhất", 70), DE("Đề", 70),
+            XIEN("Lô Xiên", 230), BC("Ba Càng", 400)
         }
     }
 }

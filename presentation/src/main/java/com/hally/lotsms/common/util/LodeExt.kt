@@ -19,6 +19,7 @@
 package com.hally.lotsms.common.util
 
 import com.hally.lotsms.common.LodeDialog
+import java.text.DecimalFormat
 
 fun <E> List<E>.getSoTrungThuong(targets: Array<Int>): Int {
     var result = 0
@@ -58,3 +59,6 @@ fun <E> MutableList<E>.toText(): String {
     return builder.toString().trim()
 }
 
+fun Number.format(): String {
+    return DecimalFormat("#,###.#").format(this)
+}

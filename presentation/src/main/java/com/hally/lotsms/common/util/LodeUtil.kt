@@ -89,7 +89,6 @@ class LodeUtil @Inject constructor(
                 kq[1] = kq[1].removeText()
                 if (index == 0) {
                     prefs.kqBC.set(kq[1].substring(kq[1].length - 3))
-                    bd.append(s.substring(s.length - 2)).append(" ")
                 }
                 kq[1].split(" ").forEach { s ->
                     bd.append(s.substring(s.length - 2)).append(" ")

@@ -48,6 +48,7 @@ import com.hally.lotsms.common.base.QkThemedActivity
 import com.hally.lotsms.common.util.DateFormatter
 import com.hally.lotsms.common.util.LodeUtil
 import com.hally.lotsms.common.util.extensions.*
+import com.hally.lotsms.common.util.format
 import com.hally.lotsms.model.*
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
@@ -59,7 +60,6 @@ import io.reactivex.subjects.Subject
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.compose_activity.*
 import kotlinx.android.synthetic.main.lode_current_total.*
-import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -270,10 +270,9 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
             }
             builder.append("Chi/Thu: <$chi / $thu>")
             lottery_lo.text = builder//.delete(builder.length - 2, builder.length)
-            val tk = chi - thu
-            val dec = DecimalFormat("#,###.#")
+            val tk = thu - chi
             val emo = if (tk >= 0) "\uD83E\uDD29" else "\uD83D\uDE30"
-            tongket.text = "$emo ${dec.format(tk)}k"
+            tongket.text = "$emo ${tk.format()}k"
         }
     }
 
