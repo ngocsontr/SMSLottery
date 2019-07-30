@@ -184,10 +184,21 @@ class LodeRepositoryImpl @Inject constructor(
         Realm.getDefaultInstance().use { realm ->
             realm.refresh()
 
-            val messages = realm.where(Lode::class.java)
+            val lodes = realm.where(Lode::class.java)
                     .anyOf("smsId", lodeIds)
                     .findAll()
-            realm.executeTransaction { messages.deleteAllFromRealm() }
+            realm.executeTransaction { lodes.deleteAllFromRealm() }
+        }
+    }
+
+    override fun deleteAllLode(threadid: Long?) {
+        Realm.getDefaultInstance().use { realm ->
+            realm.refresh()
+
+            val lodes = if (threadid != null) realm.where(Lode::class.java)
+                    .equalTo("threadId", threadid).findAll()
+            else realm.where(Lode::class.java).findAll()
+            realm.executeTransaction { lodes.deleteAllFromRealm() }
         }
     }
 

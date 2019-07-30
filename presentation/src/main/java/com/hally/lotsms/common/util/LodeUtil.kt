@@ -65,6 +65,16 @@ class LodeUtil @Inject constructor(
         messageRepo.markXuly(id, false)
     }
 
+    fun clearData(id: Long?) {
+        lodeRepo.deleteAllLode(id)
+//        messageRepo.markXuly(id, false)
+    }
+
+    fun update(id: Long, gia_lo: String, tongSo: String) {
+        conversationRepo.setGiaLo(gia_lo.toInt(), id)
+        prefs.tongSoLode.set(tongSo.toInt())
+    }
+
     fun isSameDay(pubDate: String?): Boolean {
         if (pubDate.isNullOrEmpty()) return false
 
@@ -123,8 +133,8 @@ class LodeUtil @Inject constructor(
             }
         }
         if (maps.isNotEmpty()) {
-            val arr = getLodeSummary(maps)
-            return "${arr.getSoTrungThuong(target)}/${arr.getTongDanh()}"
+            val arr = getLodeSummary(maps) // mảng từ 0..99 số lô đề
+            return "${arr.getBingoLode(target)}/${arr.getTongDanh()}"
         }
         return ""
     }

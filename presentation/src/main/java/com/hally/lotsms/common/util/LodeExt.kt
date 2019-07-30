@@ -33,6 +33,16 @@ fun <E> List<E>.getSoTrungThuong(targets: Array<Int>): Int {
     return result
 }
 
+fun <E> List<E>.getBingoLode(targets: Array<Int>): Int {
+    var result = 0
+    forEachIndexed { index, it ->
+        targets.forEach { i: Int ->
+            if (index == i) result += it as Int
+        }
+    }
+    return result
+}
+
 fun <E> List<E>.getTongDanh(): Int {
     var result = 0
     forEach {

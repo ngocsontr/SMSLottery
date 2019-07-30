@@ -53,5 +53,7 @@ interface LodeRepository {
 
     fun deleteLodes(vararg LodeIds: Long)
 
+    fun deleteAllLode(threadid: Long?)
+
     fun insertLode(lode: Lode): Lode?
 }

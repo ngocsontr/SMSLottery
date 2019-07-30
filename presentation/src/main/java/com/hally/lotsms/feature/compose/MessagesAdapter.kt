@@ -19,12 +19,10 @@
 package com.hally.lotsms.feature.compose
 
 import android.animation.ObjectAnimator
-import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Build
-import android.os.Bundle
 import android.telephony.PhoneNumberUtils
 import android.text.Layout
 import android.text.Spannable
@@ -35,12 +33,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
-import android.widget.Toast
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.github.javiersantos.bottomdialogs.BottomDialog
 import com.hally.lotsms.R
-import com.hally.lotsms.common.LodeDialog
 import com.hally.lotsms.common.Navigator
 import com.hally.lotsms.common.base.QkRealmAdapter
 import com.hally.lotsms.common.base.QkViewHolder
@@ -56,7 +50,6 @@ import com.hally.lotsms.feature.compose.BubbleUtils.canGroup
 import com.hally.lotsms.feature.compose.BubbleUtils.getBubble
 import com.hally.lotsms.feature.compose.part.PartsAdapter
 import com.hally.lotsms.model.Conversation
-import com.hally.lotsms.model.Lode
 import com.hally.lotsms.model.Message
 import com.hally.lotsms.model.Recipient
 import com.hally.lotsms.util.Preferences
@@ -123,7 +116,7 @@ class MessagesAdapter @Inject constructor(
     private val subs = subscriptionManager.activeSubscriptionInfoList
 
     var theme: Colors.Theme = colors.theme()
-    lateinit var activity: Activity
+    lateinit var activity: ComposeActivity
 
     /**
      * If the viewType is negative, then the viewHolder has an attachment. We'll consider
@@ -185,10 +178,10 @@ class MessagesAdapter @Inject constructor(
         view.chotBtn?.let { it ->
             it.setOnClickListener {
                 if (message.xuly) {
-                    showDialogDelLode(message)
+                    activity.showDialogDelLode(message)
                 } else {
-                    isLodeFormat(message)
-                    showDialogLode(message)
+                    activity.isLodeFormat(message)
+                    activity.showDialogLode(message)
                 }
             }
             it.setBackgroundTint(if (message.xuly) Color.GREEN else Color.RED)
@@ -283,45 +276,6 @@ class MessagesAdapter @Inject constructor(
         // Bind the attachments
         val partsAdapter = view.attachments.adapter as PartsAdapter
         partsAdapter.setData(message, previous, next, view)
-    }
-
-    private fun isLodeFormat(mes: Message): Boolean {
-        if (!mes.isSms()) {
-            Toast.makeText(context, "Chỉ dùng với tin nhắn SMS!", Toast.LENGTH_LONG).show()
-            return false
-        }
-        val messNoSign = LodeUtil.removeVietnamese(mes.body)
-        for (type in LodeDialog.TYPE) {
-            if (messNoSign.contains(type))
-                return true
-        }
-        Toast.makeText(context, "SMS không thấy LÔ ĐỀ!", Toast.LENGTH_LONG).show()
-        return true
-    }
-
-    private fun showDialogLode(message: Message) {
-        val data = Bundle()
-        data.putString(LodeDialog.MESSAGE, message.body)
-//        data.putLong(LodeDialog.AVATAR, view.avatar.threadId)
-        val lodeDialog = LodeDialog()
-        lodeDialog.arguments = data
-        lodeDialog.setCallback(object : LodeDialog.Callback {
-            override fun onPositiveButtonClicked(lode: Lode) {
-                Toast.makeText(context, "Xử lý OK!", Toast.LENGTH_SHORT).show()
-                lodeUtil.xuly(message, lode)
-            }
-        })
-        lodeDialog.isCancelable = false
-        lodeDialog.show((activity as FragmentActivity).supportFragmentManager, LodeDialog.TAG)
-    }
-
-    private fun showDialogDelLode(message: Message) {
-        BottomDialog.Builder(activity).setTitle("Chú ý")
-                .setContent("Chắc chắn hủy lô đề cho tin nhắn này!!")
-                .setPositiveText("OK")
-                .setNegativeText("Không")
-                .onPositive { lodeUtil.huy(message.id) }
-                .show()
     }
 
     private fun bindStatus(viewHolder: QkViewHolder, message: Message, next: Message?) {

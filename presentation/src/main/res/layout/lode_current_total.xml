@@ -23,7 +23,7 @@
             android:padding="@dimen/bottom_ellipsis_height"
             android:text="Settings"
             android:textColor="@color/tools_theme"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/kq_xsmb"
@@ -36,7 +36,7 @@
             android:padding="@dimen/bottom_ellipsis_height"
             android:text="XSMB"
             android:textColor="@color/tools_theme"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/tongket"
@@ -45,10 +45,23 @@
             android:layout_marginEnd="@dimen/default_padding_bottom"
             android:layout_weight="1"
             android:background="@drawable/lode_button"
-            android:gravity="center"
+            android:gravity="end"
             android:padding="@dimen/bottom_ellipsis_height"
             android:textColor="@color/tools_theme"
             android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/clear"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:background="@drawable/lode_button"
+            android:drawableStart="@drawable/ic_delete_white_24dp"
+            android:drawableTint="@android:color/holo_red_light"
+            android:gravity="center"
+            android:padding="@dimen/bottom_ellipsis_height"
+            android:textColor="@color/tools_theme" />
+
     </LinearLayout>
 
     <android.widget.TextClock

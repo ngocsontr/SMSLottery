@@ -290,6 +290,19 @@ class ConversationRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun setGiaLo(gialo: Int, vararg threadIds: Long) {
+        Realm.getDefaultInstance().use { realm ->
+            val conversations = realm.where(Conversation::class.java)
+                    .anyOf("id", threadIds)
+                    .findAll()
+
+            realm.executeTransaction {
+                conversations.forEach { it.giaLo = gialo }
+            }
+        }
+
+    }
+
     override fun deleteConversations(vararg threadIds: Long) {
         Realm.getDefaultInstance().use { realm ->
             val conversation = realm.where(Conversation::class.java).anyOf("id", threadIds).findAll()

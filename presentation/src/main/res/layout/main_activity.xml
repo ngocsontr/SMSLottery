@@ -79,8 +79,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingTop="10dp"
             android:paddingStart="10dp"
+            android:paddingTop="10dp"
             app:layout_constraintBottom_toTopOf="@id/recyclerView"
             app:layout_constraintTop_toBottomOf="@id/toolbar">
 
@@ -121,6 +121,18 @@
                 android:text="Tổng hợp"
                 android:textColor="@color/tools_theme"
                 android:textSize="22sp" />
+
+            <TextView
+                android:id="@+id/clear"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:background="@drawable/lode_button"
+                android:drawableStart="@drawable/ic_delete_white_24dp"
+                android:drawableTint="@android:color/holo_red_light"
+                android:gravity="center"
+                android:padding="@dimen/bottom_ellipsis_height"
+                android:textColor="@color/tools_theme" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView

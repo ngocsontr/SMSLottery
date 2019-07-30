@@ -29,6 +29,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.provider.ContactsContract
 import android.provider.MediaStore
 import android.text.format.DateFormat
@@ -43,6 +44,7 @@ import com.github.javiersantos.bottomdialogs.BottomDialog
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.hally.lotsms.R
+import com.hally.lotsms.common.LodeDialog
 import com.hally.lotsms.common.LodeDialog.Companion.E
 import com.hally.lotsms.common.androidxcompat.scope
 import com.hally.lotsms.common.base.QkThemedActivity
@@ -63,6 +65,7 @@ import io.reactivex.subjects.Subject
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.compose_activity.*
 import kotlinx.android.synthetic.main.lode_current_total.*
+import kotlinx.android.synthetic.main.lode_setting_view.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -254,13 +257,14 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
 
         lotteryList.setOnClickListener { showDetalDialog(state.lodes?.second) }
         kq_xsmb.setOnClickListener { showKqDialog() }
-        lode_settings.setOnClickListener { showSettingDialog() }
-        loadLodeTongKet(state.lodes?.second)
-    }
-
-    private fun loadLodeTongKet(second: RealmResults<Lode>?) {
-        second?.let {
-            val giaLo = 23
+//        lode_settings.text = state.messages?.first?.giaLo.toString()
+        lode_settings.setOnClickListener {
+            showSettingDialog(state.selectedConversation,
+                    state.messages?.first?.giaLo, prefs.tongSoLode.get())
+        }
+        clear.setOnClickListener { showClearDialog(state.selectedConversation) }
+        state.lodes?.second?.let {
+            val giaLo = state.lodes.first.giaLo
             var chi = 0
             var thu = 0
 
@@ -275,15 +279,19 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
 
                     val arr = txt.split("/")
                     chi += arr[0].toInt() * e.price
-                    thu += arr[1].toInt() * if (e == E.LO || e == E.XIEN) giaLo else 1
+                    thu += when (e) {
+                        E.LO, E.XIEN -> arr[1].toInt() * giaLo / 10
+                        else -> arr[1].toInt()
+                    }
                 }
             }
-            builder.append("Chi/Thu: <$chi / $thu>")
+            builder.append("Thu/Chi: <$thu / $chi>")
             lottery_lo.text = builder//.delete(builder.length - 2, builder.length)
-            val tk = thu - chi
-            val emo = if (tk >= 0) "\uD83E\uDD29" else "\uD83D\uDE30"
-            if (tk < 0) tongket.setTextColor(Color.RED)
+            val tk = chi - thu
+            val emo = if (tk <= 0) "\uD83E\uDD29" else "\uD83D\uDE30"
+            if (tk > 0) tongket.setTextColor(Color.RED)
             tongket.text = "$emo ${tk.format()}k"
+            tongket.setOnClickListener { message.setText(tk.format() + "k") }
         }
     }
 
@@ -295,9 +303,28 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
         }
     }
 
-    private fun showSettingDialog() {
+    private fun showSettingDialog(id: Long, giaLo: Int?, tongSo: Int) {
+        val view = layoutInflater.inflate(R.layout.lode_setting_view, null)
+        view.gia_lo.setText("$giaLo")
+        view.tong_so_lode.setText("$tongSo")
         BottomDialog.Builder(this).setTitle("Settings")
-                .setCustomView(layoutInflater.inflate(R.layout.notification_action, null))
+                .setCustomView(view)
+                .setPositiveText("Cập Nhật")
+                .onPositive {
+                    lodeUtil.update(id, view.gia_lo.text.toString(),
+                            view.tong_so_lode.text.toString())
+                }
+                .show()
+    }
+
+    private fun showClearDialog(id: Long) {
+        BottomDialog.Builder(this).setTitle("Xóa dữ liệu")
+                .setContent("Chắc chắn muốn xóa hết dữ liệu Lô Đề?")
+                .setPositiveText("Có")
+                .onPositive {
+                    lodeUtil.clearData(id)
+                    reloadView()
+                }
                 .show()
     }
 
@@ -334,6 +361,53 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
         val con = data?.first
         val mes = data?.second?.where()?.greaterThan("date", then.timeInMillis)?.findAll()
         return if (con == null || mes == null) null else Pair(con, mes)
+    }
+
+    private fun reloadView() {
+        Handler().postDelayed({ viewModel.bindView(this@ComposeActivity) }, 500)
+    }
+
+    fun isLodeFormat(mes: Message): Boolean {
+        if (!mes.isSms()) {
+            makeToast("Chỉ dùng với tin nhắn SMS!")
+            return false
+        }
+        val messNoSign = LodeUtil.removeVietnamese(mes.body)
+        for (type in LodeDialog.TYPE) {
+            if (messNoSign.contains(type))
+                return true
+        }
+        makeToast("SMS không thấy LÔ ĐỀ!")
+        return true
+    }
+
+    fun showDialogLode(message: Message) {
+        val data = Bundle()
+        data.putString(LodeDialog.MESSAGE, message.body)
+//        data.putLong(LodeDialog.AVATAR, view.avatar.threadId)
+        val lodeDialog = LodeDialog()
+        lodeDialog.arguments = data
+        lodeDialog.setCallback(object : LodeDialog.Callback {
+            override fun onPositiveButtonClicked(lode: Lode) {
+                makeToast("Xử lý OK!")
+                lodeUtil.xuly(message, lode)
+                reloadView()
+            }
+        })
+        lodeDialog.isCancelable = false
+        lodeDialog.show(supportFragmentManager, LodeDialog.TAG)
+    }
+
+    fun showDialogDelLode(message: Message) {
+        BottomDialog.Builder(this).setTitle("Chú ý")
+                .setContent("Chắc chắn hủy lô đề cho tin nhắn này!!")
+                .setPositiveText("OK")
+                .setNegativeText("Không")
+                .onPositive {
+                    lodeUtil.huy(message.id)
+                    reloadView()
+                }
+                .show()
     }
 
     override fun clearSelection() = messageAdapter.clearSelection()

@@ -70,8 +70,8 @@ open class Lode : RealmObject() {
         sb.append("Lô\n${lo.toDisplay()}\n\n" +
                 "Đề giải nhất\n${degiainhat.toDisplay()}\n\n" +
                 "Đề\n${de.toDisplay()}\n\n" +
-                "Xiên\n${xien.toString()}\n\n" +
-                "Ba càng\n${bc}")
+                "Xiên\n${xien.toString().replace("RealmList<?>@", "")}\n\n" +
+                "Ba càng\n${bc.toString().replace("RealmList<?>@", "")}")
 
         return sb.toString()
     }

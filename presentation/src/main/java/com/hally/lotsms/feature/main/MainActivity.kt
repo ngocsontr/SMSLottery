@@ -34,6 +34,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.github.javiersantos.bottomdialogs.BottomDialog
 import com.google.android.material.snackbar.Snackbar
 import com.hally.lotsms.R
 import com.hally.lotsms.common.Navigator
@@ -139,6 +140,15 @@ class MainActivity : QkThemedActivity(), MainView {
         datePicker.setText(if (is1Day) R.string.datePicker1Day else R.string.datePickerAllDay)
         datePicker.setOnClickListener { v -> changeDatePicker(v as TextView) }
         kq_xsmb.setOnClickListener { getKqXsmb() }
+        clear.setOnClickListener {
+            BottomDialog.Builder(this).setTitle("Xóa dữ liệu")
+                    .setContent("Chắc chắn muốn xóa TOÀN BỘ dữ liệu Lô Đề?")
+                    .setPositiveText("Có")
+                    .onPositive {
+                        lodeUtil.clearData(null)
+                    }
+                    .show()
+        }
 
         viewModel.bindView(this)
 
