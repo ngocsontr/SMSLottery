@@ -66,7 +66,6 @@ import kotlinx.android.synthetic.main.main_syncing.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.*
 import javax.inject.Inject
 
 class MainActivity : QkThemedActivity(), MainView {
@@ -362,10 +361,8 @@ class MainActivity : QkThemedActivity(), MainView {
 
     private fun filterData(data: RealmResults<Conversation>?): OrderedRealmCollection<Conversation>? {
         if (!prefs.oneDaySms.get()) return data
-
-        val then = Calendar.getInstance()
-        then.add(Calendar.DAY_OF_YEAR, -1)
-        return data?.where()?.greaterThan("date", then.timeInMillis)?.findAll()
+        val time = lodeUtil.getLodeTime()
+        return data?.where()?.between("date", time[0], time[1])?.findAll()
     }
 
     override fun onResume() {

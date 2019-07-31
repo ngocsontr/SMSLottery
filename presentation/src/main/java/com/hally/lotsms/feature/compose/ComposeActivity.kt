@@ -65,7 +65,6 @@ import io.reactivex.subjects.Subject
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.compose_activity.*
 import kotlinx.android.synthetic.main.lode_current_total.*
-import kotlinx.android.synthetic.main.lode_setting_view.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -313,6 +312,7 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
                 .onPositive {
                     lodeUtil.update(id, view.gia_lo.text.toString(),
                             view.tong_so_lode.text.toString())
+                    reloadView()
                 }
                 .show()
     }
@@ -345,6 +345,7 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
                 BottomDialog.Builder(this@ComposeActivity).setTitle("Kết quả XSMB")
                         .setContent(prefs.kqRaw.get())
                         .show()
+                reloadView()
             }
 
             override fun onFailure(call: Call<XsmbRss>, t: Throwable) {
@@ -356,15 +357,14 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
     private fun filterData(data: Pair<Conversation, RealmResults<Message>>?): Pair<Conversation, RealmResults<Message>>? {
         if (!prefs.oneDaySms.get()) return data
 
-        val then = Calendar.getInstance()
-        then.add(Calendar.DAY_OF_YEAR, -1)
         val con = data?.first
-        val mes = data?.second?.where()?.greaterThan("date", then.timeInMillis)?.findAll()
+        val time = lodeUtil.getLodeTime()
+        val mes = data?.second?.where()?.between("date", time[0], time[1])?.findAll()
         return if (con == null || mes == null) null else Pair(con, mes)
     }
 
     private fun reloadView() {
-        Handler().postDelayed({ viewModel.bindView(this@ComposeActivity) }, 500)
+        Handler().postDelayed({ viewModel.bindView(this@ComposeActivity) }, 400)
     }
 
     fun isLodeFormat(mes: Message): Boolean {
@@ -384,7 +384,6 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
     fun showDialogLode(message: Message) {
         val data = Bundle()
         data.putString(LodeDialog.MESSAGE, message.body)
-//        data.putLong(LodeDialog.AVATAR, view.avatar.threadId)
         val lodeDialog = LodeDialog()
         lodeDialog.arguments = data
         lodeDialog.setCallback(object : LodeDialog.Callback {

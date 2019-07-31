@@ -200,6 +200,15 @@ class LodeUtil @Inject constructor(
         return arr
     }
 
+    fun getLodeTime(): Array<Long> {
+        val end = Calendar.getInstance()
+        end.set(Calendar.HOUR_OF_DAY, 18)
+        end.set(Calendar.MINUTE, 30)
+        end.set(Calendar.SECOND, 0)
+        val start = end.clone() as Calendar
+        start.add(Calendar.DAY_OF_YEAR, -1)
+        return arrayOf(start.timeInMillis, end.timeInMillis)
+    }
 
     companion object {
         val SIGNX = 'x'

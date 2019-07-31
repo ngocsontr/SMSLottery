@@ -55,15 +55,24 @@ class LodeRepositoryImpl @Inject constructor(
     }
 
     override fun getLodes(threadId: Long, query: String): RealmResults<Lode> {
-        val then = Calendar.getInstance()
-        then.add(Calendar.DAY_OF_YEAR, -1)
+        val time = getLodeTime()
         return Realm.getDefaultInstance()
                 .where(Lode::class.java)
                 .equalTo("threadId", threadId)
                 .let { if (query.isEmpty()) it else it.contains("body", query, Case.INSENSITIVE) }
-//                .greaterThan("date", then.timeInMillis) // lấy giá trị trong ngày
+                .between("date", time[0], time[1]) // lấy giá trị trong ngày
                 .sort("date")
                 .findAllAsync()
+    }
+
+    private fun getLodeTime(): Array<Long> {
+        val end = Calendar.getInstance()
+        end.set(Calendar.HOUR_OF_DAY, 18)
+        end.set(Calendar.MINUTE, 30)
+        end.set(Calendar.SECOND, 0)
+        val start = end.clone() as Calendar
+        start.add(Calendar.DAY_OF_YEAR, -1)
+        return arrayOf(start.timeInMillis, end.timeInMillis)
     }
 
     override fun getLode(id: Long): Lode? {
