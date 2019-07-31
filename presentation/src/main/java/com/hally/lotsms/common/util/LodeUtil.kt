@@ -109,32 +109,39 @@ class LodeUtil @Inject constructor(
     }
 
     fun getText(type: E, data: RealmResults<Lode>): String? {
-        val maps: List<RealmList<Int>>
+        val lode = getLodeAllArray(data)
+        val maps: RealmList<Int>
         val target: Array<Int>
         when (type) {
             E.DE1 -> {
-                maps = data.map { lode -> lode.degiainhat }
+                maps = lode.degiainhat
                 target = kqDe1()
             }
             E.DE -> {
-                maps = data.map { lode -> lode.de }
+                maps = lode.de
                 target = kqDe()
             }
             E.LO -> {
-                maps = data.map { lode -> lode.lo }
+                maps = lode.lo
                 target = kqLo()
             }
             E.XIEN -> {
                 return ""
             }
             E.BC -> {
-                target = kqBc()
-                return ""
+                var bingoBc = 0
+                var tongBc = 0
+                val tar = prefs.kqBC.get()
+                lode.bc.forEach { s ->
+                    val arr = s.split("x")
+                    if (arr[0] == tar) bingoBc += arr[1].toInt()
+                    tongBc += arr[1].toInt()
+                }
+                return "$bingoBc / $tongBc"
             }
         }
         if (maps.isNotEmpty()) {
-            val arr = getLodeSummary(maps) // mảng từ 0..99 số lô đề
-            return "${arr.getBingoLode(target)}/${arr.getTongDanh()}"
+            return "${maps.getBingoLode(target)}/${maps.getTongDanh()}"
         }
         return ""
     }
@@ -158,6 +165,9 @@ class LodeUtil @Inject constructor(
             if (isSameDay(prefs.lastDayXSMB.get())) arrayOf(prefs.kqBC.get().toInt())
             else arrayOf()
 
+    /**
+     * tổng hợp tất cả từ 0..99 số lô đề
+     */
     fun getLodeAllArray(data: RealmResults<Lode>): Lode {
         val result = Lode().init()
         LodeDialog.Companion.E.values().forEach {
