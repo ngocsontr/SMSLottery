@@ -42,7 +42,7 @@ import kotlin.collections.ArrayList
 class LodeUtil @Inject constructor(
         private val context: Context,
         private val prefs: Preferences,
-        private val lodeRepo: LodeRepository,
+        val lodeRepo: LodeRepository,
         private val conversationRepo: ConversationRepository,
         private val messageRepo: MessageRepository) {
 
@@ -141,11 +141,12 @@ class LodeUtil @Inject constructor(
                     if (arr[0] == tar) bingoBc += arr[1].toInt()
                     tongBc += arr[1].toInt()
                 }
-                return "$bingoBc/$tongBc"
+                return if (tongBc > 0) "$bingoBc/$tongBc" else ""
             }
         }
         if (maps.isNotEmpty()) {
-            return "${maps.getBingoLode(target)}/${maps.getTongDanh()}"
+            val total = maps.getTongDanh()
+            return if (total > 0) "${maps.getBingoLode(target)}/$total" else ""
         }
         return ""
     }

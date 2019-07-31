@@ -348,6 +348,8 @@
     <string name="lottery_date">Lô Đề: %1s</string>
     <string name="datePicker1Day">Hôm nay</string>
     <string name="datePickerAllDay">Toàn Bộ</string>
+    <string name="gia_lo"><![CDATA[Giá ôm Lô <230 = 23k>]]></string>
+    <string name="tong_diem_om">Tổng Điểm ôm /1 số Lô</string>
 
     <string-array name="night_modes">
         <item>Disabled</item>

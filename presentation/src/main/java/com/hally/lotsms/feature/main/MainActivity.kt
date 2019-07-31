@@ -57,9 +57,11 @@ import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
-import io.realm.OrderedRealmCollection
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.drawer_view.*
+import kotlinx.android.synthetic.main.lode_setting_view.view.tong_so_lode
+import kotlinx.android.synthetic.main.lode_tongket_item_view.view.*
+import kotlinx.android.synthetic.main.lode_tongket_view.view.*
 import kotlinx.android.synthetic.main.main_activity.*
 import kotlinx.android.synthetic.main.main_permission_hint.*
 import kotlinx.android.synthetic.main.main_syncing.*
@@ -139,6 +141,7 @@ class MainActivity : QkThemedActivity(), MainView {
         datePicker.setText(if (is1Day) R.string.datePicker1Day else R.string.datePickerAllDay)
         datePicker.setOnClickListener { v -> changeDatePicker(v as TextView) }
         kq_xsmb.setOnClickListener { getKqXsmb() }
+        tongket.setOnClickListener { showTongketDialog() }
         clear.setOnClickListener {
             BottomDialog.Builder(this).setTitle("Xóa dữ liệu")
                     .setContent("Chắc chắn muốn xóa TOÀN BỘ dữ liệu Lô Đề?")
@@ -203,6 +206,34 @@ class MainActivity : QkThemedActivity(), MainView {
 
         itemTouchCallback.adapter = conversationsAdapter
         conversationsAdapter.autoScrollToStart(recyclerView)
+    }
+
+    var data: RealmResults<Conversation>? = null
+
+    private fun showTongketDialog() {
+        val view = layoutInflater.inflate(R.layout.lode_tongket_view, null)
+        view.update.setOnClickListener {
+            val tongSo = view.tong_so_lode.text.toString()
+            if (tongSo.isNotEmpty()) {
+                prefs.tongSoLode.set(tongSo.toInt())
+                makeToast("Cập nhật xong!!")
+            } else makeToast("Không được bỏ trống!!")
+        }
+        view.tong_so_lode.setText("${prefs.tongSoLode.get()}")
+        makeToast("$data")
+        data?.forEachIndexed { index, conv ->
+            val lodes = lodeUtil.lodeRepo.getLodes(conv.id)
+            if (lodes.size > 0) {
+                val viewItem = layoutInflater.inflate(R.layout.lode_tongket_item_view, null)
+                viewItem.username.text = conv.getTitle()
+                view.tongket_content.addView(viewItem)
+            }
+        }
+
+        BottomDialog.Builder(this).setTitle("TỔNG KẾT")
+                .setContent("abc ...")
+                .setCustomView(view)
+                .show()
     }
 
     private fun getKqXsmb() {
@@ -291,7 +322,8 @@ class MainActivity : QkThemedActivity(), MainView {
                 showBackButton(state.page.selected > 0)
                 title = getString(R.string.main_title_selected, state.page.selected)
                 if (recyclerView.adapter !== conversationsAdapter) recyclerView.adapter = conversationsAdapter
-                conversationsAdapter.updateData(filterData(state.page.data))
+                data = filterData(state.page.data)
+                conversationsAdapter.updateData(data)
                 itemTouchHelper.attachToRecyclerView(recyclerView)
                 empty.setText(R.string.inbox_empty_text)
             }
@@ -311,7 +343,8 @@ class MainActivity : QkThemedActivity(), MainView {
                     false -> getString(R.string.title_archived)
                 }
                 if (recyclerView.adapter !== conversationsAdapter) recyclerView.adapter = conversationsAdapter
-                conversationsAdapter.updateData(filterData(state.page.data))
+                data = filterData(state.page.data)
+                conversationsAdapter.updateData(data)
                 itemTouchHelper.attachToRecyclerView(null)
                 empty.setText(R.string.archived_empty_text)
             }
@@ -359,7 +392,7 @@ class MainActivity : QkThemedActivity(), MainView {
         }
     }
 
-    private fun filterData(data: RealmResults<Conversation>?): OrderedRealmCollection<Conversation>? {
+    private fun filterData(data: RealmResults<Conversation>?): RealmResults<Conversation>? {
         if (!prefs.oneDaySms.get()) return data
         val time = lodeUtil.getLodeTime()
         return data?.where()?.between("date", time[0], time[1])?.findAll()

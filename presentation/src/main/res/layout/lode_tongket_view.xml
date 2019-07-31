@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:scrollbarStyle="outsideOverlay">
+
+    <LinearLayout
+        android:id="@+id/tongket_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/tong_so_lode"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/tong_diem_om"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:minHeight="36dp"
+                android:textColor="@color/black"
+                app:met_errorColor="#ff0000"
+                app:met_floatingLabel="highlight"
+                app:met_floatingLabelTextColor="#303F9F" />
+
+            <TextView
+                android:id="@+id/update"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginEnd="@dimen/default_padding_bottom"
+                android:background="@drawable/lode_button"
+                android:gravity="center"
+                android:padding="@dimen/bottom_ellipsis_height"
+                android:text="Cập Nhật"
+                android:textColor="@color/tools_theme"
+                android:textSize="22sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/bottom_ellipsis_height">
+
+    <TextView
+        android:id="@+id/lottery_lo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/lode_border"
+        android:minHeight="80dp"
+        android:padding="@dimen/bottom_ellipsis_height"
+        android:textColor="@color/tools_theme"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/lode_border"
+        android:gravity="center"
+        android:padding="@dimen/bottom_ellipsis_height"
+        android:textColor="@android:color/holo_red_light"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/tongket"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_below="@id/username"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/lode_button"
+        android:gravity="center"
+        android:padding="@dimen/bottom_ellipsis_height"
+        android:text="tongket"
+        android:textColor="@color/tools_theme"
+        android:textSize="18sp" />
+
+</RelativeLayout>
