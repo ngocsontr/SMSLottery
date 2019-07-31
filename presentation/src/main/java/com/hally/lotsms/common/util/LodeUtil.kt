@@ -79,12 +79,16 @@ class LodeUtil @Inject constructor(
         if (pubDate.isNullOrEmpty()) return false
 
         val now = Calendar.getInstance()
+        now.set(Calendar.HOUR_OF_DAY, 18)
+        now.set(Calendar.MINUTE, 30)
+        now.set(Calendar.SECOND, 0)
+
         val then = Calendar.getInstance()
         val pattern = "yyyy-MM-dd HH:mm:ss"
         val simpleDateFormat = SimpleDateFormat(pattern)
         val date = simpleDateFormat.parse(pubDate)
         then.timeInMillis = date.time
-        return now.isSameDay(then)
+        return now.isSameDay(then) && now.before(then)
     }
 
     fun saveXSMB(item: XsmbRss.Item) {
@@ -137,7 +141,7 @@ class LodeUtil @Inject constructor(
                     if (arr[0] == tar) bingoBc += arr[1].toInt()
                     tongBc += arr[1].toInt()
                 }
-                return "$bingoBc / $tongBc"
+                return "$bingoBc/$tongBc"
             }
         }
         if (maps.isNotEmpty()) {

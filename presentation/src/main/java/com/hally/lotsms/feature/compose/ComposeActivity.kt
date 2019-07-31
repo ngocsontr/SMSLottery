@@ -65,6 +65,7 @@ import io.reactivex.subjects.Subject
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.compose_activity.*
 import kotlinx.android.synthetic.main.lode_current_total.*
+import kotlinx.android.synthetic.main.lode_setting_view.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
