@@ -249,7 +249,7 @@ class MainActivity : QkThemedActivity(), MainView {
                 viewItem.lottery_result.text = arr[0]
                 viewItem.tongket_text.text = arr[1]
                 if (arr[2].toInt() > 0) viewItem.tongket_text.setTextColor(Color.RED)
-                tk += arr[2].toInt().inv()
+                tk += arr[2].toInt().unaryMinus()
             }
         }
 
