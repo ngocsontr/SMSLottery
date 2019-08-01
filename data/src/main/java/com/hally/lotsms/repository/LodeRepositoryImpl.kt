@@ -23,12 +23,10 @@ import android.content.ContentValues
 import android.content.Context
 import android.provider.Telephony
 import com.hally.lotsms.extensions.anyOf
-import com.hally.lotsms.manager.ActiveConversationManager
 import com.hally.lotsms.manager.KeyManager
 import com.hally.lotsms.model.Conversation
 import com.hally.lotsms.model.Lode
 import com.hally.lotsms.util.Preferences
-import io.realm.Case
 import io.realm.Realm
 import io.realm.RealmResults
 import timber.log.Timber
@@ -38,12 +36,10 @@ import javax.inject.Singleton
 
 @Singleton
 class LodeRepositoryImpl @Inject constructor(
-        private val activeConversationManager: ActiveConversationManager,
         private val context: Context,
         private val messageIds: KeyManager,
-        private val imageRepository: ImageRepository,
-        private val prefs: Preferences,
-        private val syncRepository: SyncRepository
+        private val messageRepo: MessageRepository,
+        private val prefs: Preferences
 ) : LodeRepository {
 
     override fun insertLode(lode: Lode): Lode? {
@@ -59,10 +55,10 @@ class LodeRepositoryImpl @Inject constructor(
         return Realm.getDefaultInstance()
                 .where(Lode::class.java)
                 .equalTo("threadId", threadId)
-                .let { if (query.isEmpty()) it else it.contains("body", query, Case.INSENSITIVE) }
+//                .let { if (query.isEmpty()) it else it.contains("body", query, Case.INSENSITIVE) }
                 .between("date", time[0], time[1]) // lấy giá trị trong ngày
                 .sort("date")
-                .findAllAsync()
+                .findAll()
     }
 
     private fun getLodeTime(): Array<Long> {
@@ -207,7 +203,14 @@ class LodeRepositoryImpl @Inject constructor(
             val lodes = if (threadid != null) realm.where(Lode::class.java)
                     .equalTo("threadId", threadid).findAll()
             else realm.where(Lode::class.java).findAll()
+            markXulySMS(lodes, false)
             realm.executeTransaction { lodes.deleteAllFromRealm() }
+        }
+    }
+
+    private fun markXulySMS(lodes: RealmResults<Lode>?, b: Boolean) {
+        lodes?.forEach { lode: Lode? ->
+            messageRepo.markXuly(lode!!.smsId, b)
         }
     }
 

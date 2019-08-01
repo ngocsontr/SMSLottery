@@ -65,9 +65,8 @@ class LodeUtil @Inject constructor(
         messageRepo.markXuly(id, false)
     }
 
-    fun clearData(id: Long?) {
-        lodeRepo.deleteAllLode(id)
-//        messageRepo.markXuly(id, false)
+    fun clearData(threadid: Long?) {
+        lodeRepo.deleteAllLode(threadid)
     }
 
     fun update(id: Long, gia_lo: String, tongSo: String) {
@@ -75,7 +74,12 @@ class LodeUtil @Inject constructor(
         prefs.tongSoLode.set(tongSo.toInt())
     }
 
-    fun isSameDay(pubDate: String?): Boolean {
+    fun isToDay(): Boolean {
+//        return true
+        return isToDay(prefs.lastDayXSMB.get())
+    }
+
+    fun isToDay(pubDate: String?): Boolean {
         if (pubDate.isNullOrEmpty()) return false
 
         val now = Calendar.getInstance()
@@ -112,8 +116,35 @@ class LodeUtil @Inject constructor(
         prefs.kqLode.set(bd.trim().toString())
     }
 
-    fun getText(type: E, data: RealmResults<Lode>): String? {
+    fun tongKet(data: RealmResults<Lode>, giaLo: Int): Array<String> {
+        var chi = 0
+        var thu = 0
+
+        val builder = StringBuilder()
         val lode = getLodeAllArray(data)
+        for (e in E.values()) {
+            val txt = getTextByType(e, lode)
+            if (!txt.isNullOrBlank()) {
+                builder.append("${e.vni} : ")
+                builder.append(txt)
+                builder.append(if (e == E.LO || e == E.XIEN) " Điểm" else " k")
+                builder.append("\n")
+
+                val arr = txt.split("/")
+                chi += arr[0].toInt() * e.price
+                thu += when (e) {
+                    E.LO, E.XIEN -> arr[1].toInt() * giaLo / 10
+                    else -> arr[1].toInt()
+                }
+            }
+        }
+        builder.append("Thu/Chi: <$thu / $chi>")
+        val tk = chi - thu
+        val emo = if (tk <= 0) "\uD83E\uDD29" else "\uD83D\uDE30"
+        return arrayOf(builder.toString(), "$emo ${tk.format()}k", tk.toString())
+    }
+
+    fun getTextByType(type: E, lode: Lode): String? {
         val maps: RealmList<Int>
         val target: Array<Int>
         when (type) {
@@ -135,7 +166,7 @@ class LodeUtil @Inject constructor(
             E.BC -> {
                 var bingoBc = 0
                 var tongBc = 0
-                val tar = prefs.kqBC.get()
+                val tar = kqBc()
                 lode.bc.forEach { s ->
                     val arr = s.split("x")
                     if (arr[0] == tar) bingoBc += arr[1].toInt()
@@ -152,23 +183,23 @@ class LodeUtil @Inject constructor(
     }
 
     fun kqLo(): Array<Int> =
-            if (isSameDay(prefs.lastDayXSMB.get()))
+            if (isToDay())
                 prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()
             else arrayOf()
 
     fun kqDe(): Array<Int> =
-            if (isSameDay(prefs.lastDayXSMB.get()))
+            if (isToDay())
                 arrayOf(prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()[0])
             else arrayOf()
 
     fun kqDe1(): Array<Int> =
-            if (isSameDay(prefs.lastDayXSMB.get()))
+            if (isToDay())
                 arrayOf(prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()[1])
             else arrayOf()
 
-    fun kqBc(): Array<Int> =
-            if (isSameDay(prefs.lastDayXSMB.get())) arrayOf(prefs.kqBC.get().toInt())
-            else arrayOf()
+    fun kqBc(): String =
+            if (isToDay()) prefs.kqBC.get()
+            else "-1"
 
     /**
      * tổng hợp tất cả từ 0..99 số lô đề

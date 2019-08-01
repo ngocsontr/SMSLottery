@@ -39,7 +39,7 @@
             android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/tongket"
+            android:id="@+id/tongket_text"
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_marginEnd="@dimen/default_padding_bottom"
@@ -75,7 +75,7 @@
         android:timeZone="GMT+7" />
 
     <TextView
-        android:id="@+id/lottery_lo"
+        android:id="@+id/lottery_result"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/lode_border"

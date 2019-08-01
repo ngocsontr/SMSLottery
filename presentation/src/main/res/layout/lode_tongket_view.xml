@@ -41,7 +41,27 @@
                 android:text="Cập Nhật"
                 android:textColor="@color/tools_theme"
                 android:textSize="22sp" />
+
+            <TextView
+                android:id="@+id/chuyen"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginEnd="@dimen/default_padding_bottom"
+                android:background="@drawable/lode_button"
+                android:gravity="center"
+                android:padding="@dimen/bottom_ellipsis_height"
+                android:text="Chuyển"
+                android:textColor="@color/tools_theme"
+                android:textSize="22sp" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/chuyen_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/default_padding_bottom"
+            android:padding="@dimen/bottom_ellipsis_height"
+            android:textColor="@color/tools_theme" />
 
     </LinearLayout>
 </ScrollView>

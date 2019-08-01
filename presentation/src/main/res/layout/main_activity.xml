@@ -118,7 +118,7 @@
                 android:background="@drawable/lode_button"
                 android:gravity="center"
                 android:padding="@dimen/bottom_ellipsis_height"
-                android:text="Tổng hợp"
+                android:text="Tổng kết"
                 android:textColor="@color/tools_theme"
                 android:textSize="22sp" />
 

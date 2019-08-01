@@ -45,7 +45,6 @@ import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.hally.lotsms.R
 import com.hally.lotsms.common.LodeDialog
-import com.hally.lotsms.common.LodeDialog.Companion.E
 import com.hally.lotsms.common.androidxcompat.scope
 import com.hally.lotsms.common.base.QkThemedActivity
 import com.hally.lotsms.common.network.ApiUtils
@@ -53,7 +52,6 @@ import com.hally.lotsms.common.network.model.XsmbRss
 import com.hally.lotsms.common.util.DateFormatter
 import com.hally.lotsms.common.util.LodeUtil
 import com.hally.lotsms.common.util.extensions.*
-import com.hally.lotsms.common.util.format
 import com.hally.lotsms.model.*
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
@@ -265,33 +263,11 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
         clear.setOnClickListener { showClearDialog(state.selectedConversation) }
         state.lodes?.second?.let {
             val giaLo = state.lodes.first.giaLo
-            var chi = 0
-            var thu = 0
-
-            val builder = StringBuilder()
-            for (e in E.values()) {
-                val txt = lodeUtil.getText(e, it)
-                if (!txt.isNullOrBlank()) {
-                    builder.append("${e.vni} : ")
-                    builder.append(txt)
-                    builder.append(if (e == E.LO || e == E.XIEN) " Điểm " else " k ")
-                    builder.append("\n")
-
-                    val arr = txt.split("/")
-                    chi += arr[0].toInt() * e.price
-                    thu += when (e) {
-                        E.LO, E.XIEN -> arr[1].toInt() * giaLo / 10
-                        else -> arr[1].toInt()
-                    }
-                }
-            }
-            builder.append("Thu/Chi: <$thu / $chi>")
-            lottery_lo.text = builder//.delete(builder.length - 2, builder.length)
-            val tk = chi - thu
-            val emo = if (tk <= 0) "\uD83E\uDD29" else "\uD83D\uDE30"
-            if (tk > 0) tongket.setTextColor(Color.RED)
-            tongket.text = "$emo ${tk.format()}k"
-            tongket.setOnClickListener { message.setText(tk.format() + "k") }
+            val arr = lodeUtil.tongKet(it, giaLo)
+            lottery_result.text = arr[0]
+            tongket_text.text = arr[1]
+            if (arr[2].toInt() > 0) tongket_text.setTextColor(Color.RED)
+            tongket_text.setOnClickListener { message.setText(arr[1]) }
         }
     }
 
@@ -330,7 +306,7 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
     }
 
     private fun showKqDialog() {
-        if (lodeUtil.isSameDay(prefs.lastDayXSMB.get())) {
+        if (lodeUtil.isToDay()) {
             BottomDialog.Builder(this).setTitle("Kết quả XSMB")
                     .setContent(prefs.kqRaw.get())
                     .show()
@@ -340,8 +316,8 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
                 val res = response.body()
                 if (res?.items == null || res.items.isEmpty()) return
 
-                if (lodeUtil.isSameDay(res.items[0].pubDate))
-                    lodeUtil.saveXSMB(res.items[0])
+//                if (lodeUtil.isToDay(res.items[0].pubDate))
+                lodeUtil.saveXSMB(res.items[0])
 
                 BottomDialog.Builder(this@ComposeActivity).setTitle("Kết quả XSMB")
                         .setContent(prefs.kqRaw.get())

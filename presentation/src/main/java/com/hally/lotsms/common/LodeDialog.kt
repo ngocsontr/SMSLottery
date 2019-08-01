@@ -80,8 +80,8 @@ open class LodeDialog : DialogFragment() {
             return
         }
 
-        message = "3 cang 876 ,234 x120k 111 100,.,200 x200k Đe giai nhat 79 97 12x200 " +
-                "lo chan chan x9  22,23,20x20d, 63  5 diem, 11x5, de 20x20k, bộ  01 100n"
+//        message = "3 cang 876 ,234 x120k 111 100,.,200 x200k Đe giai nhat 79 97 12x200 " +
+//                "lo chan chan x9  22,23,20x20d, 63  5 diem, 11x5, de 20x20k, bộ  01 100n"
 //        message = TEST
         body.setText(message)
         message = message.removeSpace()

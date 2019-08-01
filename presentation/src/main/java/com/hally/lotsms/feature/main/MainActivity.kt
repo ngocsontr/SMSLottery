@@ -21,7 +21,11 @@ package com.hally.lotsms.feature.main
 import android.Manifest
 import android.animation.ObjectAnimator
 import android.app.AlertDialog
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Bundle
 import android.view.*
 import android.widget.ArrayAdapter
@@ -45,6 +49,7 @@ import com.hally.lotsms.common.network.ApiUtils
 import com.hally.lotsms.common.network.model.XsmbRss
 import com.hally.lotsms.common.util.LodeUtil
 import com.hally.lotsms.common.util.extensions.*
+import com.hally.lotsms.common.util.format
 import com.hally.lotsms.feature.conversations.ConversationItemTouchCallback
 import com.hally.lotsms.feature.conversations.ConversationsAdapter
 import com.hally.lotsms.model.Conversation
@@ -68,6 +73,7 @@ import kotlinx.android.synthetic.main.main_syncing.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
 import javax.inject.Inject
 
 class MainActivity : QkThemedActivity(), MainView {
@@ -140,17 +146,10 @@ class MainActivity : QkThemedActivity(), MainView {
         val is1Day = prefs.oneDaySms.get()
         datePicker.setText(if (is1Day) R.string.datePicker1Day else R.string.datePickerAllDay)
         datePicker.setOnClickListener { v -> changeDatePicker(v as TextView) }
-        kq_xsmb.setOnClickListener { getKqXsmb() }
+        kq_xsmb.setOnClickListener { showXsmbDialog() }
         tongket.setOnClickListener { showTongketDialog() }
-        clear.setOnClickListener {
-            BottomDialog.Builder(this).setTitle("Xóa dữ liệu")
-                    .setContent("Chắc chắn muốn xóa TOÀN BỘ dữ liệu Lô Đề?")
-                    .setPositiveText("Có")
-                    .onPositive {
-                        lodeUtil.clearData(null)
-                    }
-                    .show()
-        }
+        clear.setOnClickListener { showClearDialog() }
+        getKqXsmb()
 
         viewModel.bindView(this)
 
@@ -208,10 +207,26 @@ class MainActivity : QkThemedActivity(), MainView {
         conversationsAdapter.autoScrollToStart(recyclerView)
     }
 
-    var data: RealmResults<Conversation>? = null
+    private fun showClearDialog() {
+        BottomDialog.Builder(this).setTitle("Xóa dữ liệu")
+                .setContent("Chắc chắn muốn xóa TOÀN BỘ dữ liệu Lô Đề?")
+                .setPositiveText("Có")
+                .onPositive {
+                    lodeUtil.clearData(null)
+                }
+                .show()
+    }
 
+    var data: RealmResults<Conversation>? = null
     private fun showTongketDialog() {
         val view = layoutInflater.inflate(R.layout.lode_tongket_view, null)
+        view.chuyen.setOnClickListener {
+            view.chuyen_text.text = "TỔNG KẾT"
+            val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("TỔNG KẾT", view.chuyen_text.text)
+            clipboard.primaryClip = clip
+            makeToast("Đã copy vào clipboard.\nChuyển!!")
+        }
         view.update.setOnClickListener {
             val tongSo = view.tong_so_lode.text.toString()
             if (tongSo.isNotEmpty()) {
@@ -220,19 +235,33 @@ class MainActivity : QkThemedActivity(), MainView {
             } else makeToast("Không được bỏ trống!!")
         }
         view.tong_so_lode.setText("${prefs.tongSoLode.get()}")
-        makeToast("$data")
-        data?.forEachIndexed { index, conv ->
+
+
+        var tk = 0
+        data?.forEach { conv ->
             val lodes = lodeUtil.lodeRepo.getLodes(conv.id)
             if (lodes.size > 0) {
                 val viewItem = layoutInflater.inflate(R.layout.lode_tongket_item_view, null)
                 viewItem.username.text = conv.getTitle()
                 view.tongket_content.addView(viewItem)
+                val giaLo = conv.giaLo
+                val arr = lodeUtil.tongKet(lodes, giaLo)
+                viewItem.lottery_result.text = arr[0]
+                viewItem.tongket_text.text = arr[1]
+                if (arr[2].toInt() > 0) viewItem.tongket_text.setTextColor(Color.RED)
+                tk += arr[2].toInt().inv()
             }
         }
 
-        BottomDialog.Builder(this).setTitle("TỔNG KẾT")
-                .setContent("abc ...")
+        BottomDialog.Builder(this).setTitle("TỔNG KẾT: ${tk.format()}k")
+                .setContent(Calendar.getInstance().time.toString())
                 .setCustomView(view)
+                .show()
+    }
+
+    private fun showXsmbDialog() {
+        BottomDialog.Builder(this).setTitle("Kết quả XSMB")
+                .setContent(prefs.kqRaw.get())
                 .show()
     }
 
@@ -243,7 +272,7 @@ class MainActivity : QkThemedActivity(), MainView {
                 .setAdapter(arrayAdapter, null)
                 .setPositiveButton("OK", null)
                 .create()
-                .show()
+//                .show()
         ApiUtils.getXsmb(object : Callback<XsmbRss> {
             override fun onResponse(call: Call<XsmbRss>, response: Response<XsmbRss>) {
                 val res = response.body()
@@ -254,12 +283,12 @@ class MainActivity : QkThemedActivity(), MainView {
                     arrayAdapter.add(item.title + "\n" + item.description)
                 }
                 arrayAdapter.notifyDataSetChanged()
-                if (lodeUtil.isSameDay(res.items[0].pubDate))
-                    lodeUtil.saveXSMB(res.items[0])
+//                if (lodeUtil.isToDay(res.items[0].pubDate))
+                lodeUtil.saveXSMB(res.items[0])
             }
 
             override fun onFailure(call: Call<XsmbRss>, t: Throwable) {
-                makeToast(t.toString())
+                makeToast("Bật 4G/WIFI để lấy Kết quả XSMB mới nhất!!")
             }
         })
     }

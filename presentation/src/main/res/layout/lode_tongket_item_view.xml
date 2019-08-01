@@ -6,7 +6,7 @@
     android:padding="@dimen/bottom_ellipsis_height">
 
     <TextView
-        android:id="@+id/lottery_lo"
+        android:id="@+id/lottery_result"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/lode_border"
@@ -27,7 +27,7 @@
         android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/tongket"
+        android:id="@+id/tongket_text"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_below="@id/username"
