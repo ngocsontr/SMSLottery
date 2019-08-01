@@ -141,7 +141,7 @@ class LodeUtil @Inject constructor(
         builder.append("Thu/Chi: <$thu / $chi>")
         val tk = chi - thu
         val emo = if (tk <= 0) "\uD83E\uDD29" else "\uD83D\uDE30"
-        return arrayOf(builder.toString(), "$emo ${tk.format()}k", tk.toString())
+        return arrayOf(builder.toString(), "${tk.format()}k", tk.toString())
     }
 
     fun getTextByType(type: E, lode: Lode): String? {

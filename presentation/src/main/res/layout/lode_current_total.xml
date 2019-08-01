@@ -45,7 +45,7 @@
             android:layout_marginEnd="@dimen/default_padding_bottom"
             android:layout_weight="1"
             android:background="@drawable/lode_button"
-            android:gravity="end"
+            android:gravity="center"
             android:padding="@dimen/bottom_ellipsis_height"
             android:textColor="@color/tools_theme"
             android:textSize="20sp" />

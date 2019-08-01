@@ -23,8 +23,7 @@ import android.animation.LayoutTransition
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.ContentValues
-import android.content.Intent
+import android.content.*
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -255,7 +254,7 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
 
         lotteryList.setOnClickListener { showDetalDialog(state.lodes?.second) }
         kq_xsmb.setOnClickListener { showKqDialog() }
-//        lode_settings.text = state.messages?.first?.giaLo.toString()
+        lode_settings.text = "${(state.messages?.first?.giaLo?.toFloat()?.div(10)).toString()}k "
         lode_settings.setOnClickListener {
             showSettingDialog(state.selectedConversation,
                     state.messages?.first?.giaLo, prefs.tongSoLode.get())
@@ -273,8 +272,17 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
 
     private fun showDetalDialog(second: RealmResults<Lode>?) {
         second?.let {
+            val content = lodeUtil.getLodeAllArray(it).toDisplay()
             BottomDialog.Builder(this).setTitle("Tổng kết")
-                    .setContent(lodeUtil.getLodeAllArray(it).toDisplay())
+                    .setContent(content)
+                    .setPositiveText("Copy")
+                    .onPositive {
+                        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        val clip = ClipData.newPlainText("TỔNG KẾT", content)
+                        clipboard.primaryClip = clip
+//                        message.setText(content)
+                        makeToast("Đã copy vào clipboard!!")
+                    }
                     .show()
         }
     }
