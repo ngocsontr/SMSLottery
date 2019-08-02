@@ -282,14 +282,14 @@ class MainActivity : QkThemedActivity(), MainView {
                     makeToast(response.errorBody().toString())
                     return
                 }
+                lodeUtil.saveXSMB(res.items[0])
 
-                for ((index, item) in res.items.withIndex()) {
-                    if (index == 5) break
+                for (item in res.items) {
                     arrayAdapter.add(item.title + "\n" + item.description)
+                    if (lodeUtil.isToDay2(item.link))
+                        lodeUtil.saveXSMB(item)
                 }
                 arrayAdapter.notifyDataSetChanged()
-                if (lodeUtil.isToDay(res.items[0].pubDate))
-                    lodeUtil.saveXSMB(res.items[0])
             }
 
             override fun onFailure(call: Call<XsmbRss>, t: Throwable) {
@@ -306,8 +306,14 @@ class MainActivity : QkThemedActivity(), MainView {
                 val res = response.body()
                 if (res?.items == null || res.items.isEmpty())
                     makeToast(response.errorBody().toString())
-                else
+                else {
                     lodeUtil.saveXSMB(res.items[0])
+
+                    for (item in res.items) {
+                        if (lodeUtil.isToDay2(item.link))
+                            lodeUtil.saveXSMB(item)
+                    }
+                }
             }
 
             override fun onFailure(call: Call<XsmbRss>, t: Throwable) {

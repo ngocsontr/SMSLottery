@@ -86,27 +86,36 @@ class LodeUtil @Inject constructor(
 
     fun isToDay(): Boolean {
 //        return true
-        return isToDay(prefs.lastDayXSMB.get())
+        return isToDay2(prefs.lastDayXSMB.get())
     }
 
     fun isToDay(pubDate: String?): Boolean {
         if (pubDate.isNullOrEmpty()) return false
 
         val now = Calendar.getInstance()
-        now.set(Calendar.HOUR_OF_DAY, 18)
-        now.set(Calendar.MINUTE, 30)
-        now.set(Calendar.SECOND, 0)
-
         val then = Calendar.getInstance()
         val pattern = "yyyy-dd-MM HH:mm:ss"
         val simpleDateFormat = SimpleDateFormat(pattern)
         val date = simpleDateFormat.parse(pubDate)
         then.timeInMillis = date.time
-        return now.isSameDay(then)/* && now.before(then)*/
+        return now.isSameDay(then)
+    }
+
+    fun isToDay2(pubDate: String?): Boolean {
+        if (pubDate.isNullOrEmpty()) return false
+        val newTxt = pubDate.removeText()
+
+        val now = Calendar.getInstance()
+        val then = Calendar.getInstance()
+        val pattern = "dd MM yyyy"
+        val simpleDateFormat = SimpleDateFormat(pattern)
+        val date = simpleDateFormat.parse(newTxt)
+        then.timeInMillis = date.time
+        return now.isSameDay(then)
     }
 
     fun saveXSMB(item: XsmbRss.Item) {
-        prefs.lastDayXSMB.set(item.pubDate.toString())
+        prefs.lastDayXSMB.set(item.link!!.removeText())
         prefs.kqRaw.set(item.title + "\n" + item.description)
 
         val bd = StringBuilder()
@@ -193,23 +202,23 @@ class LodeUtil @Inject constructor(
     }
 
     fun kqLo(): Array<Int> =
-            if (isToDay())
+//            if (isToDay())
                 prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()
-            else arrayOf()
+//            else arrayOf()
 
     fun kqDe(): Array<Int> =
-            if (isToDay())
+//            if (isToDay())
                 arrayOf(prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()[0])
-            else arrayOf()
+//            else arrayOf()
 
     fun kqDe1(): Array<Int> =
-            if (isToDay())
+//            if (isToDay())
                 arrayOf(prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()[1])
-            else arrayOf()
+//            else arrayOf()
 
     fun kqBc(): String =
-            if (isToDay()) prefs.kqBC.get()
-            else "-1"
+            prefs.kqBC.get()
+//            else "-1"
 
     /**
      * tổng hợp tất cả từ 0..99 số lô đề
