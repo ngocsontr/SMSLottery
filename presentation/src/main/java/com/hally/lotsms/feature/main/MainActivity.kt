@@ -64,9 +64,6 @@ import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.drawer_view.*
-import kotlinx.android.synthetic.main.lode_setting_view.view.tong_so_lode
-import kotlinx.android.synthetic.main.lode_tongket_item_view.view.*
-import kotlinx.android.synthetic.main.lode_tongket_view.view.*
 import kotlinx.android.synthetic.main.main_activity.*
 import kotlinx.android.synthetic.main.main_permission_hint.*
 import kotlinx.android.synthetic.main.main_syncing.*
@@ -260,35 +257,58 @@ class MainActivity : QkThemedActivity(), MainView {
     }
 
     private fun showXsmbDialog() {
-        BottomDialog.Builder(this).setTitle("Kết quả XSMB")
-                .setContent(prefs.kqRaw.get())
-                .show()
-    }
+        if (lodeUtil.isToDay()) {
+            BottomDialog.Builder(this).setTitle(getString(R.string.kq_title))
+                    .setContent(prefs.kqRaw.get())
+                    .show()
+            return
+        }
 
-    private fun getKqXsmb() {
+        // request server to update new KQ XSMB
         val builder = AlertDialog.Builder(this)
         val arrayAdapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1)
-        builder.setTitle("Kết quả XSMB")
+        builder.setTitle(getString(R.string.kq_title))
                 .setAdapter(arrayAdapter, null)
                 .setPositiveButton("OK", null)
                 .create()
-//                .show()
+                .show()
         ApiUtils.getXsmb(object : Callback<XsmbRss> {
             override fun onResponse(call: Call<XsmbRss>, response: Response<XsmbRss>) {
                 val res = response.body()
-                if (res?.items == null || res.items.isEmpty()) return
+                if (res?.items == null || res.items.isEmpty()) {
+                    makeToast(response.errorBody().toString())
+                    return
+                }
 
                 for ((index, item) in res.items.withIndex()) {
                     if (index == 5) break
                     arrayAdapter.add(item.title + "\n" + item.description)
                 }
                 arrayAdapter.notifyDataSetChanged()
-//                if (lodeUtil.isToDay(res.items[0].pubDate))
-                lodeUtil.saveXSMB(res.items[0])
+                if (lodeUtil.isToDay(res.items[0].pubDate))
+                    lodeUtil.saveXSMB(res.items[0])
             }
 
             override fun onFailure(call: Call<XsmbRss>, t: Throwable) {
-                makeToast("Bật 4G/WIFI để lấy Kết quả XSMB mới nhất!!")
+                makeToast(getString(R.string.not_internet_message))
+            }
+        })
+    }
+
+    private fun getKqXsmb() {
+        if (lodeUtil.isToDay() || !lodeUtil.isLodeTime()) return
+
+        ApiUtils.getXsmb(object : Callback<XsmbRss> {
+            override fun onResponse(call: Call<XsmbRss>, response: Response<XsmbRss>) {
+                val res = response.body()
+                if (res?.items == null || res.items.isEmpty())
+                    makeToast(response.errorBody().toString())
+                else
+                    lodeUtil.saveXSMB(res.items[0])
+            }
+
+            override fun onFailure(call: Call<XsmbRss>, t: Throwable) {
+                makeToast(getString(R.string.not_internet_message))
             }
         })
     }

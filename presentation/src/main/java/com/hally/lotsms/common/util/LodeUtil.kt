@@ -74,6 +74,16 @@ class LodeUtil @Inject constructor(
         prefs.tongSoLode.set(tongSo.toInt())
     }
 
+    fun isLodeTime(): Boolean {
+        val now = Calendar.getInstance()
+        val lodeTime = Calendar.getInstance()
+        lodeTime.set(Calendar.HOUR_OF_DAY, 18)
+        lodeTime.set(Calendar.MINUTE, 25)
+        lodeTime.set(Calendar.SECOND, 0)
+
+        return now.after(lodeTime)
+    }
+
     fun isToDay(): Boolean {
 //        return true
         return isToDay(prefs.lastDayXSMB.get())
@@ -88,11 +98,11 @@ class LodeUtil @Inject constructor(
         now.set(Calendar.SECOND, 0)
 
         val then = Calendar.getInstance()
-        val pattern = "yyyy-MM-dd HH:mm:ss"
+        val pattern = "yyyy-dd-MM HH:mm:ss"
         val simpleDateFormat = SimpleDateFormat(pattern)
         val date = simpleDateFormat.parse(pubDate)
         then.timeInMillis = date.time
-        return now.isSameDay(then) && now.before(then)
+        return now.isSameDay(then)/* && now.before(then)*/
     }
 
     fun saveXSMB(item: XsmbRss.Item) {

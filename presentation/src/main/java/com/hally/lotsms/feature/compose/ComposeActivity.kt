@@ -46,8 +46,6 @@ import com.hally.lotsms.R
 import com.hally.lotsms.common.LodeDialog
 import com.hally.lotsms.common.androidxcompat.scope
 import com.hally.lotsms.common.base.QkThemedActivity
-import com.hally.lotsms.common.network.ApiUtils
-import com.hally.lotsms.common.network.model.XsmbRss
 import com.hally.lotsms.common.util.DateFormatter
 import com.hally.lotsms.common.util.LodeUtil
 import com.hally.lotsms.common.util.extensions.*
@@ -62,10 +60,6 @@ import io.reactivex.subjects.Subject
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.compose_activity.*
 import kotlinx.android.synthetic.main.lode_current_total.*
-import kotlinx.android.synthetic.main.lode_setting_view.view.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -314,29 +308,9 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
     }
 
     private fun showKqDialog() {
-        if (lodeUtil.isToDay()) {
-            BottomDialog.Builder(this).setTitle("Kết quả XSMB")
-                    .setContent(prefs.kqRaw.get())
-                    .show()
-
-        } else ApiUtils.getXsmb(object : Callback<XsmbRss> {
-            override fun onResponse(call: Call<XsmbRss>, response: Response<XsmbRss>) {
-                val res = response.body()
-                if (res?.items == null || res.items.isEmpty()) return
-
-//                if (lodeUtil.isToDay(res.items[0].pubDate))
-                lodeUtil.saveXSMB(res.items[0])
-
-                BottomDialog.Builder(this@ComposeActivity).setTitle("Kết quả XSMB")
-                        .setContent(prefs.kqRaw.get())
-                        .show()
-                reloadView()
-            }
-
-            override fun onFailure(call: Call<XsmbRss>, t: Throwable) {
-                makeToast(t.toString())
-            }
-        })
+        BottomDialog.Builder(this).setTitle(getString(R.string.kq_title))
+                .setContent(prefs.kqRaw.get())
+                .show()
     }
 
     private fun filterData(data: Pair<Conversation, RealmResults<Message>>?): Pair<Conversation, RealmResults<Message>>? {
