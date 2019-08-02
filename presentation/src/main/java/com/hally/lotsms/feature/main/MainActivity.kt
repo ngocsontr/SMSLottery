@@ -67,6 +67,9 @@ import kotlinx.android.synthetic.main.drawer_view.*
 import kotlinx.android.synthetic.main.main_activity.*
 import kotlinx.android.synthetic.main.main_permission_hint.*
 import kotlinx.android.synthetic.main.main_syncing.*
+import kotlinx.android.synthetic.main.lode_setting_view.view.tong_so_lode
+import kotlinx.android.synthetic.main.lode_tongket_item_view.view.*
+import kotlinx.android.synthetic.main.lode_tongket_view.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
