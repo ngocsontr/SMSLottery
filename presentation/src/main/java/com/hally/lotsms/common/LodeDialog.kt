@@ -80,9 +80,9 @@ open class LodeDialog : DialogFragment() {
             return
         }
 
-        message = "xi2 202x100k, xien3 11.22,33 300k, xi4 12,23,34,45 x200, Xiên quây 050.94.63 x 1tr, và xq 50.23.63.07 x300k" +
-                ",3 cang 876 ,234 x120k 111 100,.,200 x200k Đe giai nhat 79 97 12x200 " +
-                "lo chan chan x9  22,23,20x20d, 63  5 diem, 11x5, de 20x20k, bộ  01 100n"
+//        message = "xi2 202x100k, xien3 11.22,33 300k, xi4 12,23,34,45 x200, Xiên quây 050.94.63 x 1tr, và xq 50.23.63.07 x300k" +
+//                ",3 cang 876 ,234 x120k 111 100,.,200 x200k Đe giai nhat 79 97 12x200 " +
+//                "lo chan chan x9  22,23,20x20d, 63  5 diem, 11x5, de 20x20k, bộ  01 100n"
 //        message = TEST
         body.setText(message)
 //        message = message.removeSpace()
@@ -237,7 +237,7 @@ open class LodeDialog : DialogFragment() {
             }
 
             // xử lý 3 càng
-            if (type.toLowerCase() == TYPE[E.BC.ordinal]) {
+            if (type.equalTo(E.BC)) {
                 var check = true
                 val bd = StringBuilder()
                 for (n in num.removeText().split(SPACE)) {
@@ -256,6 +256,7 @@ open class LodeDialog : DialogFragment() {
             }
 
             if (flag) {
+                // xử lý theo mẫu mã sẵn có
                 for ((index, key) in codes.withIndex()) {
                     if (num.contains(key)) {
                         if (point.isDigitsOnly() &&
@@ -270,7 +271,7 @@ open class LodeDialog : DialogFragment() {
 
             if (flag) {
                 var check = true
-                val bd = StringBuilder()
+                var bd = StringBuilder()
 //                Log.i("TNS", num.removeText())
                 for (n in num.removeText().split(SPACE)) {
                     check = n.isNotBlank() && n.isDigitsOnly()
@@ -286,10 +287,15 @@ open class LodeDialog : DialogFragment() {
 
 //                Log.i("TNS", "$check " + point)
                 if (check && point.isDigitsOnly()) {
-                    builder.append("$bd$SIGNX$point, ")
-                    if (type.toLowerCase() != TYPE[E.XIEN.ordinal] && type.toLowerCase() != TYPE[E.XQ.ordinal])
-                        addLode(lode.byType(type), bd.toString(), point)
-                    else addOther(lode.xien, bd.toString(), point)
+                    if (type.equalTo(E.XQ)) {
+                        bd = addXienQuay(lode.xien, bd, point)
+                        builder.append(bd)
+                    } else {
+                        builder.append("$bd$SIGNX$point, ")
+                        if (type.equalTo(E.XIEN)) lode.xien.add("$bd$SIGNX$point")
+                        else addLode(lode.byType(type), bd.toString(), point)
+                    }
+
                     flag = false
                 }
             }
@@ -304,7 +310,7 @@ open class LodeDialog : DialogFragment() {
             row.lode_number.setTextColor(Color.BLACK)
             row.lode_number.floatingLabelText = builder.delete(builder.length - 2, builder.length - 1)
             val t = row.lode_number?.floatingLabelText?.toString()
-            row.lode_number_bubble.text = t?.replace(",", "\n")
+            row.lode_number_bubble.text = t?.replace(", ", "\n")
         }
         if (!isValid) {
             row.lode_number.setTextColor(Color.RED)
@@ -312,6 +318,21 @@ open class LodeDialog : DialogFragment() {
         }
 
         return isValid
+    }
+
+    private fun addXienQuay(xqArr: RealmList<String>, bd: StringBuilder, point: String): StringBuilder {
+        val arr = bd.toString().removeSpace().split(SPACE)
+        bd.clear()
+        val n = arr.size
+        for (i in 2..n) {
+            val compa = LodeUtil.genCombina(n, i)
+            compa.forEach {
+                val item = it.map { i -> arr[i] }.toString().removeText() + "$SIGNX$point"
+                xqArr.add(item)
+                bd.append("$item, ")
+            }
+        }
+        return bd
     }
 
     private fun addOther(arr: RealmList<String>, num: String, point: String) {
@@ -346,7 +367,11 @@ open class LodeDialog : DialogFragment() {
         enum class E(val vni: String, val price: Int) {
             LO("Lô", 80),
             DE1("Đề giải nhất", 70), DE("Đề", 70), BC("Ba Càng", 400),
-            XIEN("Lô Xiên", 230), XQ("Xiên quay", 400)
+            XIEN("Lô Xiên", 1), XQ("Xiên quay", 1)
         }
     }
+}
+
+private fun String.equalTo(e: LodeDialog.Companion.E): Boolean {
+    return toLowerCase() == LodeDialog.TYPE[e.ordinal]
 }

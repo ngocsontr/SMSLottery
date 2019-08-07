@@ -146,13 +146,13 @@ class LodeUtil @Inject constructor(
             if (!txt.isNullOrBlank()) {
                 builder.append("${e.vni} : ")
                 builder.append(txt)
-                builder.append(if (e == E.LO || e == E.XIEN) " Điểm" else " k")
+                builder.append(if (e == E.LO) " Điểm" else " k")
                 builder.append("\n")
 
                 val arr = txt.split("/")
                 chi += arr[0].toInt() * e.price
                 thu += when (e) {
-                    E.LO, E.XIEN -> arr[1].toInt() * giaLo / 10
+                    E.LO -> arr[1].toInt() * giaLo / 10
                     else -> arr[1].toInt()
                 }
             }
@@ -180,7 +180,26 @@ class LodeUtil @Inject constructor(
                 target = kqLo()
             }
             E.XIEN -> {
-                return ""
+                target = kqLo()
+                var bingoXien = 0
+                var tongXien = 0
+                lode.xien.forEach { s ->
+                    val arr = s.split("x")
+                    val nums = arr[0].trim().split(" ")
+                    for ((i, num) in nums.withIndex()) {
+                        if (!target.contains(num.toInt())) break
+
+                        if (i == nums.size - 1)
+                            bingoXien += (arr[1].toInt() * when (nums.size) {
+                                2 -> 10
+                                3 -> 40
+                                4 -> 100
+                                else -> 0
+                            })
+                    }
+                    tongXien += arr[1].toInt()
+                }
+                return if (tongXien > 0) "$bingoXien/$tongXien" else ""
             }
             E.BC -> {
                 var bingoBc = 0
@@ -205,17 +224,17 @@ class LodeUtil @Inject constructor(
 
     fun kqLo(): Array<Int> =
 //            if (isToDay())
-                prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()
+            prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()
 //            else arrayOf()
 
     fun kqDe(): Array<Int> =
 //            if (isToDay())
-                arrayOf(prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()[0])
+            arrayOf(prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()[0])
 //            else arrayOf()
 
     fun kqDe1(): Array<Int> =
 //            if (isToDay())
-                arrayOf(prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()[1])
+            arrayOf(prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()[1])
 //            else arrayOf()
 
     fun kqBc(): String =
@@ -302,6 +321,23 @@ class LodeUtil @Inject constructor(
             str = str.replace("xi3 ", "xien ")
             str = str.replace("xi4 ", "xien ")
             return str
+        }
+
+        fun genCombina(n: Int, r: Int): List<IntArray> {
+            val combinations = ArrayList<IntArray>()
+            helper(combinations, IntArray(r), 0, n - 1, 0)
+            return combinations
+        }
+
+        private fun helper(combinations: MutableList<IntArray>, data: IntArray, start: Int, end: Int, index: Int) {
+            if (index == data.size) {
+                val combination = data.clone()
+                combinations.add(combination)
+            } else if (start <= end) {
+                data[index] = start
+                helper(combinations, data, start + 1, end, index + 1)
+                helper(combinations, data, start + 1, end, index)
+            }
         }
 
         val MA_LENH = listOf(
