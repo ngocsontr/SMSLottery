@@ -164,8 +164,8 @@ class LodeUtil @Inject constructor(
     }
 
     fun getTextByType(type: E, lode: Lode): String? {
-        val maps: RealmList<Int>
-        val target: Array<Int>
+        var maps = RealmList<Int>()
+        var target: Array<Int> = arrayOf(-1)
         when (type) {
             E.DE1 -> {
                 maps = lode.degiainhat
@@ -192,6 +192,8 @@ class LodeUtil @Inject constructor(
                     tongBc += arr[1].toInt()
                 }
                 return if (tongBc > 0) "$bingoBc/$tongBc" else ""
+            }
+            else -> {
             }
         }
         if (maps.isNotEmpty()) {
@@ -284,7 +286,7 @@ class LodeUtil @Inject constructor(
 
         fun removeVietnamese(s: String): String {
 //        Toast.makeText(activity, "Xóa Vietnamese!!", Toast.LENGTH_LONG).show()
-            var str = s.trim()
+            var str = s.removeSpace()
             str = str.toLowerCase()
 
             str = str.replace("bộ", "boj")
@@ -293,6 +295,12 @@ class LodeUtil @Inject constructor(
                 for (j in 0 until VietNamChar[i].length)
                     str = str.replace(VietNamChar[i][j], VietNamChar[0][i - 1])
             }
+            str = str.replace("xien quay", "xq ").removeSpace()
+            str = str.replace("xien ", "xi")
+            str = str.replace("xien", "xi")
+            str = str.replace("xi2 ", "xien ")
+            str = str.replace("xi3 ", "xien ")
+            str = str.replace("xi4 ", "xien ")
             return str
         }
 

@@ -180,7 +180,7 @@ class MessagesAdapter @Inject constructor(
                 if (message.xuly) {
                     activity.showDialogDelLode(message)
                 } else {
-                    activity.isLodeFormat(message)
+//                    activity.isLodeFormat(message)
                     activity.showDialogLode(message)
                 }
             }

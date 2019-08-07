@@ -80,11 +80,12 @@ open class LodeDialog : DialogFragment() {
             return
         }
 
-//        message = "3 cang 876 ,234 x120k 111 100,.,200 x200k Đe giai nhat 79 97 12x200 " +
-//                "lo chan chan x9  22,23,20x20d, 63  5 diem, 11x5, de 20x20k, bộ  01 100n"
+        message = "xi2 202x100k, xien3 11.22,33 300k, xi4 12,23,34,45 x200, Xiên quây 050.94.63 x 1tr, và xq 50.23.63.07 x300k" +
+                ",3 cang 876 ,234 x120k 111 100,.,200 x200k Đe giai nhat 79 97 12x200 " +
+                "lo chan chan x9  22,23,20x20d, 63  5 diem, 11x5, de 20x20k, bộ  01 100n"
 //        message = TEST
         body.setText(message)
-        message = message.removeSpace()
+//        message = message.removeSpace()
         handleLodeText()
 
         // set listener
@@ -113,8 +114,10 @@ open class LodeDialog : DialogFragment() {
         rows.clear()
         lode_container.removeAllViews()
         // xử lý chia các view LÔ ĐỀ riêng
-        message = message.removeSpace()
+        // xử lý tiền đề text
         message = LodeUtil.removeVietnamese(message)
+
+        // tìm kiếm loại
         var index = 0
         while (index != -1) {
             var type = ""
@@ -172,10 +175,10 @@ open class LodeDialog : DialogFragment() {
         while (i < text.length) { // xóa SPACE trước sau các SIGNAL
             for ((j, key) in SIGNAL.withIndex()) {
                 if (i < text.length && key == text[i]) {
-                    if (j <= 2) {
+                    if (j <= 2) { // 'x', '*', '/',
                         if (i + 1 < text.length && SPACE == text[i + 1].toString())
                             text = text.removeRange(i + 1, i + 2)
-                    } else {
+                    } else { // 'd', 'n', 'k'
                         if (i >= 1 && SPACE == text[i - 1].toString())
                             if (i + 2 < text.length && isNotCode(text.substring(i, i + 3)))
                                 text = text.removeRange(i - 1, i)
@@ -216,7 +219,7 @@ open class LodeDialog : DialogFragment() {
             }
         }
 
-        // tìm mã lệnh
+        // tìm mã lệnh lô đề
         val numbers = lenh.map { it.first }
         val points = lenh.map { it.second }
         val builder = StringBuilder()
@@ -245,7 +248,7 @@ open class LodeDialog : DialogFragment() {
 
                 if (check && point.isDigitsOnly()) {
                     builder.append("$bd$SIGNX$point, ")
-                    add3Cang(lode.bc, bd.toString(), point)
+                    addOther(lode.bc, bd.toString(), point)
                     flag = false
                 }
                 isValid = isValid && !flag
@@ -284,7 +287,9 @@ open class LodeDialog : DialogFragment() {
 //                Log.i("TNS", "$check " + point)
                 if (check && point.isDigitsOnly()) {
                     builder.append("$bd$SIGNX$point, ")
-                    addLode(lode.byType(type), bd.toString(), point)
+                    if (type.toLowerCase() != TYPE[E.XIEN.ordinal] && type.toLowerCase() != TYPE[E.XQ.ordinal])
+                        addLode(lode.byType(type), bd.toString(), point)
+                    else addOther(lode.xien, bd.toString(), point)
                     flag = false
                 }
             }
@@ -309,10 +314,10 @@ open class LodeDialog : DialogFragment() {
         return isValid
     }
 
-    private fun add3Cang(bc: RealmList<String>, num: String, point: String) {
+    private fun addOther(arr: RealmList<String>, num: String, point: String) {
         for (n in num.removeSpace().split(SPACE))
-            bc.add("$n$SIGNX$point")
-//        Log.d("TNS", "add3Cang : $num : $point  => $bc")
+            arr.add("$n$SIGNX$point")
+        Log.d("TNS", "addOther : $num : $point  => $arr")
     }
 
     private fun addLode(lode: RealmList<Int>, numbers: String, point: String) {
@@ -335,13 +340,13 @@ open class LodeDialog : DialogFragment() {
     companion object {
         val TAG: String = LodeDialog::class.java.simpleName
         val MESSAGE = "RemoveSNSConfirmDialog.MESSAGE"
-        val TYPE = arrayOf("lo", "de giai nhat", "de", "xien", "3 cang")
+        val TYPE = arrayOf("lo", "de giai nhat", "de", "3 cang", "xien", "xq")
         val SPACE = " "
 
         enum class E(val vni: String, val price: Int) {
             LO("Lô", 80),
-            DE1("Đề giải nhất", 70), DE("Đề", 70),
-            XIEN("Lô Xiên", 230), BC("Ba Càng", 400)
+            DE1("Đề giải nhất", 70), DE("Đề", 70), BC("Ba Càng", 400),
+            XIEN("Lô Xiên", 230), XQ("Xiên quay", 400)
         }
     }
 }
