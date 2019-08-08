@@ -28,7 +28,6 @@ import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.view.*
-import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.app.ActivityCompat
@@ -45,8 +44,6 @@ import com.hally.lotsms.common.Navigator
 import com.hally.lotsms.common.androidxcompat.drawerOpen
 import com.hally.lotsms.common.androidxcompat.scope
 import com.hally.lotsms.common.base.QkThemedActivity
-import com.hally.lotsms.common.network.ApiUtils
-import com.hally.lotsms.common.network.model.XsmbRss
 import com.hally.lotsms.common.util.LodeUtil
 import com.hally.lotsms.common.util.extensions.*
 import com.hally.lotsms.common.util.format
@@ -70,9 +67,6 @@ import kotlinx.android.synthetic.main.main_syncing.*
 import kotlinx.android.synthetic.main.lode_setting_view.view.tong_so_lode
 import kotlinx.android.synthetic.main.lode_tongket_item_view.view.*
 import kotlinx.android.synthetic.main.lode_tongket_view.view.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.util.*
 import javax.inject.Inject
 
@@ -260,66 +254,15 @@ class MainActivity : QkThemedActivity(), MainView {
     }
 
     private fun showXsmbDialog() {
-        if (lodeUtil.isToDay()) {
-            BottomDialog.Builder(this).setTitle(getString(R.string.kq_title))
-                    .setContent(prefs.kqRaw.get())
-                    .show()
-            return
-        }
-
-        // request server to update new KQ XSMB
-        val builder = AlertDialog.Builder(this)
-        val arrayAdapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1)
-        builder.setTitle(getString(R.string.kq_title))
-                .setAdapter(arrayAdapter, null)
-                .setPositiveButton("OK", null)
-                .create()
+        BottomDialog.Builder(this).setTitle(getString(R.string.kq_title))
+                .setContent(prefs.kqRaw.get())
                 .show()
-        ApiUtils.getXsmb(object : Callback<XsmbRss> {
-            override fun onResponse(call: Call<XsmbRss>, response: Response<XsmbRss>) {
-                val res = response.body()
-                if (res?.items == null || res.items.isEmpty()) {
-                    makeToast(response.errorBody().toString())
-                    return
-                }
-                lodeUtil.saveXSMB(res.items[0])
-
-                for (item in res.items) {
-                    arrayAdapter.add(item.title + "\n" + item.description)
-                    if (lodeUtil.isToDay2(item.link))
-                        lodeUtil.saveXSMB(item)
-                }
-                arrayAdapter.notifyDataSetChanged()
-            }
-
-            override fun onFailure(call: Call<XsmbRss>, t: Throwable) {
-                makeToast(getString(R.string.not_internet_message))
-            }
-        })
+        lodeUtil.getKqXsmb()
     }
 
     private fun getKqXsmb() {
         if (lodeUtil.isToDay() || !lodeUtil.isLodeTime()) return
-
-        ApiUtils.getXsmb(object : Callback<XsmbRss> {
-            override fun onResponse(call: Call<XsmbRss>, response: Response<XsmbRss>) {
-                val res = response.body()
-                if (res?.items == null || res.items.isEmpty())
-                    makeToast(response.errorBody().toString())
-                else {
-                    lodeUtil.saveXSMB(res.items[0])
-
-                    for (item in res.items) {
-                        if (lodeUtil.isToDay2(item.link))
-                            lodeUtil.saveXSMB(item)
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<XsmbRss>, t: Throwable) {
-                makeToast(getString(R.string.not_internet_message))
-            }
-        })
+        lodeUtil.getKqXsmb()
     }
 
     private fun changeDatePicker(textView: TextView) {

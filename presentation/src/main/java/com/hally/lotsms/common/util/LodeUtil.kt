@@ -19,17 +19,23 @@
 package com.hally.lotsms.common.util
 
 import android.content.Context
+import android.net.ConnectivityManager
 import android.util.Log
+import com.hally.lotsms.R
 import com.hally.lotsms.common.LodeDialog
 import com.hally.lotsms.common.LodeDialog.Companion.E
 import com.hally.lotsms.common.network.model.XsmbRss
 import com.hally.lotsms.common.util.extensions.isSameDay
+import com.hally.lotsms.common.util.extensions.makeToast
 import com.hally.lotsms.model.Lode
 import com.hally.lotsms.model.Message
 import com.hally.lotsms.repository.ConversationRepository
 import com.hally.lotsms.repository.LodeRepository
 import com.hally.lotsms.repository.MessageRepository
 import com.hally.lotsms.util.Preferences
+import com.prof.rssparser.Article
+import com.prof.rssparser.OnTaskCompleted
+import com.prof.rssparser.Parser
 import io.realm.RealmList
 import io.realm.RealmResults
 import java.text.SimpleDateFormat
@@ -37,6 +43,8 @@ import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.collections.ArrayList
+import androidx.core.content.ContextCompat.getSystemService
+
 
 @Singleton
 class LodeUtil @Inject constructor(
@@ -112,6 +120,40 @@ class LodeUtil @Inject constructor(
         val date = simpleDateFormat.parse(newTxt)
         then.timeInMillis = date.time
         return now.isSameDay(then)
+    }
+
+    fun isNetworkConnected(): Boolean {
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+        return cm!!.activeNetworkInfo != null
+    }
+
+    fun getKqXsmb() {
+        if (!isNetworkConnected()) context.makeToast(context.getString(R.string.not_internet_message))
+
+        val parser = Parser()
+        parser.onFinish(object : OnTaskCompleted {
+            override fun onError(e: Exception) {
+                e.printStackTrace()
+                context.makeToast(context.getString(R.string.not_internet_message))
+            }
+
+            override fun onTaskCompleted(list: MutableList<Article>) {
+                val items = list.map {
+                    XsmbRss.Item(it.title, it.link, it.description, it.pubDate)
+                }
+
+                // lưu thằng mới nhất
+                saveXSMB(items[0])
+
+                // lưu thằng trùng với ngày đang pick
+                for (item in items) {
+                    Log.i("TNS", item.toString())
+                    if (isToDay2(item.link))
+                        saveXSMB(item)
+                }
+            }
+        })
+        parser.execute(XSMB_URL)
     }
 
     fun saveXSMB(item: XsmbRss.Item) {
@@ -297,6 +339,9 @@ class LodeUtil @Inject constructor(
     }
 
     companion object {
+        public val XSMB_URL = "https://xskt.com.vn/rss-feed/mien-bac-xsmb.rss"
+        public val XSMB_URL2 = "https://xosodaiphat.com/ket-qua-xo-so-mien-bac-xsmb.rss"
+
         val SIGNX = 'x'
         val SIGNAL = arrayOf(SIGNX, '*', '/', 'd', 'n', 'k')
         val VietNamChar = arrayOf("aAeEoOuUiIdDyY",

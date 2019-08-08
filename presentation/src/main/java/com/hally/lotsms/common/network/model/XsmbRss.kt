@@ -58,16 +58,7 @@ class XsmbRss {
         }
     }
 
-    inner class Item {
-        @SerializedName("title")
-        @Expose
-        val title: String? = null
-        @SerializedName("pubDate")
-        @Expose
-        val pubDate: String? = null
-        @SerializedName("link")
-        @Expose
-        val link: String? = null
+    class Item(val title: String?, val link: String?, val description: String?, val pubDate: String?) {
         @SerializedName("guid")
         @Expose
         val guid: String? = null
@@ -77,9 +68,6 @@ class XsmbRss {
         @SerializedName("thumbnail")
         @Expose
         val thumbnail: String? = null
-        @SerializedName("description")
-        @Expose
-        val description: String? = null
         @SerializedName("content")
         @Expose
         val content: String? = null
@@ -92,12 +80,7 @@ class XsmbRss {
                     "title='" + title + '\''.toString() +
                     ", pubDate='" + pubDate + '\''.toString() +
                     ", link='" + link + '\''.toString() +
-                    ", guid='" + guid + '\''.toString() +
-                    ", author='" + author + '\''.toString() +
-                    ", thumbnail='" + thumbnail + '\''.toString() +
-                    ", description='" + description + '\''.toString() +
-                    ", content='" + content + '\''.toString() +
-                    ", categories=" + categories +
+                    ", \ndescription='" + description + '\''.toString() +
                     '}'.toString()
         }
     }
