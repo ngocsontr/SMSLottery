@@ -43,7 +43,6 @@ import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.collections.ArrayList
-import androidx.core.content.ContextCompat.getSystemService
 
 
 @Singleton
@@ -93,30 +92,16 @@ class LodeUtil @Inject constructor(
     }
 
     fun isToDay(): Boolean {
-//        return true
         return isToDay2(prefs.lastDayXSMB.get())
-    }
-
-    fun isToDay(pubDate: String?): Boolean {
-        if (pubDate.isNullOrEmpty()) return false
-
-        val now = Calendar.getInstance()
-        val then = Calendar.getInstance()
-        val pattern = "yyyy-dd-MM HH:mm:ss"
-        val simpleDateFormat = SimpleDateFormat(pattern)
-        val date = simpleDateFormat.parse(pubDate)
-        then.timeInMillis = date.time
-        return now.isSameDay(then)
     }
 
     fun isToDay2(pubDate: String?): Boolean {
         if (pubDate.isNullOrEmpty()) return false
         val newTxt = pubDate.removeText()
 
-        val now = Calendar.getInstance()
+        val now = getNow()
         val then = Calendar.getInstance()
-        val pattern = "dd MM yyyy"
-        val simpleDateFormat = SimpleDateFormat(pattern)
+        val simpleDateFormat = SimpleDateFormat("dd MM yyyy", Locale.US)
         val date = simpleDateFormat.parse(newTxt)
         then.timeInMillis = date.time
         return now.isSameDay(then)
@@ -329,13 +314,19 @@ class LodeUtil @Inject constructor(
     }
 
     fun getLodeTime(): Array<Long> {
-        val end = Calendar.getInstance()
+        val end = getNow()
         end.set(Calendar.HOUR_OF_DAY, 18)
         end.set(Calendar.MINUTE, 30)
         end.set(Calendar.SECOND, 0)
         val start = end.clone() as Calendar
         start.add(Calendar.DAY_OF_YEAR, -1)
         return arrayOf(start.timeInMillis, end.timeInMillis)
+    }
+
+    fun getNow(): Calendar {
+        val now = Calendar.getInstance()
+        now.time = sdf.parse(prefs.pickDate.get())
+        return now
     }
 
     companion object {
@@ -367,6 +358,8 @@ class LodeUtil @Inject constructor(
             str = str.replace("xi4 ", "xien ")
             return str
         }
+
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.US)
 
         fun genCombina(n: Int, r: Int): List<IntArray> {
             val combinations = ArrayList<IntArray>()

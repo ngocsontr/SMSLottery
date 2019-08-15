@@ -20,7 +20,9 @@ package com.hally.lotsms.feature.main
 
 import android.Manifest
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -61,12 +63,12 @@ import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.drawer_view.*
-import kotlinx.android.synthetic.main.main_activity.*
-import kotlinx.android.synthetic.main.main_permission_hint.*
-import kotlinx.android.synthetic.main.main_syncing.*
 import kotlinx.android.synthetic.main.lode_setting_view.view.tong_so_lode
 import kotlinx.android.synthetic.main.lode_tongket_item_view.view.*
 import kotlinx.android.synthetic.main.lode_tongket_view.view.*
+import kotlinx.android.synthetic.main.main_activity.*
+import kotlinx.android.synthetic.main.main_permission_hint.*
+import kotlinx.android.synthetic.main.main_syncing.*
 import java.util.*
 import javax.inject.Inject
 
@@ -137,9 +139,13 @@ class MainActivity : QkThemedActivity(), MainView {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
-        val is1Day = prefs.oneDaySms.get()
-        datePicker.setText(if (is1Day) R.string.datePicker1Day else R.string.datePickerAllDay)
+        val pickDate = prefs.pickDate.get()
+        if (pickDate.isBlank()) {
+            val date = LodeUtil.sdf.format(Calendar.getInstance().time)
+            datePicker.text = date
+        } else datePicker.text = pickDate
         datePicker.setOnClickListener { v -> changeDatePicker(v as TextView) }
+        all.setOnClickListener { allDate() }
         kq_xsmb.setOnClickListener { showXsmbDialog() }
         tongket.setOnClickListener { showTongketDialog() }
         clear.setOnClickListener { showClearDialog() }
@@ -248,7 +254,7 @@ class MainActivity : QkThemedActivity(), MainView {
         }
 
         BottomDialog.Builder(this).setTitle("TỔNG KẾT: ${tk.format()}k")
-                .setContent(Calendar.getInstance().time.toString())
+                .setContent(prefs.pickDate.get())
                 .setCustomView(view)
                 .show()
     }
@@ -265,11 +271,32 @@ class MainActivity : QkThemedActivity(), MainView {
         lodeUtil.getKqXsmb()
     }
 
+    private fun allDate() {
+        if (prefs.oneDaySms.get()) {
+            prefs.oneDaySms.set(false)
+            viewModel.bindView(this)
+        }
+    }
+
+    @SuppressLint("RestrictedApi")
     private fun changeDatePicker(textView: TextView) {
-        val is1Day = prefs.oneDaySms.get()
-        textView.setText(if (is1Day) R.string.datePickerAllDay else R.string.datePicker1Day)
-        prefs.oneDaySms.set(!is1Day)
-        viewModel.bindView(this)
+        val calendar = lodeUtil.getNow()
+        val dialog = DatePickerDialog(this, 0,
+                { _, year, month, dayOfMonth ->
+                    calendar.set(Calendar.YEAR, year)
+                    calendar.set(Calendar.MONTH, month)
+                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+                    val date = LodeUtil.sdf.format(calendar.time)
+                    prefs.pickDate.set(date)
+                    prefs.oneDaySms.set(true)
+
+                    textView.text = date
+                    viewModel.bindView(this)
+                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH))
+        dialog.datePicker.spinnersShown = true
+        dialog.show()
     }
 
     override fun render(state: MainState) {

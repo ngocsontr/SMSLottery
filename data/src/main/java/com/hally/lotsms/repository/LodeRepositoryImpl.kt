@@ -30,6 +30,7 @@ import com.hally.lotsms.util.Preferences
 import io.realm.Realm
 import io.realm.RealmResults
 import timber.log.Timber
+import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -62,7 +63,9 @@ class LodeRepositoryImpl @Inject constructor(
     }
 
     private fun getLodeTime(): Array<Long> {
+        val sdf = SimpleDateFormat("dd-MM-yyyy", Locale.US)
         val end = Calendar.getInstance()
+        end.time = sdf.parse(prefs.pickDate.get())
         end.set(Calendar.HOUR_OF_DAY, 18)
         end.set(Calendar.MINUTE, 30)
         end.set(Calendar.SECOND, 0)

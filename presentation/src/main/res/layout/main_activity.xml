@@ -98,6 +98,19 @@
                 android:textSize="22sp" />
 
             <TextView
+                android:id="@+id/all"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/default_padding_bottom"
+                android:background="@drawable/lode_button"
+                android:gravity="center"
+                android:padding="@dimen/bottom_ellipsis_height"
+                android:text="ALL"
+                android:textColor="@color/tools_theme"
+                android:textSize="22sp" />
+
+            <TextView
                 android:id="@+id/kq_xsmb"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
