@@ -143,6 +143,7 @@ class MainActivity : QkThemedActivity(), MainView {
         if (pickDate.isBlank()) {
             val date = LodeUtil.sdf.format(Calendar.getInstance().time)
             datePicker.text = date
+            prefs.pickDate.set(date)
         } else datePicker.text = pickDate
         datePicker.setOnClickListener { v -> changeDatePicker(v as TextView) }
         all.setOnClickListener { allDate() }
