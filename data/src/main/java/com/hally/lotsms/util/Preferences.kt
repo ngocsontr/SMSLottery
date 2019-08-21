@@ -90,7 +90,12 @@ class Preferences @Inject constructor(private val rxPrefs: RxSharedPreferences) 
 
     val oneDaySms = rxPrefs.getBoolean("oneDaySms", true)
     val pickDate = rxPrefs.getString("pickDate", "")
-    val tongSoLode = rxPrefs.getInteger("tongSoLode", 200)
+
+    val tongSoLo = rxPrefs.getInteger("tongSoLo", 200)
+    val tongSoDe = rxPrefs.getInteger("tongSoDe", 200)
+    val tongSoBC = rxPrefs.getInteger("tongSoBC", 200)
+    val tongSoXien = rxPrefs.getInteger("tongSoXien", 200)
+
     val lastDayXSMB = rxPrefs.getString("lastDayXSMB", "")
     val kqRaw = rxPrefs.getString("kqRaw", "")
     val kqLode = rxPrefs.getString("kqLode", "")

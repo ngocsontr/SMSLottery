@@ -20,7 +20,9 @@ package com.hally.lotsms.common.util
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.hally.lotsms.R
 import com.hally.lotsms.common.LodeDialog
 import com.hally.lotsms.common.LodeDialog.Companion.E
@@ -78,7 +80,7 @@ class LodeUtil @Inject constructor(
 
     fun update(id: Long, gia_lo: String, tongSo: String) {
         conversationRepo.setGiaLo(gia_lo.toInt(), id)
-        prefs.tongSoLode.set(tongSo.toInt())
+        prefs.tongSoLo.set(tongSo.toInt())
     }
 
     fun isLodeTime(): Boolean {
@@ -91,11 +93,11 @@ class LodeUtil @Inject constructor(
         return now.after(lodeTime)
     }
 
-    fun isToDay(): Boolean {
-        return isToDay2(prefs.lastDayXSMB.get())
+    fun isSameDay(): Boolean {
+        return isSameDay(prefs.lastDayXSMB.get())
     }
 
-    fun isToDay2(pubDate: String?): Boolean {
+    fun isSameDay(pubDate: String?): Boolean {
         if (pubDate.isNullOrEmpty()) return false
         val newTxt = pubDate.removeText()
 
@@ -133,7 +135,7 @@ class LodeUtil @Inject constructor(
                 // lưu thằng trùng với ngày đang pick
                 for (item in items) {
                     Log.i("TNS", item.toString())
-                    if (isToDay2(item.link))
+                    if (isSameDay(item.link))
                         saveXSMB(item)
                 }
             }
@@ -250,17 +252,17 @@ class LodeUtil @Inject constructor(
     }
 
     fun kqLo(): Array<Int> =
-//            if (isToDay())
+//            if (isSameDay())
             prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()
 //            else arrayOf()
 
     fun kqDe(): Array<Int> =
-//            if (isToDay())
+//            if (isSameDay())
             arrayOf(prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()[0])
 //            else arrayOf()
 
     fun kqDe1(): Array<Int> =
-//            if (isToDay())
+//            if (isSameDay())
             arrayOf(prefs.kqLode.get().split(" ").map { it.toInt() }.toTypedArray()[1])
 //            else arrayOf()
 
@@ -271,7 +273,7 @@ class LodeUtil @Inject constructor(
     /**
      * tổng hợp tất cả từ 0..99 số lô đề
      */
-    fun getLodeAllArray(data: RealmResults<Lode>): Lode {
+    fun getLodeAllArray(data: List<Lode>): Lode {
         val result = Lode().init()
         LodeDialog.Companion.E.values().forEach {
             when (it) {
@@ -303,6 +305,51 @@ class LodeUtil @Inject constructor(
             }
         }
         return result
+    }
+
+    @RequiresApi(Build.VERSION_CODES.N)
+    fun getLodeForward(data: Lode): Lode {
+        var temp = 0
+        LodeDialog.Companion.E.values().forEach {
+            when (it) {
+                E.DE1 -> {
+                    temp = prefs.tongSoDe.get()
+                    for ((i, value) in data.degiainhat.withIndex())
+                        if (value <= temp) data.degiainhat[i] = 0 else data.degiainhat[i] = value - temp
+                }
+                E.DE -> {
+                    temp = prefs.tongSoDe.get()
+                    for ((i, value) in data.de.withIndex())
+                        if (value <= temp) data.de[i] = 0 else data.de[i] = value - temp
+                }
+                E.LO -> {
+                    temp = prefs.tongSoLo.get()
+                    for ((i, value) in data.lo.withIndex())
+                        if (value <= temp) data.lo[i] = 0 else data.lo[i] = value - temp
+                }
+                E.XIEN -> {
+                    temp = prefs.tongSoXien.get()
+                    data.xien.removeIf { it.split(SIGNX)[1].toInt() <= temp }
+
+                    for ((i, value) in data.xien.withIndex()) {
+                        val arr = value.split(SIGNX)
+                        if (arr[1].toInt() > temp) data.xien[i] = "${arr[0]}$SIGNX${arr[1].toInt() - temp}"
+                    }
+                }
+                E.BC -> {
+                    temp = prefs.tongSoBC.get()
+                    data.bc.removeIf { it.split(SIGNX)[1].toInt() <= temp }
+
+                    for ((i, value) in data.bc.withIndex()) {
+                        val arr = value.split(SIGNX)
+                        if (arr[1].toInt() > temp) data.bc[i] = "${arr[0]}$SIGNX${arr[1].toInt() - temp}"
+                    }
+                }
+                else -> {
+                }
+            }
+        }
+        return data
     }
 
     fun getLodeSummary(maps: List<RealmList<Int>>): ArrayList<Int> {

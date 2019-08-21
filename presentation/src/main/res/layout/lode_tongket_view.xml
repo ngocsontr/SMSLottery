@@ -21,32 +21,82 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="@string/tong_diem_om"
+                android:hint="@string/tong_lo"
                 android:imeOptions="actionDone"
                 android:inputType="number"
                 android:minHeight="36dp"
                 android:textColor="@color/black"
                 app:met_errorColor="#ff0000"
-                app:met_floatingLabel="highlight"
-                app:met_floatingLabelTextColor="#303F9F" />
+                app:met_floatingLabel="normal"
+                app:met_floatingLabelAlwaysShown="true"
+                app:met_floatingLabelTextColor="@color/tools_theme" />
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/tong_so_de"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/tong_de"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:minHeight="36dp"
+                android:textColor="@color/black"
+                app:met_errorColor="#ff0000"
+                app:met_floatingLabel="normal"
+                app:met_floatingLabelAlwaysShown="true"
+                app:met_floatingLabelTextColor="@color/tools_theme" />
 
             <TextView
                 android:id="@+id/update"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:layout_marginEnd="@dimen/default_padding_bottom"
                 android:background="@drawable/lode_button"
                 android:gravity="center"
                 android:padding="@dimen/bottom_ellipsis_height"
-                android:text="Cập Nhật"
+                android:text="Update"
                 android:textColor="@color/tools_theme"
                 android:textSize="22sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/tong_so_xien"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/tong_xien"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:minHeight="36dp"
+                android:textColor="@color/black"
+                app:met_errorColor="#ff0000"
+                app:met_floatingLabel="normal"
+                app:met_floatingLabelAlwaysShown="true"
+                app:met_floatingLabelTextColor="@color/tools_theme" />
+
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:id="@+id/tong_so_bc"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/tong_bc"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:minHeight="36dp"
+                android:textColor="@color/black"
+                app:met_errorColor="#ff0000"
+                app:met_floatingLabel="normal"
+                app:met_floatingLabelAlwaysShown="true"
+                app:met_floatingLabelTextColor="@color/tools_theme" />
 
             <TextView
                 android:id="@+id/chuyen"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
-                android:layout_marginEnd="@dimen/default_padding_bottom"
                 android:background="@drawable/lode_button"
                 android:gravity="center"
                 android:padding="@dimen/bottom_ellipsis_height"
@@ -59,7 +109,6 @@
             android:id="@+id/chuyen_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/default_padding_bottom"
             android:padding="@dimen/bottom_ellipsis_height"
             android:textColor="@color/tools_theme" />
 

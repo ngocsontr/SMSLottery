@@ -70,22 +70,45 @@ open class Lode : RealmObject() {
         sb.append("Lô\n${lo.toDisplay()}\n\n" +
                 "Đề giải nhất\n${degiainhat.toDisplay()}\n\n" +
                 "Đề\n${de.toDisplay()}\n\n" +
-                "Xiên\n${xien.toString().replace("RealmList<?>@", "")}\n\n" +
-                "Ba càng\n${bc.toString().replace("RealmList<?>@", "")}")
+                "Xiên\n${xien.toString().replace("RealmList<?>@[", "")
+                        .replace("]", "")}\n\n" +
+                "Ba càng\n${bc.toString().replace("RealmList<?>@[", "")
+                        .replace("]", "")}")
 
         return sb.toString()
     }
+
+    fun toForward(): String {
+        val sb = StringBuilder()
+        sb.append("Lô\n${lo.toDisplay(false)}\n\n" +
+                "Đề giải nhất\n${degiainhat.toDisplay(false)}\n\n" +
+                "Đề\n${de.toDisplay(false)}\n\n" +
+                "Xiên\n${toXien(xien).toString().replace("RealmList<?>@[", "")
+                        .replace("]", "")}\n\n" +
+                "Ba càng\n${bc.toString().replace("RealmList<?>@[", "")
+                        .replace("]", "")}")
+
+        return sb.toString()
+    }
+
+    private fun toXien(xien: RealmList<String>): RealmList<String> {
+        xien.forEachIndexed { index, e ->
+            val arr = e.split("x")
+            xien[index] = "Xi${arr[0].trim().split(" ").size} $e"
+        }
+        return xien
+    }
 }
 
-private fun <E> RealmList<E>.toDisplay(): String {
+private fun <E> RealmList<E>.toDisplay(show: Boolean = true): String {
     val sb = StringBuilder()
     forEachIndexed { index, e ->
         val prefix = "Đầu ${index / 10} : "
         if (e as Int > 0) {
-            if (!sb.contains(prefix)) sb.append("\n").append(prefix)
-            sb.append("${index}x$e ")
+            if (!sb.contains(prefix) && show) sb.append("\n").append(prefix)
+            sb.append("${if (index < 10) "0" else ""}${index}x$e, ")
         }
     }
-
-    return sb.delete(0, 1).toString()
+    if (show) sb.delete(0, 1)
+    return sb.toString()
 }

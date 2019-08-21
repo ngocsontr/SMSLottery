@@ -252,7 +252,7 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
         lode_settings.text = "${(state.messages?.first?.giaLo?.toFloat()?.div(10)).toString()}k "
         lode_settings.setOnClickListener {
             showSettingDialog(state.selectedConversation,
-                    state.messages?.first?.giaLo, prefs.tongSoLode.get())
+                    state.messages?.first?.giaLo, prefs.tongSoLo.get())
         }
         clear.setOnClickListener { showClearDialog(state.selectedConversation) }
         state.lodes?.second?.let {

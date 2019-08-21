@@ -74,79 +74,101 @@
             tools:text="Your conversations will appear here"
             tools:visibility="invisible" />
 
-        <LinearLayout
-            android:id="@+id/hally_layout"
+        <HorizontalScrollView
+            android:id="@+id/menu_scroll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingStart="10dp"
-            android:paddingTop="10dp"
+            android:scrollbars="none"
             app:layout_constraintBottom_toTopOf="@id/recyclerView"
             app:layout_constraintTop_toBottomOf="@id/toolbar">
 
-            <TextView
-                android:id="@+id/datePicker"
+            <LinearLayout
+                android:id="@+id/hally_layout"
                 android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_gravity="center"
-                android:layout_marginEnd="@dimen/default_padding_bottom"
-                android:background="@drawable/lode_button"
-                android:gravity="center"
-                android:padding="@dimen/bottom_ellipsis_height"
-                android:text="@string/datePicker1Day"
-                android:textColor="@color/tools_theme"
-                android:textSize="22sp" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="10dp"
+                android:paddingTop="10dp">
 
-            <TextView
-                android:id="@+id/all"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_gravity="center"
-                android:layout_marginEnd="@dimen/default_padding_bottom"
-                android:background="@drawable/lode_button"
-                android:gravity="center"
-                android:padding="@dimen/bottom_ellipsis_height"
-                android:text="ALL"
-                android:textColor="@color/tools_theme"
-                android:textSize="22sp" />
+                <TextView
+                    android:id="@+id/datePicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="@dimen/default_padding_bottom"
+                    android:background="@drawable/lode_button"
+                    android:gravity="center"
+                    android:padding="@dimen/bottom_ellipsis_height"
+                    android:text="@string/datePicker1Day"
+                    android:textColor="@color/tools_theme"
+                    android:textSize="22sp" />
 
-            <TextView
-                android:id="@+id/kq_xsmb"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_gravity="center"
-                android:layout_marginEnd="@dimen/default_padding_bottom"
-                android:background="@drawable/lode_button"
-                android:gravity="center"
-                android:padding="@dimen/bottom_ellipsis_height"
-                android:text="XSMB"
-                android:textColor="@color/tools_theme"
-                android:textSize="22sp" />
+                <TextView
+                    android:id="@+id/all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="@dimen/default_padding_bottom"
+                    android:background="@drawable/lode_button"
+                    android:gravity="center"
+                    android:padding="@dimen/bottom_ellipsis_height"
+                    android:text="ALL"
+                    android:textColor="@color/tools_theme"
+                    android:textSize="22sp" />
 
-            <TextView
-                android:id="@+id/tongket"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_marginEnd="@dimen/default_padding_bottom"
-                android:background="@drawable/lode_button"
-                android:gravity="center"
-                android:padding="@dimen/bottom_ellipsis_height"
-                android:text="Tổng kết"
-                android:textColor="@color/tools_theme"
-                android:textSize="22sp" />
+                <TextView
+                    android:id="@+id/kq_xsmb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="@dimen/default_padding_bottom"
+                    android:background="@drawable/lode_button"
+                    android:gravity="center"
+                    android:padding="@dimen/bottom_ellipsis_height"
+                    android:text="XSMB"
+                    android:textColor="@color/tools_theme"
+                    android:textSize="22sp" />
 
-            <TextView
-                android:id="@+id/clear"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_gravity="center"
-                android:background="@drawable/lode_button"
-                android:drawableStart="@drawable/ic_delete_white_24dp"
-                android:drawableTint="@android:color/holo_red_light"
-                android:gravity="center"
-                android:padding="@dimen/bottom_ellipsis_height"
-                android:textColor="@color/tools_theme" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/tongket"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginEnd="@dimen/default_padding_bottom"
+                    android:background="@drawable/lode_button"
+                    android:gravity="center"
+                    android:padding="@dimen/bottom_ellipsis_height"
+                    android:text="Tổng kết"
+                    android:textColor="@color/tools_theme"
+                    android:textSize="22sp" />
+
+                <TextView
+                    android:id="@+id/setting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="@dimen/default_padding_bottom"
+                    android:background="@drawable/lode_button"
+                    android:drawableStart="@drawable/ic_settings_black_24dp"
+                    android:drawableTint="@color/tools_theme"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:padding="@dimen/bottom_ellipsis_height"
+                    android:textColor="@color/tools_theme" />
+
+                <TextView
+                    android:id="@+id/clear"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="@dimen/default_padding_bottom"
+                    android:background="@drawable/lode_button"
+                    android:drawableStart="@drawable/ic_delete_white_24dp"
+                    android:drawableTint="@android:color/holo_red_light"
+                    android:gravity="center"
+                    android:padding="@dimen/bottom_ellipsis_height"
+                    android:textColor="@color/tools_theme" />
+            </LinearLayout>
+        </HorizontalScrollView>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
@@ -157,7 +179,7 @@
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             app:layout_constraintBottom_toTopOf="@id/bottom"
-            app:layout_constraintTop_toBottomOf="@id/hally_layout"
+            app:layout_constraintTop_toBottomOf="@id/menu_scroll"
             tools:listitem="@layout/conversation_list_item" />
 
         <ImageView

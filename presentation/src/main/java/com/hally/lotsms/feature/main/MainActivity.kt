@@ -52,6 +52,7 @@ import com.hally.lotsms.common.util.format
 import com.hally.lotsms.feature.conversations.ConversationItemTouchCallback
 import com.hally.lotsms.feature.conversations.ConversationsAdapter
 import com.hally.lotsms.model.Conversation
+import com.hally.lotsms.model.Lode
 import com.hally.lotsms.repository.SyncRepository
 import com.jakewharton.rxbinding2.view.clicks
 import com.jakewharton.rxbinding2.widget.textChanges
@@ -140,11 +141,7 @@ class MainActivity : QkThemedActivity(), MainView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
         val pickDate = prefs.pickDate.get()
-        if (pickDate.isBlank()) {
-            val date = LodeUtil.sdf.format(Calendar.getInstance().time)
-            datePicker.text = date
-            prefs.pickDate.set(date)
-        } else datePicker.text = pickDate
+        if (pickDate.isBlank()) changeToday() else datePicker.text = pickDate
         datePicker.setOnClickListener { v -> changeDatePicker(v as TextView) }
         all.setOnClickListener { allDate() }
         kq_xsmb.setOnClickListener { showXsmbDialog() }
@@ -208,6 +205,12 @@ class MainActivity : QkThemedActivity(), MainView {
         conversationsAdapter.autoScrollToStart(recyclerView)
     }
 
+    private fun changeToday() {
+        val date = LodeUtil.sdf.format(Calendar.getInstance().time)
+        datePicker.text = date
+        prefs.pickDate.set(date)
+    }
+
     private fun showClearDialog() {
         BottomDialog.Builder(this).setTitle("Xóa dữ liệu")
                 .setContent("Chắc chắn muốn xóa TOÀN BỘ dữ liệu Lô Đề?")
@@ -219,29 +222,37 @@ class MainActivity : QkThemedActivity(), MainView {
     }
 
     var data: RealmResults<Conversation>? = null
+
     private fun showTongketDialog() {
+        var result = Lode().init()
         val view = layoutInflater.inflate(R.layout.lode_tongket_view, null)
         view.chuyen.setOnClickListener {
-            view.chuyen_text.text = "TỔNG KẾT"
+            if (!updateTongOmLoDe(view)) return@setOnClickListener
+
+            val temp = lodeUtil.getLodeForward(result)
+            view.chuyen_text.text = "TỔNG KẾT ${prefs.pickDate.get()}\n${temp.toForward()}"
+
             val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("TỔNG KẾT", view.chuyen_text.text)
             clipboard.primaryClip = clip
-            makeToast("Đã copy vào clipboard.\nChuyển!!")
+            makeToast("Đã copy vào clipboard.\nChuyển ngay đi!!")
         }
-        view.update.setOnClickListener {
-            val tongSo = view.tong_so_lode.text.toString()
-            if (tongSo.isNotEmpty()) {
-                prefs.tongSoLode.set(tongSo.toInt())
-                makeToast("Cập nhật xong!!")
-            } else makeToast("Không được bỏ trống!!")
-        }
-        view.tong_so_lode.setText("${prefs.tongSoLode.get()}")
+        view.update.setOnClickListener { updateTongOmLoDe(view) }
 
+        view.tong_so_lode.setText("${prefs.tongSoLo.get()}")
+        view.tong_so_de.setText("${prefs.tongSoDe.get()}")
+        view.tong_so_xien.setText("${prefs.tongSoXien.get()}")
+        view.tong_so_bc.setText("${prefs.tongSoBC.get()}")
 
         var tk = 0
         data?.forEach { conv ->
             val lodes = lodeUtil.lodeRepo.getLodes(conv.id)
             if (lodes.size > 0) {
+                // xử lý cộng tổng tất cả lô đề
+                val temp = lodeUtil.getLodeAllArray(lodes)
+                result = lodeUtil.getLodeAllArray(arrayListOf(temp, result))
+
+                // xử lý kết quả cho từng người đánh
                 val viewItem = layoutInflater.inflate(R.layout.lode_tongket_item_view, null)
                 viewItem.username.text = conv.getTitle()
                 view.tongket_content.addView(viewItem)
@@ -260,6 +271,22 @@ class MainActivity : QkThemedActivity(), MainView {
                 .show()
     }
 
+    private fun updateTongOmLoDe(view: View): Boolean {
+        val tongLo = view.tong_so_lode.text.toString()
+        val tongDe = view.tong_so_de.text.toString()
+        val tongBC = view.tong_so_bc.text.toString()
+        val tongXien = view.tong_so_xien.text.toString()
+        if (tongLo.isNotEmpty() && tongDe.isNotEmpty() && tongBC.isNotEmpty() && tongXien.isNotEmpty()) {
+            prefs.tongSoLo.set(tongLo.toInt())
+            prefs.tongSoDe.set(tongDe.toInt())
+            prefs.tongSoBC.set(tongBC.toInt())
+            prefs.tongSoXien.set(tongXien.toInt())
+            makeToast("Cập nhật xong!!")
+            return true
+        } else makeToast("Không được bỏ trống số ôm Lô Đề!!")
+        return false
+    }
+
     private fun showXsmbDialog() {
         BottomDialog.Builder(this).setTitle(getString(R.string.kq_title))
                 .setContent(prefs.kqRaw.get())
@@ -268,13 +295,15 @@ class MainActivity : QkThemedActivity(), MainView {
     }
 
     private fun getKqXsmb() {
-        if (lodeUtil.isToDay() || !lodeUtil.isLodeTime()) return
-        lodeUtil.getKqXsmb()
+        if (!lodeUtil.isSameDay() && lodeUtil.isLodeTime()) {
+            lodeUtil.getKqXsmb()
+        }
     }
 
     private fun allDate() {
         if (prefs.oneDaySms.get()) {
             prefs.oneDaySms.set(false)
+            changeToday()
             viewModel.bindView(this)
         }
     }
@@ -291,6 +320,7 @@ class MainActivity : QkThemedActivity(), MainView {
                     val date = LodeUtil.sdf.format(calendar.time)
                     prefs.pickDate.set(date)
                     prefs.oneDaySms.set(true)
+                    lodeUtil.getKqXsmb()
 
                     textView.text = date
                     viewModel.bindView(this)

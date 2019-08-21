@@ -26,6 +26,7 @@
         android:imeOptions="actionDone"
         android:inputType="number"
         android:minHeight="36dp"
+        android:visibility="gone"
         android:textColor="@color/black"
         app:met_errorColor="#ff0000"
         app:met_floatingLabel="highlight"

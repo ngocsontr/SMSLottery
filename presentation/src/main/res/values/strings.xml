@@ -352,6 +352,10 @@
     <string name="tong_diem_om">Tổng số Điểm ôm /1 con Lô</string>
     <string name="kq_title">Kết quả XSMB</string>
     <string name="not_internet_message">Bật 4G/WIFI để lấy Kết quả XSMB mới nhất!!</string>
+    <string name="tong_lo"><![CDATA[ôm Lô <Điểm>]]></string>
+    <string name="tong_de"><![CDATA[ôm Đề <K>]]></string>
+    <string name="tong_bc"><![CDATA[ôm Ba càng <K>]]></string>
+    <string name="tong_xien"><![CDATA[ôm Xiên <K>]]></string>
 
     <string-array name="night_modes">
         <item>Disabled</item>
