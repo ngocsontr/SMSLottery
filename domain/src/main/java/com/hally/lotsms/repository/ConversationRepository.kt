@@ -74,5 +74,5 @@ interface ConversationRepository {
 
     fun deleteConversations(vararg threadIds: Long)
 
-    fun setGiaLo(gialo: Int, vararg threadIds: Long)
+    fun setGiaLo(gialo: Int, giaDe: Int, vararg threadIds: Long)
 }

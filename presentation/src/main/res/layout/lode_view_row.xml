@@ -27,6 +27,7 @@
         android:imeOptions="actionDone"
         android:inputType="textMultiLine"
         android:minHeight="36dp"
+        app:met_clearButton="true"
         app:met_errorColor="#ff0000"
         app:met_floatingLabel="highlight"
         app:met_floatingLabelAlwaysShown="true"

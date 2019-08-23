@@ -91,6 +91,18 @@
                 android:paddingTop="10dp">
 
                 <TextView
+                    android:id="@+id/tongket"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_marginEnd="@dimen/default_padding_bottom"
+                    android:background="@drawable/lode_button"
+                    android:gravity="center"
+                    android:padding="@dimen/bottom_ellipsis_height"
+                    android:text="Tổng kết"
+                    android:textColor="@color/tools_theme"
+                    android:textSize="22sp" />
+
+                <TextView
                     android:id="@+id/datePicker"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
@@ -130,18 +142,6 @@
                     android:textSize="22sp" />
 
                 <TextView
-                    android:id="@+id/tongket"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:layout_marginEnd="@dimen/default_padding_bottom"
-                    android:background="@drawable/lode_button"
-                    android:gravity="center"
-                    android:padding="@dimen/bottom_ellipsis_height"
-                    android:text="Tổng kết"
-                    android:textColor="@color/tools_theme"
-                    android:textSize="22sp" />
-
-                <TextView
                     android:id="@+id/setting"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
@@ -151,9 +151,9 @@
                     android:drawableStart="@drawable/ic_settings_black_24dp"
                     android:drawableTint="@color/tools_theme"
                     android:gravity="center"
-                    android:visibility="gone"
                     android:padding="@dimen/bottom_ellipsis_height"
-                    android:textColor="@color/tools_theme" />
+                    android:textColor="@color/tools_theme"
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/clear"

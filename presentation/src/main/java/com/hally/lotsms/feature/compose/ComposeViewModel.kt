@@ -45,7 +45,6 @@ import com.hally.lotsms.manager.PermissionManager
 import com.hally.lotsms.model.*
 import com.hally.lotsms.repository.ContactRepository
 import com.hally.lotsms.repository.ConversationRepository
-import com.hally.lotsms.repository.LodeRepository
 import com.hally.lotsms.repository.MessageRepository
 import com.hally.lotsms.util.ActiveSubscriptionObservable
 import com.hally.lotsms.util.Preferences
@@ -84,7 +83,6 @@ class ComposeViewModel @Inject constructor(
         private val markRead: MarkRead,
         private val messageDetailsFormatter: MessageDetailsFormatter,
         private val messageRepo: MessageRepository,
-        private val lodeRepo: LodeRepository,
         private val navigator: Navigator,
         private val permissionManager: PermissionManager,
         private val prefs: Preferences,
@@ -180,17 +178,6 @@ class ComposeViewModel @Inject constructor(
                 }
                 .switchMap { messages -> messages.asObservable() }
                 .subscribe(messages::onNext)
-
-        disposables += conversation
-                .distinctUntilChanged { conversation -> conversation.id }
-                .observeOn(AndroidSchedulers.mainThread())
-                .map { conversation ->
-                    val lodes = lodeRepo.getLodes(conversation.id)
-                    newState { copy(selectedConversation = conversation.id, lodes = Pair(conversation, lodes)) }
-                    lodes
-                }
-                .switchMap { lodes -> lodes.asObservable() }
-                .subscribe(lodes::onNext)
 
         disposables += conversation
                 .map { conversation -> conversation.getTitle() }

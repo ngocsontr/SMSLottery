@@ -349,6 +349,7 @@
     <string name="datePicker1Day">Hôm nay</string>
     <string name="datePickerAllDay">Toàn Bộ</string>
     <string name="gia_lo"><![CDATA[Giá ôm Lô <230 = 23k>]]></string>
+    <string name="gia_de"><![CDATA[Giá ôm Đề <90 = 90%>]]></string>
     <string name="tong_diem_om">Tổng số Điểm ôm /1 con Lô</string>
     <string name="kq_title">Kết quả XSMB</string>
     <string name="not_internet_message">Bật 4G/WIFI để lấy Kết quả XSMB mới nhất!!</string>

@@ -52,6 +52,7 @@
             android:inputType="textMultiLine"
             android:minHeight="36dp"
             app:met_errorColor="#ddaa00"
+            app:met_clearButton="true"
             app:met_helperText="Tin nhắn gốc."
             app:met_primaryColor="#982360" />
 

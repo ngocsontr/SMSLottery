@@ -64,7 +64,6 @@ import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.drawer_view.*
-import kotlinx.android.synthetic.main.lode_setting_view.view.tong_so_lode
 import kotlinx.android.synthetic.main.lode_tongket_item_view.view.*
 import kotlinx.android.synthetic.main.lode_tongket_view.view.*
 import kotlinx.android.synthetic.main.main_activity.*
@@ -140,8 +139,6 @@ class MainActivity : QkThemedActivity(), MainView {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
-        val pickDate = prefs.pickDate.get()
-        if (pickDate.isBlank()) changeToday() else datePicker.text = pickDate
         datePicker.setOnClickListener { v -> changeDatePicker(v as TextView) }
         all.setOnClickListener { allDate() }
         kq_xsmb.setOnClickListener { showXsmbDialog() }
@@ -205,10 +202,11 @@ class MainActivity : QkThemedActivity(), MainView {
         conversationsAdapter.autoScrollToStart(recyclerView)
     }
 
-    private fun changeToday() {
-        val date = LodeUtil.sdf.format(Calendar.getInstance().time)
-        datePicker.text = date
-        prefs.pickDate.set(date)
+    override fun onResume() {
+        super.onResume()
+        activityResumedIntent.onNext(Unit)
+        val pickDate = prefs.pickDate.get()
+        if (pickDate.isBlank()) changeToday() else datePicker.text = pickDate
     }
 
     private fun showClearDialog() {
@@ -256,8 +254,7 @@ class MainActivity : QkThemedActivity(), MainView {
                 val viewItem = layoutInflater.inflate(R.layout.lode_tongket_item_view, null)
                 viewItem.username.text = conv.getTitle()
                 view.tongket_content.addView(viewItem)
-                val giaLo = conv.giaLo
-                val arr = lodeUtil.tongKet(lodes, giaLo)
+                val arr = lodeUtil.tongKet(lodes, conv.giaLo, conv.giaDe)
                 viewItem.lottery_result.text = arr[0]
                 viewItem.tongket_text.text = arr[1]
                 if (arr[2].toInt() > 0) viewItem.tongket_text.setTextColor(Color.RED)
@@ -304,8 +301,15 @@ class MainActivity : QkThemedActivity(), MainView {
         if (prefs.oneDaySms.get()) {
             prefs.oneDaySms.set(false)
             changeToday()
+            lodeUtil.getKqXsmb()
             viewModel.bindView(this)
         }
+    }
+
+    private fun changeToday() {
+        val date = LodeUtil.sdf.format(Calendar.getInstance().time)
+        datePicker.text = date
+        prefs.pickDate.set(date)
     }
 
     @SuppressLint("RestrictedApi")
@@ -452,14 +456,10 @@ class MainActivity : QkThemedActivity(), MainView {
     }
 
     private fun filterData(data: RealmResults<Conversation>?): RealmResults<Conversation>? {
-        if (!prefs.oneDaySms.get()) return data
-        val time = lodeUtil.getLodeTime()
-        return data?.where()?.between("date", time[0], time[1])?.findAll()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        activityResumedIntent.onNext(Unit)
+        return data
+//        if (!prefs.oneDaySms.get()) return data
+//        val time = lodeUtil.getLodeTime()
+//        return data?.where()?.between("date", time[0], time[1])?.findAll()
     }
 
     override fun onDestroy() {

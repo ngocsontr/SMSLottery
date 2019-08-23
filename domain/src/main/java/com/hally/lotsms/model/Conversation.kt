@@ -31,6 +31,7 @@ open class Conversation(
         var recipients: RealmList<Recipient> = RealmList(),
         var count: Int = 0,
         var giaLo: Int = 230,
+        var giaDe: Int = 100,
         var date: Long = 0,
         var snippet: String = "",
         var read: Boolean = true,

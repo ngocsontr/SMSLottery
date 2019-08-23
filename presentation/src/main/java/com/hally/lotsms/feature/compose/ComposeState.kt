@@ -19,7 +19,10 @@
 package com.hally.lotsms.feature.compose
 
 import com.hally.lotsms.compat.SubscriptionInfoCompat
-import com.hally.lotsms.model.*
+import com.hally.lotsms.model.Attachment
+import com.hally.lotsms.model.Contact
+import com.hally.lotsms.model.Conversation
+import com.hally.lotsms.model.Message
 import io.realm.RealmResults
 
 data class ComposeState(
@@ -37,7 +40,6 @@ data class ComposeState(
         val searchSelectionPosition: Int = 0,
         val searchResults: Int = 0,
         val messages: Pair<Conversation, RealmResults<Message>>? = null,
-        val lodes: Pair<Conversation, RealmResults<Lode>>? = null,
         val selectedMessages: Int = 0,
         val scheduled: Long = 0,
         val attachments: List<Attachment> = ArrayList(),

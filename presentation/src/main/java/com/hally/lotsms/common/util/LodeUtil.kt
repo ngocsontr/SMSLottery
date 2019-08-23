@@ -78,9 +78,8 @@ class LodeUtil @Inject constructor(
         lodeRepo.deleteAllLode(threadid)
     }
 
-    fun update(id: Long, gia_lo: String, tongSo: String) {
-        conversationRepo.setGiaLo(gia_lo.toInt(), id)
-        prefs.tongSoLo.set(tongSo.toInt())
+    fun update(id: Long, gia_lo: String, gia_de: String) {
+        conversationRepo.setGiaLo(gia_lo.toInt(), gia_de.toInt(), id)
     }
 
     fun isLodeTime(): Boolean {
@@ -115,6 +114,12 @@ class LodeUtil @Inject constructor(
     }
 
     fun getKqXsmb() {
+        getKqXsmb {
+            Log.i("TNS", "getKqXsmb TaskCompleted")
+        }
+    }
+
+    fun getKqXsmb(function: () -> Int) {
         if (!isNetworkConnected()) context.makeToast(context.getString(R.string.not_internet_message))
 
         val parser = Parser()
@@ -134,10 +139,10 @@ class LodeUtil @Inject constructor(
 
                 // lưu thằng trùng với ngày đang pick
                 for (item in items) {
-                    Log.i("TNS", item.toString())
-                    if (isSameDay(item.link))
-                        saveXSMB(item)
+//                    Log.i("TNS", item.toString())
+                    if (isSameDay(item.link)) saveXSMB(item)
                 }
+                function()
             }
         })
         parser.execute(XSMB_URL)
@@ -164,7 +169,7 @@ class LodeUtil @Inject constructor(
         prefs.kqLode.set(bd.trim().toString())
     }
 
-    fun tongKet(data: RealmResults<Lode>, giaLo: Int): Array<String> {
+    fun tongKet(data: RealmResults<Lode>, giaLo: Int, giaDe: Int): Array<String> {
         var chi = 0
         var thu = 0
 
@@ -182,6 +187,7 @@ class LodeUtil @Inject constructor(
                 chi += arr[0].toInt() * e.price
                 thu += when (e) {
                     E.LO -> arr[1].toInt() * giaLo / 10
+                    E.DE, E.DE1 -> arr[1].toInt() * giaDe / 100
                     else -> arr[1].toInt()
                 }
             }
@@ -362,17 +368,18 @@ class LodeUtil @Inject constructor(
 
     fun getLodeTime(): Array<Long> {
         val end = getNow()
-        end.set(Calendar.HOUR_OF_DAY, 18)
-        end.set(Calendar.MINUTE, 30)
-        end.set(Calendar.SECOND, 0)
         val start = end.clone() as Calendar
         start.add(Calendar.DAY_OF_YEAR, -1)
+//        Log.d("TNS", "getLodeTime: ${start.time} --> ${end.time}")
         return arrayOf(start.timeInMillis, end.timeInMillis)
     }
 
     fun getNow(): Calendar {
         val now = Calendar.getInstance()
         now.time = sdf.parse(prefs.pickDate.get())
+        now.set(Calendar.HOUR_OF_DAY, 18)
+        now.set(Calendar.MINUTE, 30)
+        now.set(Calendar.SECOND, 0)
         return now
     }
 

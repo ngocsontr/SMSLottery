@@ -20,6 +20,7 @@ package com.hally.lotsms.feature.compose
 
 import android.Manifest
 import android.animation.LayoutTransition
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -34,6 +35,7 @@ import android.provider.MediaStore
 import android.text.format.DateFormat
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
@@ -164,6 +166,8 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
             messageBackground.setBackgroundTint(resolveThemeColor(R.attr.bubbleColor))
             composeBackground.setBackgroundTint(resolveThemeColor(R.attr.composeBackground))
         }
+
+        initLode()
     }
 
     override fun onStart() {
@@ -176,6 +180,7 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
         activityVisibleIntent.onNext(false)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun render(state: ComposeState) {
         if (state.hasError) {
             finish()
@@ -227,6 +232,8 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
         messageList.setVisible(state.sendAsGroup)
         messageAdapter.data = filterData(state.messages)
         messageAdapter.highlight = state.searchSelectionId
+        messageAdapter.autoScrollToStart(messageList)
+        messageList.adapter = messageAdapter
 
         scheduledGroup.isVisible = state.scheduled != 0L
         scheduledTime.text = dateFormatter.getScheduledTimestamp(state.scheduled)
@@ -247,23 +254,78 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
         send.isEnabled = state.canSend
         send.imageAlpha = if (state.canSend) 255 else 128
 
-        lotteryList.setOnClickListener { showDetalDialog(state.lodes?.second) }
         kq_xsmb.setOnClickListener { showKqDialog() }
-        lode_settings.text = "${(state.messages?.first?.giaLo?.toFloat()?.div(10)).toString()}k "
-        lode_settings.setOnClickListener {
-            showSettingDialog(state.selectedConversation,
-                    state.messages?.first?.giaLo, prefs.tongSoLo.get())
+        state.messages?.first?.let {
+            giaLo = it.giaLo
+            giaDe = it.giaDe
+            lode_settings.text = "${(it.giaLo.toFloat().div(10))}k "
+            lode_settings.setOnClickListener {
+                showSettingDialog(state.selectedConversation, giaLo, giaDe)
+            }
         }
         clear.setOnClickListener { showClearDialog(state.selectedConversation) }
-        state.lodes?.second?.let {
-            val giaLo = state.lodes.first.giaLo
-            val arr = lodeUtil.tongKet(it, giaLo)
-            lottery_result.text = arr[0]
-            tongket_text.text = arr[1]
-            if (arr[2].toInt() > 0) tongket_text.setTextColor(Color.RED)
-            tongket_text.setOnClickListener { message.setText(arr[1]) }
+        computeLodeResult(state.selectedConversation)
+    }
+
+    var giaLo = 230
+    var giaDe = 100
+
+    private fun computeLodeResult(conv_id: Long) {
+        val lodes = lodeUtil.lodeRepo.getLodes(conv_id)
+        val arr = lodeUtil.tongKet(lodes, giaLo, giaDe)
+        lottery_result.text = arr[0]
+        tongket_text.text = arr[1]
+        if (arr[2].toInt() > 0) tongket_text.setTextColor(Color.RED)
+        tongket_text.setOnClickListener { message.setText(arr[1]) }
+        lotteryList.setOnClickListener { showDetalDialog(lodes) }
+    }
+
+    private fun initLode() {
+        datePicker.text = prefs.pickDate.get()
+        datePicker.setOnClickListener { v -> changeDatePicker(v as TextView) }
+        all.setOnClickListener { allDate() }
+    }
+
+    private fun allDate() {
+        if (prefs.oneDaySms.get()) {
+            prefs.oneDaySms.set(false)
+            changeToday()
+            lodeUtil.getKqXsmb()
+            reloadView()
         }
     }
+
+    private fun changeToday() {
+        val date = LodeUtil.sdf.format(Calendar.getInstance().time)
+        datePicker.text = date
+        prefs.pickDate.set(date)
+    }
+
+    @SuppressLint("RestrictedApi")
+    private fun changeDatePicker(textView: TextView) {
+        val calendar = lodeUtil.getNow()
+        val dialog = DatePickerDialog(this, 0,
+                { _, year, month, dayOfMonth ->
+                    calendar.set(Calendar.YEAR, year)
+                    calendar.set(Calendar.MONTH, month)
+                    calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+                    val date = LodeUtil.sdf.format(calendar.time)
+                    prefs.pickDate.set(date)
+                    prefs.oneDaySms.set(true)
+                    lottery_result.text = ""
+                    tongket_text.text = ""
+                    textView.text = prefs.pickDate.get()
+
+                    lodeUtil.getKqXsmb()
+                    reloadView()
+
+                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH))
+        dialog.datePicker.spinnersShown = true
+        dialog.show()
+    }
+
 
     private fun showDetalDialog(second: RealmResults<Lode>?) {
         second?.let {
@@ -282,16 +344,15 @@ class ComposeActivity : QkThemedActivity(), ComposeView {
         }
     }
 
-    private fun showSettingDialog(id: Long, giaLo: Int?, tongSo: Int) {
+    private fun showSettingDialog(id: Long, giaLo: Int, giaDe: Int) {
         val view = layoutInflater.inflate(R.layout.lode_setting_view, null)
         view.gia_lo.setText("$giaLo")
-        view.tong_so_lode.setText("$tongSo")
+        view.gia_de.setText("$giaDe")
         BottomDialog.Builder(this).setTitle("Settings")
                 .setCustomView(view)
                 .setPositiveText("Cập Nhật")
                 .onPositive {
-                    lodeUtil.update(id, view.gia_lo.text.toString(),
-                            view.tong_so_lode.text.toString())
+                    lodeUtil.update(id, view.gia_lo.text.toString(), view.gia_de.text.toString())
                     reloadView()
                 }
                 .show()

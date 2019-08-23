@@ -41,10 +41,10 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ConversationRepositoryImpl @Inject constructor(
-    private val context: Context,
-    private val conversationFilter: ConversationFilter,
-    private val cursorToConversation: CursorToConversation,
-    private val cursorToRecipient: CursorToRecipient
+        private val context: Context,
+        private val conversationFilter: ConversationFilter,
+        private val cursorToConversation: CursorToConversation,
+        private val cursorToRecipient: CursorToRecipient
 ) : ConversationRepository {
 
     override fun getConversations(archived: Boolean): RealmResults<Conversation> {
@@ -290,14 +290,17 @@ class ConversationRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun setGiaLo(gialo: Int, vararg threadIds: Long) {
+    override fun setGiaLo(gialo: Int, giaDe: Int, vararg threadIds: Long) {
         Realm.getDefaultInstance().use { realm ->
             val conversations = realm.where(Conversation::class.java)
                     .anyOf("id", threadIds)
                     .findAll()
 
             realm.executeTransaction {
-                conversations.forEach { it.giaLo = gialo }
+                conversations.forEach {
+                    it.giaLo = gialo
+                    it.giaDe = giaDe
+                }
             }
         }
 

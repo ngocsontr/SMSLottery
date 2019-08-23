@@ -4,65 +4,96 @@
     android:orientation="vertical"
     android:padding="@dimen/default_padding_bottom">
 
-    <LinearLayout
-        android:id="@+id/hally_layout"
+    <HorizontalScrollView
+        android:id="@+id/menu_scroll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:scrollbars="none">
 
-        <TextView
-            android:id="@+id/lode_settings"
+        <LinearLayout
+            android:id="@+id/hally_layout"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:layout_marginEnd="@dimen/default_padding_bottom"
-            android:background="@drawable/lode_button"
-            android:drawableStart="@drawable/ic_settings_black_24dp"
-            android:drawableTint="@color/tools_theme"
-            android:gravity="center"
-            android:padding="@dimen/bottom_ellipsis_height"
-            android:text="Settings"
-            android:textColor="@color/tools_theme"
-            android:textSize="18sp" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/kq_xsmb"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:layout_marginEnd="@dimen/default_padding_bottom"
-            android:background="@drawable/lode_button"
-            android:gravity="center"
-            android:padding="@dimen/bottom_ellipsis_height"
-            android:text="XSMB"
-            android:textColor="@color/tools_theme"
-            android:textSize="18sp" />
+            <TextView
+                android:id="@+id/tongket_text"
+                android:layout_width="150dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="@dimen/default_padding_bottom"
+                android:background="@drawable/lode_button"
+                android:gravity="center"
+                android:padding="@dimen/bottom_ellipsis_height"
+                android:textColor="@color/tools_theme"
+                android:textSize="20sp" />
 
-        <TextView
-            android:id="@+id/tongket_text"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:layout_marginEnd="@dimen/default_padding_bottom"
-            android:layout_weight="1"
-            android:background="@drawable/lode_button"
-            android:gravity="center"
-            android:padding="@dimen/bottom_ellipsis_height"
-            android:textColor="@color/tools_theme"
-            android:textSize="20sp" />
+            <TextView
+                android:id="@+id/datePicker"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/default_padding_bottom"
+                android:background="@drawable/lode_button"
+                android:gravity="center"
+                android:padding="@dimen/bottom_ellipsis_height"
+                android:text="@string/datePicker1Day"
+                android:textColor="@color/tools_theme"
+                android:textSize="22sp" />
 
-        <TextView
-            android:id="@+id/clear"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_gravity="center"
-            android:background="@drawable/lode_button"
-            android:drawableStart="@drawable/ic_delete_white_24dp"
-            android:drawableTint="@android:color/holo_red_light"
-            android:gravity="center"
-            android:padding="@dimen/bottom_ellipsis_height"
-            android:textColor="@color/tools_theme" />
+            <TextView
+                android:id="@+id/all"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/default_padding_bottom"
+                android:background="@drawable/lode_button"
+                android:gravity="center"
+                android:padding="@dimen/bottom_ellipsis_height"
+                android:text="ALL"
+                android:textColor="@color/tools_theme"
+                android:textSize="22sp" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/lode_settings"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/default_padding_bottom"
+                android:background="@drawable/lode_button"
+                android:drawableStart="@drawable/ic_settings_black_24dp"
+                android:drawableTint="@color/tools_theme"
+                android:gravity="center"
+                android:padding="@dimen/bottom_ellipsis_height"
+                android:text="Settings"
+                android:textColor="@color/tools_theme"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/kq_xsmb"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:layout_marginEnd="@dimen/default_padding_bottom"
+                android:background="@drawable/lode_button"
+                android:gravity="center"
+                android:padding="@dimen/bottom_ellipsis_height"
+                android:text="XSMB"
+                android:textColor="@color/tools_theme"
+                android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/clear"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:background="@drawable/lode_button"
+                android:drawableStart="@drawable/ic_delete_white_24dp"
+                android:drawableTint="@android:color/holo_red_light"
+                android:gravity="center"
+                android:padding="@dimen/bottom_ellipsis_height"
+                android:textColor="@color/tools_theme" />
+        </LinearLayout>
+    </HorizontalScrollView>
 
     <android.widget.TextClock
         android:id="@+id/lottery_date"
