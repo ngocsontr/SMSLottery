@@ -456,10 +456,10 @@ class MainActivity : QkThemedActivity(), MainView {
     }
 
     private fun filterData(data: RealmResults<Conversation>?): RealmResults<Conversation>? {
-        return data
-//        if (!prefs.oneDaySms.get()) return data
-//        val time = lodeUtil.getLodeTime()
-//        return data?.where()?.between("date", time[0], time[1])?.findAll()
+        if (!prefs.oneDaySms.get()) return data
+        val time = lodeUtil.getLodeTime()
+        val now = Calendar.getInstance()
+        return data?.where()?.between("date", time[1], now.timeInMillis)?.findAll()
     }
 
     override fun onDestroy() {
