@@ -459,7 +459,7 @@ class MainActivity : QkThemedActivity(), MainView {
         if (!prefs.oneDaySms.get()) return data
         val time = lodeUtil.getLodeTime()
         val now = Calendar.getInstance()
-        return data?.where()?.between("date", time[1], now.timeInMillis)?.findAll()
+        return data?.where()?.between("date", time[0], now.timeInMillis)?.findAll()
     }
 
     override fun onDestroy() {
